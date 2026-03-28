@@ -1,0 +1,71 @@
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  font-family: var(--font-ui);
+  font-weight: 500;
+  border-radius: var(--radius-md);
+  border: 1.5px solid transparent;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, opacity 0.15s;
+  white-space: nowrap;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── Variants ── */
+.primary {
+  background: var(--color-accent);
+  color: #fff;
+  border-color: var(--color-accent);
+}
+.primary:hover:not(:disabled) {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+}
+
+.secondary {
+  background: transparent;
+  color: var(--color-primary);
+  border-color: var(--color-border);
+}
+.secondary:hover:not(:disabled) {
+  background: #f1f5f9;
+}
+
+.danger {
+  background: var(--color-error);
+  color: #fff;
+  border-color: var(--color-error);
+}
+.danger:hover:not(:disabled) {
+  background: #dc2626;
+  border-color: #dc2626;
+}
+
+.ghost {
+  background: transparent;
+  color: var(--color-accent);
+  border-color: transparent;
+}
+.ghost:hover:not(:disabled) {
+  background: #eff6ff;
+}
+
+/* ── Sizes ── */
+.sm {
+  padding: 0.3rem 0.75rem;
+  font-size: 0.8rem;
+}
+.md {
+  padding: 0.5rem 1.1rem;
+  font-size: 0.9rem;
+}
+.lg {
+  padding: 0.7rem 1.5rem;
+  font-size: 1rem;
+}

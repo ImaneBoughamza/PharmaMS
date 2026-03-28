@@ -1,0 +1,42 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.hero {
+  background: linear-gradient(135deg, var(--color-primary), #163257);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem;
+  box-shadow: var(--shadow-lg);
+}
+
+.heroBadge {
+  display: inline-block;
+  margin-bottom: 0.875rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #c8daf1;
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+}
+
+.heroTitle {
+  font-family: var(--font-heading);
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #fff;
+  margin: 0 0 0.625rem;
+  line-height: 1.25;
+  max-width: 760px;
+}
+
+.heroDesc {
+  font-family: var(--font-ui);
+  font-size: 0.875rem;
+  color: #b9cce2;
+  line-height: 1.7;
+  margin: 0;
+  max-width: 760px;
+}
