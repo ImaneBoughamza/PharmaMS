@@ -1,35 +1,105 @@
 .badge {
   display: inline-flex;
   align-items: center;
-  padding: 0.2rem 0.6rem;
-  border-radius: 999px;
+  padding: 2px 7px;
+  border-radius: 3px;
   font-family: var(--font-ui);
-  font-size: 0.75rem;
-  font-weight: 500;
+  font-size: 11px;
+  font-weight: 600;
   white-space: nowrap;
+  border: 1px solid transparent;
+  text-transform: capitalize;
 }
 
+/* ── Status variants (reservation / sale lifecycle) ── */
+.pending {
+  background: #FEF3C7;
+  color: #92400E;
+  border-color: #FDE68A;
+}
+
+.confirmed {
+  background: #D1FAE5;
+  color: #1B5E42;
+  border-color: #6EE7B7;
+}
+
+.ready {
+  background: #DBEAFE;
+  color: #1E3A5F;
+  border-color: #93C5FD;
+}
+
+.expired {
+  background: #F3F4F6;
+  color: #6B7280;
+  border-color: #D1D5DB;
+}
+
+.cancelled {
+  background: #FEE2E2;
+  color: #7F1D1D;
+  border-color: #FECACA;
+}
+
+.regulated {
+  background: #FFF7ED;
+  color: #92400E;
+  border-color: #FED7AA;
+}
+
+/* ── Generic semantic variants ── */
 .success {
-  background: #d1fae5;
-  color: #065f46;
+  background: #D1FAE5;
+  color: #1B5E42;
+  border-color: #6EE7B7;
 }
 
 .warning {
-  background: #fef3c7;
-  color: #92400e;
+  background: #FEF3C7;
+  color: #92400E;
+  border-color: #FDE68A;
 }
 
 .error {
-  background: #fee2e2;
-  color: #991b1b;
+  background: #FEE2E2;
+  color: #7F1D1D;
+  border-color: #FECACA;
 }
 
 .info {
-  background: #dbeafe;
-  color: #1e40af;
+  background: #DBEAFE;
+  color: #1E3A5F;
+  border-color: #93C5FD;
 }
 
-.neutral {
-  background: #f1f5f9;
-  color: #475569;
+.neutral,
+.default {
+  background: #F3F4F6;
+  color: #5C5C5C;
+  border-color: #D1D5DB;
+}
+
+.primary {
+  background: #E6F0EB;
+  color: #1B5E42;
+  border-color: #A7D4B8;
+}
+
+.completed {
+  background: #D1FAE5;
+  color: #1B5E42;
+  border-color: #6EE7B7;
+}
+
+.ordered {
+  background: #FEF3C7;
+  color: #92400E;
+  border-color: #FDE68A;
+}
+
+.received {
+  background: #D1FAE5;
+  color: #1B5E42;
+  border-color: #6EE7B7;
 }

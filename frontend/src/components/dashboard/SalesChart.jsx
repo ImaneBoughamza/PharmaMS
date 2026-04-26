@@ -1,6 +1,6 @@
 import {
-  LineChart,
-  Line,
+  BarChart,
+  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -14,16 +14,16 @@ export default function SalesChart({ data = [] }) {
     <div className={styles.card}>
       <p className={styles.title}>Sales — Last 7 Days</p>
       <ResponsiveContainer width="100%" height={220}>
-        <LineChart data={data} margin={{ top: 8, right: 16, left: 0, bottom: 0 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+        <BarChart data={data} margin={{ top: 8, right: 16, left: 0, bottom: 0 }}>
+          <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} />
           <XAxis
             dataKey="date"
-            tick={{ fontFamily: "Outfit, sans-serif", fontSize: 12, fill: "#6B7280" }}
+            tick={{ fontFamily: "Inter, sans-serif", fontSize: 11, fill: "#8C8C8C" }}
             axisLine={false}
             tickLine={false}
           />
           <YAxis
-            tick={{ fontFamily: "Outfit, sans-serif", fontSize: 12, fill: "#6B7280" }}
+            tick={{ fontFamily: "Inter, sans-serif", fontSize: 11, fill: "#8C8C8C" }}
             axisLine={false}
             tickLine={false}
             tickFormatter={(v) => `${v} MAD`}
@@ -31,22 +31,16 @@ export default function SalesChart({ data = [] }) {
           />
           <Tooltip
             contentStyle={{
-              fontFamily: "Outfit, sans-serif",
-              fontSize: 13,
-              borderRadius: 8,
-              border: "1px solid #E5E7EB",
+              fontFamily: "Inter, sans-serif",
+              fontSize: 12,
+              borderRadius: 4,
+              border: "1px solid var(--color-border)",
+              background: "#fff",
             }}
             formatter={(value) => [`${value} MAD`, "Sales"]}
           />
-          <Line
-            type="monotone"
-            dataKey="total"
-            stroke="#2563EB"
-            strokeWidth={2.5}
-            dot={{ r: 4, fill: "#2563EB" }}
-            activeDot={{ r: 6 }}
-          />
-        </LineChart>
+          <Bar dataKey="total" fill="#1B5E42" radius={[2, 2, 0, 0]} />
+        </BarChart>
       </ResponsiveContainer>
     </div>
   );

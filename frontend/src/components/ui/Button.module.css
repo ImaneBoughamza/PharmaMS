@@ -2,39 +2,41 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.4rem;
+  gap: 6px;
   font-family: var(--font-ui);
-  font-weight: 500;
-  border-radius: var(--radius-md);
-  border: 1.5px solid transparent;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 4px;
+  border: 1px solid transparent;
   cursor: pointer;
-  transition: background 0.15s, border-color 0.15s, opacity 0.15s;
+  transition: background 0.12s, border-color 0.12s;
   white-space: nowrap;
+  line-height: 1;
 }
 
 .btn:disabled {
-  opacity: 0.5;
+  opacity: 0.45;
   cursor: not-allowed;
 }
 
 /* ── Variants ── */
 .primary {
-  background: var(--color-accent);
+  background: var(--color-primary-action);
   color: #fff;
-  border-color: var(--color-accent);
+  border-color: var(--color-primary-action);
 }
 .primary:hover:not(:disabled) {
-  background: #1d4ed8;
-  border-color: #1d4ed8;
+  background: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
 }
 
 .secondary {
-  background: transparent;
-  color: var(--color-primary);
+  background: var(--color-surface);
+  color: var(--color-text);
   border-color: var(--color-border);
 }
 .secondary:hover:not(:disabled) {
-  background: #f1f5f9;
+  background: var(--color-bg);
 }
 
 .danger {
@@ -43,29 +45,35 @@
   border-color: var(--color-error);
 }
 .danger:hover:not(:disabled) {
-  background: #dc2626;
-  border-color: #dc2626;
+  background: #6B1919;
+  border-color: #6B1919;
 }
 
 .ghost {
   background: transparent;
-  color: var(--color-accent);
+  color: var(--color-text-secondary);
   border-color: transparent;
 }
 .ghost:hover:not(:disabled) {
-  background: #eff6ff;
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+.loading {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
 /* ── Sizes ── */
 .sm {
-  padding: 0.3rem 0.75rem;
-  font-size: 0.8rem;
+  padding: 5px 10px;
+  font-size: 12px;
 }
 .md {
-  padding: 0.5rem 1.1rem;
-  font-size: 0.9rem;
+  padding: 8px 16px;
+  font-size: 13px;
 }
 .lg {
-  padding: 0.7rem 1.5rem;
-  font-size: 1rem;
+  padding: 10px 20px;
+  font-size: 14px;
 }

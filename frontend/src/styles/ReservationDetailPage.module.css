@@ -2,7 +2,21 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  max-width: 860px;
+}
+
+/* ── Page header ── */
+.pageHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.headerLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .back {
@@ -10,7 +24,7 @@
   align-items: center;
   gap: 0.4rem;
   font-family: var(--font-ui);
-  font-size: 0.875rem;
+  font-size: 0.825rem;
   color: var(--color-text-muted);
   background: none;
   border: none;
@@ -23,10 +37,82 @@
   color: var(--color-text);
 }
 
-.card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  padding: 1.75rem;
-  box-shadow: var(--shadow-sm);
+.title {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  margin: 0 0 0.2rem;
+}
+
+.subtitle {
+  font-family: var(--font-ui);
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+/* ── Header action buttons ── */
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  padding-top: 0.25rem;
+}
+
+.actionBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  height: 36px;
+  padding: 0 1rem;
+  border-radius: var(--radius-md);
+  border: 1.5px solid transparent;
+  font-family: var(--font-ui);
+  font-size: 0.825rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s, opacity 0.15s;
+  white-space: nowrap;
+}
+
+.actionBtnPrimary {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+}
+
+.actionBtnPrimary:hover {
+  opacity: 0.88;
+}
+
+.actionBtnSuccess {
+  background: #059669;
+  border-color: #059669;
+  color: #fff;
+}
+
+.actionBtnSuccess:hover {
+  background: #047857;
+  border-color: #047857;
+}
+
+.actionBtnDanger {
+  background: transparent;
+  border-color: #dc2626;
+  color: #dc2626;
+}
+
+.actionBtnDanger:hover {
+  background: #dc2626;
+  color: #fff;
+}
+
+/* ── Not found ── */
+.notFound {
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  margin: 0;
 }

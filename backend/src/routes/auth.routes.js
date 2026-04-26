@@ -1,8 +1,8 @@
 import express from "express";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { z } from "zod";
-import { User } from "../models/User.js";
+import { User } from "../models/User.model.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { requireAuth } from "../middleware/auth.js";
 
@@ -12,12 +12,17 @@ const registerSchema = z.object({
   fullName: z.string().min(2),
   email: z.string().email(),
   password: z.string().min(8),
-  role: z.enum(["admin", "pharmacist", "cashier"]).optional()
+  role: z.enum(["pharmacist", "assistant", "cashier"]).optional(),
 });
 
 const loginSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(1)
+  password: z.string().min(1),
+});
+
+const changePasswordSchema = z.object({
+  currentPassword: z.string().min(1),
+  newPassword: z.string().min(8),
 });
 
 function signToken(user) {
@@ -28,7 +33,7 @@ function signToken(user) {
   );
 }
 
-// Register (for development; in production you can restrict this to admin-only)
+// POST /api/auth/register
 router.post(
   "/register",
   asyncHandler(async (req, res) => {
@@ -43,18 +48,18 @@ router.post(
       fullName: data.fullName,
       email: data.email,
       passwordHash,
-      role: data.role || "cashier"
+      role: data.role || "cashier",
     });
 
     const token = signToken(user);
     res.status(201).json({
       token,
-      user: { id: user._id, fullName: user.fullName, email: user.email, role: user.role }
+      user: { id: user._id, fullName: user.fullName, email: user.email, role: user.role },
     });
   })
 );
 
-// Login
+// POST /api/auth/login
 router.post(
   "/login",
   asyncHandler(async (req, res) => {
@@ -69,12 +74,12 @@ router.post(
     const token = signToken(user);
     res.json({
       token,
-      user: { id: user._id, fullName: user.fullName, email: user.email, role: user.role }
+      user: { id: user._id, fullName: user.fullName, email: user.email, role: user.role },
     });
   })
 );
 
-// Me
+// GET /api/auth/me
 router.get(
   "/me",
   requireAuth,
@@ -82,6 +87,26 @@ router.get(
     const user = await User.findById(req.user.sub).select("-passwordHash");
     if (!user) return res.status(404).json({ message: "User not found" });
     res.json(user);
+  })
+);
+
+// PATCH /api/auth/change-password
+router.patch(
+  "/change-password",
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const data = changePasswordSchema.parse(req.body);
+
+    const user = await User.findById(req.user.sub);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    const ok = await bcrypt.compare(data.currentPassword, user.passwordHash);
+    if (!ok) return res.status(401).json({ message: "Current password is incorrect" });
+
+    user.passwordHash = await bcrypt.hash(data.newPassword, 12);
+    await user.save();
+
+    res.json({ message: "Password updated successfully" });
   })
 );
 

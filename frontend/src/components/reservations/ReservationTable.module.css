@@ -16,7 +16,7 @@
 .table th {
   padding: 0.65rem 1rem;
   text-align: left;
-  font-size: 0.75rem;
+  font-size: 0.73rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -26,7 +26,7 @@
 }
 
 .table td {
-  padding: 0.75rem 1rem;
+  padding: 0.7rem 1rem;
   color: var(--color-text);
   border-bottom: 1px solid var(--color-border);
   vertical-align: middle;
@@ -40,36 +40,168 @@
   background: var(--color-bg);
 }
 
-.code {
-  font-family: var(--font-ui);
+/* ── Code cell ── */
+.codeBtn {
+  font-family: ui-monospace, "Cascadia Mono", Menlo, monospace;
   font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--color-accent) !important;
+  font-weight: 700;
+  color: var(--color-accent);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
   white-space: nowrap;
+  transition: opacity 0.15s;
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
+.codeBtn:hover {
+  opacity: 0.75;
+}
+
+/* ── Customer cell ── */
 .customer {
   display: flex;
   flex-direction: column;
   gap: 0.15rem;
 }
 
+.customerName {
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
 .phone {
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   color: var(--color-text-muted);
 }
 
-.payment {
+/* ── Items cell ── */
+.itemsWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.12rem;
+  max-width: 220px;
+}
+
+.itemLine {
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  color: var(--color-text);
   white-space: nowrap;
-  font-size: 0.8rem;
-  color: var(--color-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
+.moreHint {
+  font-family: var(--font-ui);
+  font-size: 0.73rem;
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+/* ── Pickup date ── */
+.overdueDate {
+  color: var(--color-error) !important;
+  font-weight: 600;
+}
+
+/* ── Payment badge ── */
+.payOnline {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+  color: var(--color-accent);
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.payPickup {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-text-muted) 12%, transparent);
+  color: var(--color-text-muted);
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* ── Actions cell ── */
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.actionBtn {
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+
+.actionApprove {
+  color: var(--color-success);
+}
+.actionApprove:hover {
+  background: color-mix(in srgb, var(--color-success) 12%, transparent);
+}
+
+.actionReject {
+  color: var(--color-error);
+}
+.actionReject:hover {
+  background: color-mix(in srgb, var(--color-error) 12%, transparent);
+}
+
+.actionReady {
+  color: var(--color-accent);
+}
+.actionReady:hover {
+  background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+}
+
+.actionCancel {
+  color: var(--color-error);
+}
+.actionCancel:hover {
+  background: color-mix(in srgb, var(--color-error) 12%, transparent);
+}
+
+.actionConvert {
+  color: var(--color-success);
+}
+.actionConvert:hover {
+  background: color-mix(in srgb, var(--color-success) 12%, transparent);
+}
+
+.actionView {
+  color: var(--color-text-muted);
+}
+.actionView:hover {
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+/* ── Empty ── */
 .empty {
   font-family: var(--font-ui);
   font-size: 0.875rem;
   color: var(--color-text-muted);
   text-align: center;
-  padding: 2rem 0;
+  padding: 2.5rem 0;
   margin: 0;
 }

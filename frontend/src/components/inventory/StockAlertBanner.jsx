@@ -10,7 +10,7 @@ export default function StockAlertBanner({ count }) {
       <span className={styles.text}>
         <strong>{count} medicine{count > 1 ? "s" : ""}</strong> below minimum stock level.
       </span>
-      <Link href="/inventory?filter=low" className={styles.link}>
+      <Link href="/stock" className={styles.link}>
         View all
       </Link>
     </div>

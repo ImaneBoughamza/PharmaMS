@@ -1,5 +1,6 @@
 import AppLayout from "@/components/layout/AppLayout";
-import OTCAssistantPanel from "@/components/ai/OTCAssistantPanel";
+import PrescriptionScanner from "@/components/ai/PrescriptionScanner";
+import ConsultationHistory from "@/components/ai/ConsultationHistory";
 import styles from "@/styles/AIAssistantPage.module.css";
 
 // TODO: restore when backend is ready
@@ -8,18 +9,25 @@ import styles from "@/styles/AIAssistantPage.module.css";
 export default function AIAssistantPage() {
   return (
     <div className={styles.page}>
-      <section className={styles.hero}>
-        <span className={styles.heroBadge}>Differentiator Feature · Decision Support</span>
-        <h1 className={styles.heroTitle}>
-          Generate advisory OTC suggestions based on symptoms and available stock.
-        </h1>
-        <p className={styles.heroDesc}>
-          This feature supports the pharmacist or assistant by surfacing in-stock,
-          non-prescription products only. The final dispensing decision always remains human.
+      <div className={styles.header}>
+        <h1 className={styles.title}>Prescription Scanner</h1>
+        <p className={styles.subtitle}>
+          Upload a prescription image to extract medicines and receive parapharmacy complement suggestions.
         </p>
-      </section>
+      </div>
 
-      <OTCAssistantPanel />
+      <div className={styles.disclaimer}>
+        <span>⚠</span>
+        <span>
+          AI suggestions are for decision support only. They surface in-stock parapharmacy complements —
+          not OTC medicines. The final dispensing decision always remains with the pharmacist.
+        </span>
+      </div>
+
+      <div className={styles.layout}>
+        <PrescriptionScanner />
+        <ConsultationHistory />
+      </div>
     </div>
   );
 }

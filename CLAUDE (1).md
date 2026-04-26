@@ -19,7 +19,10 @@ Do not add code to a file without reading it first.
 ## Project
 
 Web-Based Automated Pharmacy Management System (SaaS)
-Capstone project — Al Akhawayn University, Spring 2026
+Capstone project — Al Akhawayn University in Ifrane, Spring 2026
+Student: Imane Boughamza
+Supervisor: Dr. Driss Kettani
+Live URL: https://pharmacy-management-system-one-drab.vercel.app/
 
 ## Monorepo Structure
 
@@ -50,27 +53,130 @@ PHARMACY-MS/
 - Toasts: Sonner
 - Language: JavaScript only. Never use TypeScript.
 
-### Design System
+---
 
-Fonts: Cormorant Garamond (headings and branding) + Outfit (all UI text).
-Load both via @import URL in frontend/src/styles/globals.css.
+### DESIGN SYSTEM — READ CAREFULLY
 
-Colors:
-- Navy (primary):  #0B1C35
-- Blue (accent):   #2563EB
-- Background:      #F5F3EE
-- Success:         #10B981
-- Warning:         #F59E0B
-- Error:           #EF4444
-- Slate (muted):   #64748B
+This is a professional pharmacy management system used by licensed healthcare
+staff. The interface must look like it was designed by a human designer with
+domain knowledge — not like a generic AI-generated SaaS dashboard.
 
-Every page gets its own CSS Module file named [PageName].module.css
-stored in frontend/src/styles/. Every component gets its own CSS Module
-stored alongside the component or in src/styles/.
+#### What NOT to do
+
+Do NOT produce the typical AI-generated UI pattern. Specifically avoid:
+- Blue gradient hero banners or gradient backgrounds of any kind
+- Heavy floating card grids with large box-shadows everywhere
+- Rounded pill buttons (border-radius > 6px on buttons)
+- Teal/cyan/purple accent colors
+- "Feature highlight" sections with icon + title + paragraph in 3-column grids
+- Glassmorphism (backdrop-filter, frosted glass effects)
+- Large emoji or illustrated icons as decorative elements
+- Excessive white space with centered minimal content
+- SaaS landing page aesthetics applied to a data management tool
+- Every section being a rounded white card with a drop shadow
+- Heroic large typography on functional pages
+
+#### What TO do — The PharmaOS Aesthetic
+
+The interface references professional French pharmacy and clinical software.
+It is structured, readable, and purposeful. Think of it as the UI a
+pharmacist would trust with medication data — not a consumer app.
+
+**Layout philosophy:**
+- Dense but not cramped. Show more data, less decoration.
+- Tables are the primary layout pattern for list views — not card grids.
+- Forms are structured with clear field grouping, not floating cards.
+- The sidebar is the navigation anchor — it should feel solid and reliable.
+- Pages have a clear title area at the top, then content below — no hero sections.
+
+**Colors:**
+- Background:        #F7F5F0  (warm parchment — not pure white)
+- Surface:           #FFFFFF  (white — for content areas only)
+- Sidebar:           #0F2340  (deep navy)
+- Sidebar active:    #1A3A5C
+- Primary action:    #1B5E42  (forest green — pharmacy color tradition)
+- Primary hover:     #154D36
+- Secondary:         #0B1C35  (navy)
+- Border:            #DDD9D0  (warm gray — not cool gray)
+- Text primary:      #1A1A1A
+- Text secondary:    #5C5C5C
+- Text muted:        #8C8C8C
+- Success:           #1B5E42
+- Warning:           #92400E
+- Error:             #7F1D1D
+- Info:              #1E3A5F
+
+**Typography:**
+- Headings: 'Libre Baskerville', serif — loaded via Google Fonts @import
+- Body / UI: 'Inter', sans-serif — loaded via Google Fonts @import
+- Monospace (codes, batch numbers): 'JetBrains Mono', monospace
+- Load all three via @import in globals.css
+
+Page titles: 22px, Libre Baskerville, color #0B1C35
+Section headers: 14px, Inter 600 (semibold), uppercase, letter-spacing 0.08em, color #5C5C5C
+Table headers: 11px, Inter 600, uppercase, letter-spacing 0.06em, color #8C8C8C, background #F7F5F0
+Body text: 14px, Inter 400
+Small/labels: 12px, Inter 400, color #5C5C5C
+Batch/code values: 13px, JetBrains Mono
+
+**Buttons:**
+- Primary: background #1B5E42, color white, border-radius 4px, padding 8px 16px, font-size 13px, font-weight 600
+- Secondary: background white, border 1px solid #DDD9D0, color #1A1A1A, border-radius 4px
+- Danger: background #7F1D1D, color white, border-radius 4px
+- Never use pill-shaped buttons (border-radius 20px+)
+- Never use gradient backgrounds on buttons
+
+**Tables:**
+- Full-width, no rounded corners
+- Header row: background #F7F5F0, border-bottom 2px solid #DDD9D0
+- Body rows: background white, border-bottom 1px solid #EEE9E0
+- Row hover: background #F7F5F0
+- No card wrapping around tables — tables sit directly in the page
+
+**Forms:**
+- Field labels: 12px, Inter 600, color #5C5C5C, uppercase, letter-spacing 0.05em
+- Inputs: border 1px solid #DDD9D0, border-radius 3px, padding 8px 10px, font-size 14px
+- Input focus: border-color #1B5E42, outline none
+- Group related fields with a horizontal rule and a section label — not by wrapping in a card
+- Required fields: add a red asterisk after the label, no other decoration
+
+**Sidebar:**
+- Background #0F2340
+- Logo area: 60px height, pharmacy cross icon + "PharmaOS" in white Libre Baskerville
+- Nav items: 40px height, 14px Inter, color rgba(255,255,255,0.7)
+- Active nav item: background #1A3A5C, color white, left border 3px solid #1B5E42
+- Section dividers in sidebar: 1px solid rgba(255,255,255,0.1) with uppercase label 10px
+
+**Status badges:**
+- Pending:   background #FEF3C7, color #92400E, border 1px solid #FDE68A
+- Confirmed: background #D1FAE5, color #1B5E42, border 1px solid #6EE7B7
+- Ready:     background #DBEAFE, color #1E3A5F, border 1px solid #93C5FD
+- Expired:   background #F3F4F6, color #6B7280, border 1px solid #D1D5DB
+- Cancelled: background #FEE2E2, color #7F1D1D, border 1px solid #FECACA
+- Regulated: background #FFF7ED, color #92400E, border 1px solid #FED7AA
+- Border-radius on badges: 3px maximum
+
+**Dashboard specifically:**
+- No large KPI cards with gradients
+- KPI row: 4 inline stat blocks with left border in primary color, background white
+- Stats show number in 28px Libre Baskerville + label in 12px Inter below
+- Chart section: plain white background, labeled title in section-header style
+- Alert feed: simple table-style list, not card stack
+
+**POS page specifically:**
+- Two-column layout: left 60% for product search + cart, right 40% for checkout
+- Cart is a table — not floating card items
+- No animations or transitions on cart add/remove
+
+**Public reservation portal specifically:**
+- Clean centered form on the parchment background
+- No hero image, no gradient banner
+- Simple logo + tagline, then the form
+- Mobile-first, works at 320px
+
+---
 
 ### Frontend File Structure
-
-Every file below is empty and needs to be implemented:
 
 ```
 frontend/
@@ -80,36 +186,57 @@ frontend/
 │   ├── pages/
 │   │   ├── _app.js
 │   │   ├── _document.js
-│   │   ├── index.js
-│   │   ├── login.jsx
-│   │   ├── dashboard.jsx
-│   │   ├── inventory/
-│   │   │   ├── index.jsx
-│   │   │   ├── add.jsx
-│   │   │   └── [id].jsx
-│   │   ├── pos.jsx
-│   │   ├── reservations/
-│   │   │   ├── index.jsx
-│   │   │   ├── [id].jsx
-│   │   │   ├── new.jsx
+│   │   ├── index.js                          → redirects to /login
+│   │   ├── login.jsx                         → Sign In + Create Pharmacy Account tabs
+│   │   ├── dashboard.jsx                     → BACK OFFICE
+│   │   │
+│   │   ├── products/                         → BACK OFFICE — Manage Product (BB2)
+│   │   │   ├── index.jsx                     → /products — medicine list + parapharmacy list tabs
+│   │   │   ├── add.jsx                       → /products/add — register medicine
+│   │   │   ├── [id].jsx                      → /products/[id] — medicine detail
+│   │   │   ├── parapharmacy/
+│   │   │   │   ├── index.jsx                 → /products/parapharmacy — parapharmacy list
+│   │   │   │   ├── add.jsx                   → /products/parapharmacy/add
+│   │   │   │   └── [id].jsx                  → /products/parapharmacy/[id]
+│   │   │   └── orders/
+│   │   │       ├── index.jsx                 → /products/orders — purchase orders list
+│   │   │       └── new.jsx                   → /products/orders/new
+│   │   │
+│   │   ├── stock/                            → BACK OFFICE — Manage Stock (BB3)
+│   │   │   ├── index.jsx                     → /stock — stock overview, alerts, batch management
+│   │   │   └── report.jsx                    → /stock/report — stock management report
+│   │   │
+│   │   ├── pos.jsx                           → BACK OFFICE — Manage Sales (BB4)
+│   │   │
+│   │   ├── reservations/                     → Manage Reservations (BB5)
+│   │   │   ├── index.jsx                     → BACK OFFICE — staff reservations list
+│   │   │   ├── [id].jsx                      → BACK OFFICE — reservation detail
+│   │   │   ├── new.jsx                       → FRONT OFFICE — public reservation form
 │   │   │   └── track/
-│   │   │       └── [code].jsx
-│   │   ├── suppliers/
+│   │   │       └── [code].jsx                → FRONT OFFICE — public status tracking
+│   │   │
+│   │   ├── transactions/
+│   │   │   └── index.jsx                     → BACK OFFICE — Manage Transactions (BB6)
+│   │   │
+│   │   ├── suppliers/                        → BACK OFFICE — Manage Suppliers (BB7)
 │   │   │   ├── index.jsx
 │   │   │   ├── add.jsx
+│   │   │   ├── [id].jsx
 │   │   │   └── delivery/
 │   │   │       └── new.jsx
-│   │   ├── reports.jsx
-│   │   ├── audit-logs.jsx
-│   │   ├── ai-assistant.jsx
-│   │   ├── profile.jsx
-│   │   └── settings/
-│   │       └── users.jsx
+│   │   │
+│   │   ├── settings/
+│   │   │   └── users.jsx                     → BACK OFFICE — Manage Users (BB8)
+│   │   │
+│   │   ├── ai-assistant.jsx                  → BACK OFFICE — AI Decision Support (BB9)
+│   │   ├── audit-logs.jsx                    → BACK OFFICE — Manage Audit Logs
+│   │   ├── reports.jsx                       → BACK OFFICE — Sales reports
+│   │   └── profile.jsx                       → BACK OFFICE — own profile
 │   │
 │   ├── components/
 │   │   ├── layout/
-│   │   │   ├── AppLayout.jsx
-│   │   │   ├── PublicLayout.jsx
+│   │   │   ├── AppLayout.jsx                 → Sidebar + Topbar — all back office pages
+│   │   │   ├── PublicLayout.jsx              → logo only — login, reservations/new, track
 │   │   │   ├── Sidebar.jsx
 │   │   │   └── Topbar.jsx
 │   │   ├── ui/
@@ -124,35 +251,49 @@ frontend/
 │   │   ├── auth/
 │   │   │   └── ProtectedRoute.jsx
 │   │   ├── dashboard/
-│   │   │   ├── KpiCard.jsx
+│   │   │   ├── KpiRow.jsx
 │   │   │   ├── SalesChart.jsx
 │   │   │   └── AlertFeed.jsx
-│   │   ├── inventory/
+│   │   ├── products/
 │   │   │   ├── MedicineTable.jsx
+│   │   │   ├── ParapharmacyTable.jsx
 │   │   │   ├── BatchList.jsx
 │   │   │   ├── AddMedicineForm.jsx
-│   │   │   └── StockAlertBanner.jsx
+│   │   │   ├── AddParapharmacyForm.jsx
+│   │   │   ├── StockAlertBanner.jsx
+│   │   │   └── OrderForm.jsx
+│   │   ├── stock/
+│   │   │   ├── StockOverview.jsx
+│   │   │   ├── ExpiryAlerts.jsx
+│   │   │   ├── LowStockAlerts.jsx
+│   │   │   └── StockReport.jsx
 │   │   ├── pos/
-│   │   │   ├── MedicineSearch.jsx
+│   │   │   ├── ProductSearch.jsx
 │   │   │   ├── Cart.jsx
 │   │   │   ├── CartItem.jsx
 │   │   │   ├── CheckoutPanel.jsx
+│   │   │   ├── BillingPanel.jsx
 │   │   │   └── PharmacistApprovalModal.jsx
 │   │   ├── reservations/
 │   │   │   ├── ReservationTable.jsx
 │   │   │   ├── ReservationDetail.jsx
 │   │   │   └── ReservationForm.jsx
+│   │   ├── transactions/
+│   │   │   ├── TransactionTable.jsx
+│   │   │   └── EndOfDayPanel.jsx
 │   │   ├── suppliers/
 │   │   │   ├── SupplierTable.jsx
 │   │   │   ├── AddSupplierForm.jsx
 │   │   │   └── DeliveryForm.jsx
 │   │   ├── ai/
-│   │   │   └── OTCAssistantPanel.jsx
+│   │   │   ├── PrescriptionScanner.jsx
+│   │   │   ├── RecommendationPanel.jsx
+│   │   │   └── ConsultationHistory.jsx
 │   │   └── reports/
-│   │       └── SalesChart.jsx
+│   │       └── SalesReportChart.jsx
 │   │
 │   ├── styles/
-│   │   ├── globals.css
+│   │   ├── globals.css                       → @import fonts + CSS reset + CSS vars
 │   │   ├── LoginPage.module.css
 │   │   ├── Dashboard.module.css
 │   │   ├── AppLayout.module.css
@@ -162,6 +303,7 @@ frontend/
 │   ├── hooks/
 │   │   ├── useAuth.js
 │   │   ├── useMedicines.js
+│   │   ├── useParapharmacy.js
 │   │   ├── useReservations.js
 │   │   └── useSales.js
 │   │
@@ -178,289 +320,108 @@ frontend/
 │       ├── roles.js
 │       └── routes.js
 │
-├── .env.local
+├── .env.local                                → NEXT_PUBLIC_API_URL=http://localhost:5000
 ├── next.config.js
 ├── jsconfig.json
 └── package.json
 ```
 
-### Frontend Dependencies (package.json)
-
-```json
-{
-  "name": "pharmaos-frontend",
-  "version": "1.0.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "next": "14.2.3",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "axios": "^1.7.2",
-    "swr": "^2.2.5",
-    "tailwindcss": "^3.4.4",
-    "react-hook-form": "^7.52.1",
-    "@hookform/resolvers": "^3.9.0",
-    "zod": "^3.23.8",
-    "recharts": "^2.12.7",
-    "i18next": "^23.11.5",
-    "react-i18next": "^14.1.2",
-    "next-i18next": "^15.3.1",
-    "jose": "^5.4.0",
-    "js-cookie": "^3.0.5",
-    "date-fns": "^3.6.0",
-    "lucide-react": "^0.396.0",
-    "sonner": "^1.5.0",
-    "@anthropic-ai/sdk": "^0.24.3"
-  },
-  "devDependencies": {
-    "eslint": "^8.57.0",
-    "eslint-config-next": "14.2.3",
-    "postcss": "^8.4.39",
-    "autoprefixer": "^10.4.19"
-  }
-}
-```
-
 ### Authentication
 
-- JWT is stored in a cookie using js-cookie
-- Every Axios request automatically attaches the token via a request interceptor in src/lib/axios.js
-- Three roles: pharmacist (full admin), assistant, cashier
-- Public pages that require no authentication: /login, /reservations/new, /reservations/track/[code]
-- Every other page is protected via ProtectedRoute and roleGuard in getServerSideProps
+- JWT stored in cookies via js-cookie
+- Attached to every request via Axios request interceptor
+- Three roles: pharmacist (admin), assistant, cashier
+- FRONT OFFICE routes (no auth): /login, /reservations/new, /reservations/track/[code]
+- All BACK OFFICE routes: protected via ProtectedRoute + roleGuard in getServerSideProps
 
-### RBAC — Who Can Access What
+### RBAC Rules
 
-| Page              | Pharmacist | Assistant | Cashier |
-|-------------------|-----------|-----------|---------|
-| /dashboard        | ✅        | ✅        | ✅      |
-| /inventory        | ✅        | ✅        | ❌      |
-| /inventory/add    | ✅        | ❌        | ❌      |
-| /inventory/[id]   | ✅        | ✅        | ❌      |
-| /pos              | ✅        | ✅        | ✅      |
-| /reservations     | ✅        | ✅        | ❌      |
-| /reservations/[id]| ✅        | ✅        | ❌      |
-| /suppliers        | ✅        | ❌        | ❌      |
-| /reports          | ✅        | ❌        | ❌      |
-| /audit-logs       | ✅        | ❌        | ❌      |
-| /settings/users   | ✅        | ❌        | ❌      |
-| /ai-assistant     | ✅        | ✅        | ❌      |
-| /profile          | ✅        | ✅        | ✅      |
+| Page                        | Pharmacist | Assistant | Cashier |
+|-----------------------------|-----------|-----------|---------|
+| /dashboard                  | ✅        | ✅        | ✅      |
+| /products                   | ✅        | ✅        | ❌      |
+| /products/add               | ✅        | ❌        | ❌      |
+| /products/[id]              | ✅        | ✅        | ❌      |
+| /products/parapharmacy      | ✅        | ✅        | ❌      |
+| /products/parapharmacy/add  | ✅        | ❌        | ❌      |
+| /products/orders            | ✅        | ❌        | ❌      |
+| /stock                      | ✅        | ✅        | ❌      |
+| /stock/report               | ✅        | ❌        | ❌      |
+| /pos                        | ✅        | ✅        | ✅      |
+| /reservations (staff)       | ✅        | ✅        | ✅      |
+| /reservations/[id]          | ✅        | ✅        | ✅      |
+| /transactions               | ✅        | ❌        | ❌      |
+| /suppliers                  | ✅        | ❌        | ❌      |
+| /reports                    | ✅        | ❌        | ❌      |
+| /audit-logs                 | ✅        | ❌        | ❌      |
+| /settings/users             | ✅        | ❌        | ❌      |
+| /ai-assistant               | ✅        | ✅        | ❌      |
+| /profile                    | ✅        | ✅        | ✅      |
 
 ### Frontend Implementation Steps
 
-Follow this order strictly. Do not jump ahead. Each step depends on the previous one.
+Implement frontend only after the backend is running locally.
 
-**Step 1 — Project foundation**
-- frontend/src/styles/globals.css
-  Import Cormorant Garamond + Outfit from Google Fonts. Add CSS reset.
-  Set body background to #F5F3EE and font-family to Outfit.
-- frontend/src/pages/_document.js
-  Standard Next.js custom document.
-- frontend/src/pages/_app.js
-  Import globals.css. Wrap Component with layout logic:
-  pages that have a getLayout function use it, otherwise render Component directly.
-- frontend/src/pages/index.js
-  Redirect to /login using getServerSideProps.
+Step 1 — Foundation
+- _app.js, _document.js, globals.css (with font imports + CSS vars), index.js
 
-**Step 2 — Core utilities and config**
-- frontend/src/lib/auth.js
-  getToken(), setToken(token), clearToken() using js-cookie. Cookie name: pharmaos_token.
-- frontend/src/lib/axios.js
-  Create Axios instance with baseURL from process.env.NEXT_PUBLIC_API_URL.
-  Add request interceptor: attach Authorization: Bearer <token> header on every request.
-  Add response interceptor: on 401, clear token and redirect to /login.
-- frontend/src/constants/roles.js
-  Export: PHARMACIST = 'pharmacist', ASSISTANT = 'assistant', CASHIER = 'cashier'.
-- frontend/src/constants/routes.js
-  Export all 18 route path strings as named constants.
-- frontend/src/utils/formatCurrency.js
-  Format a number as MAD currency (Moroccan Dirham).
-- frontend/src/utils/formatDate.js
-  Format a date string into a readable format (e.g. DD/MM/YYYY).
-- frontend/src/utils/roleGuard.js
-  A getServerSideProps wrapper that checks the JWT cookie.
-  If no token → redirect to /login.
-  If role not in allowed roles → redirect to /dashboard.
+Step 2 — Core utilities
+- src/lib/auth.js, src/lib/axios.js
+- src/constants/roles.js, src/constants/routes.js
+- src/utils/formatCurrency.js, formatDate.js, roleGuard.js
 - frontend/.env.local
-  NEXT_PUBLIC_API_URL=http://localhost:5000
-- frontend/jsconfig.json
-  Set up path aliases: @ → src/
 
-**Step 3 — Auth hook**
-- frontend/src/hooks/useAuth.js
-  Read token from cookie, decode it (using jose or manually), expose:
-  { user, role, isLoading, logout }
-  logout() clears the cookie and redirects to /login.
+Step 3 — Auth hook
+- src/hooks/useAuth.js
 
-**Step 4 — UI primitives**
-Implement all 8 components in frontend/src/components/ui/.
-Each one must be a clean, reusable React component using CSS Modules.
-Use the design system colors and Outfit font.
-- Button.jsx — variants: primary, secondary, danger, ghost. Sizes: sm, md, lg.
-- Input.jsx — label, error state, helper text.
-- Badge.jsx — variants: success, warning, error, info, neutral.
-- Modal.jsx — overlay + centered card, close on backdrop click.
-- Table.jsx — thead, tbody, striped rows, responsive.
-- Card.jsx — white card with subtle shadow, padding variants.
-- Spinner.jsx — animated loading indicator.
-- Alert.jsx — variants: success, warning, error, info. Dismissible.
+Step 4 — UI primitives
+- All 8 components in src/components/ui/
+- Apply the design system above to every component
 
-**Step 5 — Layout components**
-- frontend/src/components/auth/ProtectedRoute.jsx
-  Wraps a page. Reads role from useAuth. If role not in allowedRoles prop → redirect to /dashboard.
-- frontend/src/components/layout/Sidebar.jsx
-  Navigation links grouped by module. Highlights active route.
-  Groups: Overview (dashboard), Inventory, Sales (pos), Reservations,
-  Suppliers, Reports, Audit Logs, AI Assistant, Settings (users, profile).
-  Collapsible on mobile.
-- frontend/src/components/layout/Topbar.jsx
-  Shows current page title, user avatar, role badge, language switcher (FR/AR), logout button.
-- frontend/src/components/layout/AppLayout.jsx
-  Combines Sidebar + Topbar + main content area.
-  Used by all authenticated pages via getLayout pattern.
-- frontend/src/components/layout/PublicLayout.jsx
-  Minimal layout with logo only in top bar.
-  Used by /login, /reservations/new, /reservations/track/[code].
+Step 5 — Layout
+- ProtectedRoute.jsx, Sidebar.jsx, Topbar.jsx, AppLayout.jsx, PublicLayout.jsx
 
-**Step 6 — Login page**
-- frontend/src/pages/login.jsx
-  Two tabs: Sign In and Create Pharmacy Account.
-  Sign In tab: email + password fields, remember me checkbox, forgot password link,
-  role quick-fill badges (Pharmacist / Assistant / Cashier for demo).
-  Create Pharmacy Account tab: pharmacy name, full name, phone, email, password
-  with strength bar (Weak/Fair/Good/Strong), confirm password, terms agreement checkbox.
-  One-time setup banner explaining only one admin account can be created.
-  On login success: store JWT, redirect to /dashboard.
-  On register success: store JWT, redirect to /dashboard.
-  Uses PublicLayout.
-- frontend/src/styles/LoginPage.module.css
-  Split screen: dark navy left panel with decorative capsule shapes and stats,
-  white right panel with the form. Responsive: left panel hidden on mobile.
+Step 6 — Login page
+- src/pages/login.jsx + LoginPage.module.css
 
-**Step 7 — Dashboard**
-- frontend/src/components/dashboard/KpiCard.jsx
-  Shows a label, a large number, and a trend indicator.
-- frontend/src/components/dashboard/SalesChart.jsx
-  Recharts LineChart showing sales for the last 7 days.
-- frontend/src/components/dashboard/AlertFeed.jsx
-  List of near-expiry and low-stock alerts with badge indicators.
-- frontend/src/pages/dashboard.jsx
-  Fetches from GET /api/dashboard/summary via SWR.
-  Shows 3 KPI cards: Total Sales Today, Low Stock Items, Expiring Soon.
-  Shows SalesChart and AlertFeed below.
-  Uses AppLayout.
-- frontend/src/styles/Dashboard.module.css
+Step 7 — Dashboard
+- KpiRow.jsx, SalesChart.jsx, AlertFeed.jsx
+- src/pages/dashboard.jsx
 
-**Step 8 — Inventory**
-- frontend/src/components/inventory/MedicineTable.jsx
-  Searchable table of medicines with columns: name, category, batches count,
-  total stock, status badge (OK / Low / Critical), actions.
-- frontend/src/components/inventory/BatchList.jsx
-  List of batches for a single medicine: batch number, expiry date, qty, price.
-- frontend/src/components/inventory/AddMedicineForm.jsx
-  Two-section form: medicine details + initial batch details.
-- frontend/src/components/inventory/StockAlertBanner.jsx
-  Banner shown at top of inventory when low-stock items exist.
-- frontend/src/pages/inventory/index.jsx
-  Fetches GET /api/medicines via SWR. Renders MedicineTable. Uses AppLayout.
-  Pharmacist and Assistant only.
-- frontend/src/pages/inventory/add.jsx
-  Renders AddMedicineForm. Posts to POST /api/medicines. Uses AppLayout.
-  Pharmacist only.
-- frontend/src/pages/inventory/[id].jsx
-  Fetches GET /api/medicines/:id. Shows medicine detail + BatchList. Uses AppLayout.
-  Pharmacist and Assistant only.
+Step 8 — Manage Product (BB2)
+- MedicineTable, ParapharmacyTable, BatchList, AddMedicineForm,
+  AddParapharmacyForm, StockAlertBanner, OrderForm
+- pages: products/index, add, [id], parapharmacy/index, add, [id], orders/index, new
 
-**Step 9 — Point of Sale**
-- frontend/src/components/pos/MedicineSearch.jsx
-  Search input that queries GET /api/medicines with a search param.
-- frontend/src/components/pos/CartItem.jsx
-  Single row in the cart: medicine name, quantity selector, price, remove button.
-- frontend/src/components/pos/Cart.jsx
-  List of CartItems with subtotal.
-- frontend/src/components/pos/CheckoutPanel.jsx
-  Shows cart total, payment method selector, checkout button.
-- frontend/src/components/pos/PharmacistApprovalModal.jsx
-  Modal shown when checkout requires pharmacist approval.
-  Shows a 120 second countdown timer. Waiting / Approved / Rejected states.
-- frontend/src/pages/pos.jsx
-  Split layout: left side MedicineSearch + item results, right side Cart + CheckoutPanel.
-  On checkout POST /api/sales. If response includes requiresApproval flag, show PharmacistApprovalModal.
-  Uses AppLayout. All staff roles.
+Step 9 — Manage Stock (BB3)
+- StockOverview, ExpiryAlerts, LowStockAlerts, StockReport
+- pages: stock/index, report
 
-**Step 10 — Reservations**
-- frontend/src/components/reservations/ReservationTable.jsx
-  Table with status filter tabs: All / Pending / Confirmed / Ready / Expired.
-- frontend/src/components/reservations/ReservationDetail.jsx
-  Detail view of a single reservation with approve/reject/mark-ready actions.
-- frontend/src/components/reservations/ReservationForm.jsx
-  Public form: customer name, phone, medicine search + quantity. Submit returns confirmation code.
-- frontend/src/pages/reservations/index.jsx
-  Fetches GET /api/reservations. Renders ReservationTable. Uses AppLayout.
-  Pharmacist and Assistant only.
-- frontend/src/pages/reservations/[id].jsx
-  Fetches GET /api/reservations/:id. Renders ReservationDetail. Uses AppLayout.
-  Pharmacist and Assistant only.
-- frontend/src/pages/reservations/new.jsx
-  Renders ReservationForm. Posts to POST /api/reservations.
-  Shows confirmation code on success. Uses PublicLayout. No auth.
-- frontend/src/pages/reservations/track/[code].jsx
-  Fetches GET /api/reservations/track/:code. Shows status to customer.
-  Uses PublicLayout. No auth.
+Step 10 — Manage Sales / POS (BB4)
+- ProductSearch, Cart, CartItem, CheckoutPanel, BillingPanel, PharmacistApprovalModal
+- pages: pos.jsx
 
-**Step 11 — Suppliers**
-- frontend/src/components/suppliers/SupplierTable.jsx
-  Table of suppliers: name, contact, email, delivery count, actions.
-- frontend/src/components/suppliers/AddSupplierForm.jsx
-  Form: supplier name, contact person, email, address.
-- frontend/src/components/suppliers/DeliveryForm.jsx
-  Select supplier, add one or more delivery lines (medicine + batch data).
-- frontend/src/pages/suppliers/index.jsx
-  Fetches GET /api/suppliers. Renders SupplierTable. Uses AppLayout. Pharmacist only.
-- frontend/src/pages/suppliers/add.jsx
-  Renders AddSupplierForm. Posts to POST /api/suppliers. Uses AppLayout. Pharmacist only.
-- frontend/src/pages/suppliers/delivery/new.jsx
-  Renders DeliveryForm. Posts to POST /api/deliveries. Uses AppLayout. Pharmacist only.
+Step 11 — Manage Reservations (BB5)
+- ReservationTable, ReservationDetail, ReservationForm
+- pages: reservations/index, [id], new, track/[code]
 
-**Step 12 — Reports**
-- frontend/src/pages/reports.jsx
-  Date range picker at top. Fetches GET /api/reports/sales and GET /api/reports/expiry.
-  Shows sales line chart (Recharts), expiry alert table, export button.
-  Uses AppLayout. Pharmacist only.
+Step 12 — Manage Transactions (BB6)
+- TransactionTable, EndOfDayPanel
+- pages: transactions/index
 
-**Step 13 — Audit Logs**
-- frontend/src/pages/audit-logs.jsx
-  Fetches GET /api/audit-logs with filters: action, user, date range.
-  Shows filterable table: timestamp, user, role, action, entity.
-  Uses AppLayout. Pharmacist only.
+Step 13 — Manage Suppliers (BB7)
+- SupplierTable, AddSupplierForm, DeliveryForm
+- pages: suppliers/index, add, [id], delivery/new
 
-**Step 14 — Settings — User Management**
-- frontend/src/pages/settings/users.jsx
-  Fetches GET /api/users. Shows staff table with role badges.
-  Add Staff button opens modal: full name, email, role selector, temporary password.
-  Posts to POST /api/users. Uses AppLayout. Pharmacist only.
+Step 14 — AI Decision Support (BB9)
+- PrescriptionScanner, RecommendationPanel, ConsultationHistory
+- pages: ai-assistant.jsx
+- The prescription scan sends a base64-encoded JPEG/PNG to POST /api/ai/scan
+- The API returns extracted medicines + parapharmacy complement suggestions
+- The pharmacist reviews and validates before presenting to customer
 
-**Step 15 — AI Assistant**
-- frontend/src/components/ai/OTCAssistantPanel.jsx
-  Textarea for prescription input. Submit button. Streamed response display area.
-  Disclaimer banner: "For informational use only."
-- frontend/src/pages/ai-assistant.jsx
-  Renders OTCAssistantPanel. Posts to POST /api/ai/suggest.
-  Uses AppLayout. Pharmacist and Assistant only.
-
-**Step 16 — Profile**
-- frontend/src/pages/profile.jsx
-  Shows current user info: full name, email, role badge.
-  Form to change password: current password, new password, confirm.
-  Posts to PATCH /api/auth/change-password.
-  Uses AppLayout. All roles.
+Step 15 — Reports, Audit Logs, Settings, Profile
+- pages: reports.jsx, audit-logs.jsx, settings/users.jsx, profile.jsx
 
 ---
 
@@ -476,12 +437,11 @@ Use the design system colors and Outfit font.
 - Scheduler: node-cron
 - Logging: Winston
 - Real-time: Socket.io
-- AI: Anthropic SDK
+- AI: Anthropic SDK (claude-sonnet-4-20250514 — supports vision for prescription scan)
+- Email: Nodemailer + SendGrid SMTP
 - Validation: Zod
 
 ### Backend File Structure
-
-Every file below is empty and needs to be implemented:
 
 ```
 backend/
@@ -498,7 +458,9 @@ backend/
 │   ├── models/
 │   │   ├── User.model.js
 │   │   ├── Medicine.model.js
+│   │   ├── ParapharmacyProduct.model.js      → NEW — separate collection
 │   │   ├── Batch.model.js
+│   │   ├── Order.model.js
 │   │   ├── Sale.model.js
 │   │   ├── Reservation.model.js
 │   │   ├── Supplier.model.js
@@ -507,14 +469,18 @@ backend/
 │   ├── services/
 │   │   ├── fifo.service.js
 │   │   ├── pharmacistGate.service.js
-│   │   ├── alert.service.js
-│   │   └── ai.service.js
+│   │   ├── email.service.js                  → NEW — Nodemailer + SendGrid
+│   │   └── ai.service.js                     → UPDATED — now handles vision input
 │   ├── routes/
 │   │   ├── auth.routes.js
 │   │   ├── medicine.routes.js
+│   │   ├── parapharmacy.routes.js            → NEW
 │   │   ├── batch.routes.js
+│   │   ├── order.routes.js
+│   │   ├── stock.routes.js
 │   │   ├── sale.routes.js
 │   │   ├── reservation.routes.js
+│   │   ├── transaction.routes.js
 │   │   ├── supplier.routes.js
 │   │   ├── delivery.routes.js
 │   │   ├── report.routes.js
@@ -524,9 +490,13 @@ backend/
 │   ├── controllers/
 │   │   ├── auth.controller.js
 │   │   ├── medicine.controller.js
+│   │   ├── parapharmacy.controller.js        → NEW
 │   │   ├── batch.controller.js
+│   │   ├── order.controller.js
+│   │   ├── stock.controller.js
 │   │   ├── sale.controller.js
 │   │   ├── reservation.controller.js
+│   │   ├── transaction.controller.js
 │   │   ├── supplier.controller.js
 │   │   ├── delivery.controller.js
 │   │   ├── report.controller.js
@@ -534,8 +504,8 @@ backend/
 │   │   ├── user.controller.js
 │   │   └── ai.controller.js
 │   ├── jobs/
-│   │   ├── nearExpiry.job.js
-│   │   └── reservationExpiry.job.js
+│   │   ├── nearExpiry.job.js                 → daily at 08:00
+│   │   └── reservationExpiry.job.js          → every 15 minutes
 │   └── utils/
 │       ├── logger.js
 │       └── ApiError.js
@@ -546,95 +516,286 @@ backend/
 
 ### MongoDB Schemas
 
-**users:** _id, pharmacyId, fullName, email, passwordHash, role (pharmacist|assistant|cashier), createdAt
-**medicines:** _id, pharmacyId, name, genericName, category, unit, minStockLevel, supplierId
-**batches:** _id, medicineId, pharmacyId, batchNumber, expiryDate, purchasePrice, salePrice, initialQty, remainingQty, deliveryId
-**sales:** _id, pharmacyId, cashierId, pharmacistId, items[{batchId, qty, unitPrice}], totalAmount, approvalStatus, createdAt
-**reservations:** _id, pharmacyId, customerName, customerPhone, items[{medicineId, qty}], status (pending|confirmed|ready|expired|cancelled), confirmationCode, expiresAt, createdAt
-**suppliers:** _id, pharmacyId, name, contact, email, address
-**deliveries:** _id, pharmacyId, supplierId, receivedBy, items[{medicineId, batchData}], deliveryDate
-**auditLogs:** _id, pharmacyId, userId, action, entity, entityId, payload, createdAt
+**users:**
+_id, pharmacyId, fullName, email, passwordHash,
+role (pharmacist|assistant|cashier), isActive, createdAt, updatedAt
+
+**medicines:**
+_id, pharmacyId, name, genericName,
+category (prescription|non-prescription|regulated),
+unit, minStockLevel, supplierId, isActive, createdAt, updatedAt
+
+**parapharmacyProducts:**
+_id, pharmacyId, name, brand,
+category (cosmetics|supplements|medical-device|hygiene|other),
+purchasePrice, salePrice, stockQty, minStockLevel,
+supplierId, isActive, createdAt, updatedAt
+
+**batches:**
+_id, medicineId, pharmacyId, batchNumber, expiryDate,
+purchasePrice, salePrice, initialQty, remainingQty,
+deliveryId, isActive, createdAt
+
+**orders:**
+_id, pharmacyId, supplierId,
+productType (medicine|parapharmacy),
+items[{productId, orderedQty}],
+status (ordered|received|cancelled), createdAt, updatedAt
+
+**sales:**
+_id, pharmacyId, cashierId, pharmacistId,
+items[{batchId, qty, unitPrice}],
+parapharmacyItems[{productId, qty, unitPrice}],
+totalAmount, paymentMethod (cash|electronic),
+approvalStatus (approved|pending|rejected|voided),
+voidReason,
+invoice{receiptNumber, generatedAt, medicineSubtotal, parapharmacySubtotal},
+createdAt
+
+**reservations:**
+_id, pharmacyId, customerName, customerPhone, customerEmail,
+items[{productType, productId, qty}],
+status (pending|confirmed|ready|expired|cancelled),
+confirmationCode, paymentMethod (online|pay-on-pickup),
+rejectionReason, expiresAt, createdAt, updatedAt
+
+**suppliers:**
+_id, pharmacyId, name, contact, email, phone, address,
+type (grossiste|laboratoire|parapharmacy-distributor|other),
+isActive, createdAt, updatedAt
+
+**deliveries:**
+_id, pharmacyId, supplierId, receivedBy, orderId,
+medicineItems[{medicineId, batchNumber, expiryDate, receivedQty, purchasePrice, salePrice}],
+parapharmacyItems[{productId, receivedQty, purchasePrice}],
+deliveryDate, notes, createdAt
+
+**auditLogs:**
+_id, pharmacyId, userId, action, entity,
+entityId, payload, createdAt
+(immutable — never update or delete)
+
+### API Endpoints
+
+#### Auth
+| Method | Route                       | Auth      | Description                         |
+|--------|-----------------------------|-----------|-------------------------------------|
+| POST   | /api/auth/register          | none      | Pharmacist one-time signup          |
+| POST   | /api/auth/login             | none      | Returns JWT + refresh token         |
+| POST   | /api/auth/refresh           | none      | Refresh access token                |
+| PATCH  | /api/auth/change-password   | any staff | Change own password                 |
+
+#### Manage Product — Medicines (BB2)
+| Method | Route                       | Auth        | Description                         |
+|--------|-----------------------------|-------------|-------------------------------------|
+| GET    | /api/medicines              | staff       | List with batch stock summary       |
+| POST   | /api/medicines              | pharmacist  | Register medicine + initial batch   |
+| GET    | /api/medicines/:id          | staff       | Detail with all batches             |
+| PATCH  | /api/medicines/:id          | pharmacist  | Update medicine                     |
+| PATCH  | /api/medicines/:id/deactivate | pharmacist| Soft delete                         |
+| PATCH  | /api/medicines/:id/reactivate | pharmacist| Restore                             |
+
+#### Manage Product — Parapharmacy (BB2)
+| Method | Route                            | Auth        | Description                    |
+|--------|----------------------------------|-------------|--------------------------------|
+| GET    | /api/parapharmacy                | staff       | List with stock levels         |
+| POST   | /api/parapharmacy                | pharmacist  | Register parapharmacy product  |
+| GET    | /api/parapharmacy/:id            | staff       | Product detail                 |
+| PATCH  | /api/parapharmacy/:id            | pharmacist  | Update product                 |
+| PATCH  | /api/parapharmacy/:id/deactivate | pharmacist  | Soft delete                    |
+| PATCH  | /api/parapharmacy/:id/reactivate | pharmacist  | Restore                        |
+
+#### Manage Product — Orders (BB2)
+| Method | Route                | Auth        | Description                         |
+|--------|----------------------|-------------|-------------------------------------|
+| GET    | /api/orders          | pharmacist  | List purchase orders with filters   |
+| POST   | /api/orders          | pharmacist  | Create purchase order               |
+| PATCH  | /api/orders/:id      | pharmacist  | Update order status                 |
+
+#### Manage Stock (BB3)
+| Method | Route                     | Auth        | Description                         |
+|--------|---------------------------|-------------|-------------------------------------|
+| GET    | /api/stock/alerts         | staff       | Low-stock alerts (both types)       |
+| PATCH  | /api/stock/adjust         | pharmacist  | Manual adjustment with reason       |
+| GET    | /api/stock/expiry/alerts  | staff       | Near-expiry batch list              |
+| PATCH  | /api/stock/expiry/threshold | pharmacist| Set near-expiry threshold in days   |
+| POST   | /api/stock/return         | pharmacist  | Mark batch for supplier return      |
+| POST   | /api/batches              | pharmacist  | Register batch manually             |
+| GET    | /api/batches/:id/history  | pharmacist  | Batch consumption history           |
+| PATCH  | /api/batches/:id/deactivate | pharmacist| Deactivate batch (before use)       |
+| GET    | /api/reports/stock        | pharmacist  | Full stock management report        |
+
+#### Manage Sales / POS (BB4)
+| Method | Route                      | Auth        | Description                        |
+|--------|----------------------------|-------------|------------------------------------|
+| POST   | /api/sales                 | staff       | Add sale (FIFO + gate if needed)   |
+| GET    | /api/sales                 | staff       | List with filters                  |
+| GET    | /api/sales/:id             | staff       | Sale detail + invoice              |
+| GET    | /api/sales/:id/invoice     | staff       | Invoice/receipt                    |
+| PATCH  | /api/sales/:id/void        | pharmacist  | Void sale with reason              |
+| GET    | /api/reports/sales         | pharmacist  | Aggregated sales report            |
+
+#### Manage Reservations (BB5)
+| Method | Route                             | Auth        | Description                    |
+|--------|-----------------------------------|-------------|--------------------------------|
+| POST   | /api/reservations                 | none        | Public — submit reservation    |
+| GET    | /api/reservations/track/:code     | none        | Public — status check          |
+| PATCH  | /api/reservations/track/:code     | none        | Public — update reservation    |
+| DELETE | /api/reservations/track/:code     | none        | Public — cancel reservation    |
+| GET    | /api/reservations                 | staff       | Staff — list with filters      |
+| GET    | /api/reservations/:id             | staff       | Staff — reservation detail     |
+| PATCH  | /api/reservations/:id/confirm     | pharmacist  | Approve                        |
+| PATCH  | /api/reservations/:id/reject      | pharmacist  | Reject with reason             |
+| PATCH  | /api/reservations/:id/ready       | staff       | Mark ready for pickup          |
+| PATCH  | /api/reservations/:id/cancel      | staff       | Staff cancel                   |
+| POST   | /api/reservations/:id/convert     | staff       | Convert to sale                |
+
+#### Manage Transactions (BB6)
+| Method | Route                         | Auth        | Description                        |
+|--------|-------------------------------|-------------|------------------------------------|
+| GET    | /api/transactions             | pharmacist  | Unified view: sales+res+deliveries |
+| GET    | /api/transactions/summary     | pharmacist  | Totals by period                   |
+| GET    | /api/transactions/reconcile   | pharmacist  | End-of-day reconciliation data     |
+| POST   | /api/transactions/reconcile   | pharmacist  | Confirm + close the day            |
+
+#### Manage Suppliers (BB7)
+| Method | Route                            | Auth        | Description                    |
+|--------|----------------------------------|-------------|--------------------------------|
+| GET    | /api/suppliers                   | pharmacist  | Supplier list                  |
+| POST   | /api/suppliers                   | pharmacist  | Add supplier                   |
+| GET    | /api/suppliers/:id               | pharmacist  | Supplier detail + history      |
+| PATCH  | /api/suppliers/:id               | pharmacist  | Update supplier                |
+| PATCH  | /api/suppliers/:id/deactivate    | pharmacist  | Soft delete                    |
+| PATCH  | /api/suppliers/:id/reactivate    | pharmacist  | Restore                        |
+| POST   | /api/deliveries                  | pharmacist  | Register delivery (both types) |
+| GET    | /api/deliveries                  | pharmacist  | Delivery history               |
+
+#### Manage Users (BB8)
+| Method | Route                | Auth        | Description                         |
+|--------|----------------------|-------------|-------------------------------------|
+| GET    | /api/users           | pharmacist  | List all staff                      |
+| POST   | /api/users           | pharmacist  | Create staff account                |
+| PATCH  | /api/users/:id       | pharmacist  | Update or deactivate account        |
+| PATCH  | /api/users/:id/reset-password | pharmacist | Reset password              |
+
+#### AI Decision Support (BB9)
+| Method | Route                  | Auth                   | Description                    |
+|--------|------------------------|------------------------|--------------------------------|
+| POST   | /api/ai/scan           | pharmacist, assistant  | Upload prescription image, get extracted medicines + suggestions |
+| GET    | /api/ai/consultations  | pharmacist, assistant  | Consultation history           |
+| GET    | /api/ai/consultations/:id | pharmacist, assistant | Consultation detail           |
+
+#### Manage Audit Logs
+| Method | Route              | Auth        | Description                         |
+|--------|--------------------|-------------|-------------------------------------|
+| GET    | /api/audit-logs    | pharmacist  | Full audit trail with filters       |
 
 ### Key Business Logic
 
 **FIFO (fifo.service.js):**
-1. Receive medicineId and quantityRequested
-2. Query batches where remainingQty > 0, sort by expiryDate ASC
-3. Walk through sorted batches, consuming greedily until quantity is fulfilled
-4. If total available is less than requested, throw InsufficientStockError — do not write anything
-5. Only write all batch updates to MongoDB after full allocation is confirmed in memory
+Input: medicineId, quantityRequested
+1. Query batches where remainingQty > 0 AND isActive = true, sort by expiryDate ASC
+2. Greedily consume from oldest batch until quantity fulfilled
+3. If total available < requested → throw InsufficientStockError, commit nothing
+4. Confirm all batch updates in memory first, then write atomically to MongoDB
 
 **Pharmacist Gate (pharmacistGate.service.js):**
-1. Triggered when a sale contains regulated items and operator role is not pharmacist
-2. Emit a Socket.io event to all connected pharmacists
-3. Start a 120 second countdown
-4. If approved within 120s → proceed with sale
-5. If timeout or rejected → throw SaleRejectedError, do not commit sale
+1. If sale items contain regulated medicines AND operator role ≠ pharmacist → trigger gate
+2. Emit Socket.io APPROVAL_REQUIRED event to pharmacist channel
+3. Start 120-second countdown
+4. On approval → proceed; on timeout or rejection → throw SaleRejectedError
+5. Parapharmacy items NEVER trigger the gate
+
+**Delivery Processing (delivery.controller.js):**
+- For each medicineItem in delivery → create a new Batch document
+- For each parapharmacyItem in delivery → increment stockQty on ParapharmacyProduct
+- Both operations in one atomic transaction where possible
+
+**AI Prescription Scan (ai.service.js):**
+1. Receive base64-encoded JPEG/PNG from frontend
+2. Call Anthropic SDK with vision input: send prescription image
+3. Prompt: extract list of prescribed medicines, then suggest complementary
+   vitamins, supplements, and parapharmacy products (NOT OTC medicines)
+   from the pharmacy's current in-stock parapharmacy catalogue
+4. Return: { extractedMedicines: [], suggestions: [{productId, name, rationale}] }
+5. Save consultation to a consultations sub-document or separate collection
+6. Store prescription image only if pharmacist explicitly saves — otherwise session only
+
+**Email Notifications (email.service.js):**
+Uses Nodemailer with SendGrid SMTP. All sends are async — never block API response.
+Five triggers:
+1. Reservation submitted → send confirmation email with code + items + pickup window
+2. Reservation confirmed by pharmacist → send confirmed email
+3. Reservation rejected → send rejected email with reason
+4. Reservation ready for pickup → send ready email
+5. Reservation auto-expired → send expiry email (triggered by cron job)
 
 **Cron Jobs:**
-- nearExpiry.job.js: runs daily at 08:00, finds batches where expiryDate ≤ today + 30 days and remainingQty > 0, creates alert records and writes audit log
-- reservationExpiry.job.js: runs every 15 minutes, finds pending reservations where expiresAt < now, releases locked stock, sets status to expired, writes audit log
+- nearExpiry.job.js: daily at 08:00
+  → batches where expiryDate ≤ today + threshold (configurable) AND remainingQty > 0
+  → log via Winston, do not crash on error
 
-### API Endpoints
+- reservationExpiry.job.js: every 15 minutes
+  → pending reservations where expiresAt < now
+  → releaseLockedStock() for both medicine batches and parapharmacy stockQty
+  → set status = expired
+  → send expiry email via email.service.js
+  → write auditLog entry
+  → log via Winston
 
-| Method | Route                            | Auth                  | Description                          |
-|--------|----------------------------------|-----------------------|--------------------------------------|
-| POST   | /api/auth/register               | none                  | pharmacist one-time signup           |
-| POST   | /api/auth/login                  | none                  | returns JWT + refresh token          |
-| PATCH  | /api/auth/change-password        | any staff             | change own password                  |
-| GET    | /api/medicines                   | any staff             | list with stock summary              |
-| POST   | /api/medicines                   | pharmacist            | create medicine + initial batch      |
-| GET    | /api/medicines/:id               | any staff             | detail with all batches              |
-| PATCH  | /api/medicines/:id               | pharmacist            | update medicine info                 |
-| POST   | /api/batches                     | pharmacist            | add batch to existing medicine       |
-| POST   | /api/sales                       | any staff             | FIFO + approval gate if regulated    |
-| GET    | /api/sales                       | any staff             | sales history with filters           |
-| GET    | /api/reservations                | pharmacist, assistant | list with status filter              |
-| POST   | /api/reservations                | none                  | public create                        |
-| GET    | /api/reservations/track/:code    | none                  | public status check                  |
-| PATCH  | /api/reservations/:id            | pharmacist            | confirm, reject, or mark ready       |
-| GET    | /api/suppliers                   | pharmacist            | supplier list                        |
-| POST   | /api/suppliers                   | pharmacist            | add supplier                         |
-| POST   | /api/deliveries                  | pharmacist            | register delivery + new batches      |
-| GET    | /api/reports/sales               | pharmacist            | aggregated sales data                |
-| GET    | /api/reports/expiry              | pharmacist            | near-expiry batch list               |
-| GET    | /api/audit-logs                  | pharmacist            | full audit trail with filters        |
-| GET    | /api/users                       | pharmacist            | list all staff                       |
-| POST   | /api/users                       | pharmacist            | create staff account                 |
-| POST   | /api/ai/suggest                  | pharmacist, assistant | OTC suggestions via Anthropic        |
+**End-of-Day Reconciliation (transaction.controller.js):**
+GET /api/transactions/reconcile → return today's totals:
+- total sales revenue (cash + electronic separately)
+- total voided sales + reasons
+- total reservations by status
+- flag discrepancies (e.g. expected total vs recorded total)
+POST /api/transactions/reconcile → pharmacist confirms + closes day:
+- create immutable reconciliation record with timestamp + pharmacistId
+- closed days cannot be modified retroactively
 
 ### Backend Implementation Steps
 
-**Step 1 — Foundation**
-- src/utils/logger.js: Winston logger with console transport
-- src/utils/ApiError.js: class ApiError extends Error with statusCode and message
-- src/config/db.js: connect to MongoDB Atlas using MONGO_URI from .env
-- src/config/redis.js: connect to Redis using REDIS_URL from .env
-- src/server.js: create Express app, connect to db and redis, register all routes,
-  initialize Socket.io, start cron jobs, listen on PORT
+Step 1 — Foundation
+- src/utils/logger.js — Winston logger
+- src/utils/ApiError.js — structured error class
+- src/config/db.js — MongoDB Atlas connection
+- src/config/redis.js — Redis Upstash connection
+- src/server.js — Express app, all routes, Socket.io, cron jobs, listen
 
-**Step 2 — Models**
-Implement all 8 Mongoose models with proper schemas and timestamps.
+Step 2 — Models
+Implement all 10 Mongoose models with proper schemas and timestamps.
 
-**Step 3 — Middleware**
-- src/middleware/auth.js: verify JWT from Authorization header, attach decoded user to req.user
-- src/middleware/rbac.js: factory function allow(...roles) returns middleware that checks req.user.role
-- src/middleware/validate.js: takes a Zod schema, validates req.body, calls next() or returns 400
-- src/middleware/audit.js: after response, write an AuditLog document with userId, action, entity, payload
+Step 3 — Middleware
+- auth.js: verify JWT from Authorization header, attach req.user
+- rbac.js: allow(...roles) factory function
+- validate.js: Zod schema validation middleware
+- audit.js: write AuditLog document after every mutation
 
-**Step 4 — Services**
-- src/services/fifo.service.js: implement FIFO algorithm described above
-- src/services/pharmacistGate.service.js: implement Socket.io approval gate described above
-- src/services/alert.service.js: createAlert(type, medicineId, batchId, message)
-- src/services/ai.service.js: call Anthropic Claude API with prescription text, return suggestions
+Step 4 — Services
+- fifo.service.js
+- pharmacistGate.service.js
+- email.service.js
+- ai.service.js
 
-**Step 5 — Routes and Controllers**
-Implement all routes and controllers. Auth routes first, then medicines,
-batches, sales, reservations, suppliers, deliveries, reports, audit logs, users, ai.
+Step 5 — Routes and Controllers
+Implement in this order:
+1. auth
+2. medicines + batches
+3. parapharmacy
+4. orders
+5. stock
+6. sales
+7. reservations
+8. transactions + reconciliation
+9. suppliers + deliveries
+10. reports/sales + reports/stock
+11. audit-logs
+12. users
+13. ai (prescription scan + consultation history)
 
-**Step 6 — Cron Jobs**
-- src/jobs/nearExpiry.job.js
-- src/jobs/reservationExpiry.job.js
+Step 6 — Cron Jobs
+- jobs/nearExpiry.job.js
+- jobs/reservationExpiry.job.js
 
 ---
 
@@ -653,6 +814,8 @@ JWT_SECRET=your_jwt_secret
 JWT_REFRESH_SECRET=your_refresh_secret
 REDIS_URL=redis://...
 ANTHROPIC_API_KEY=sk-ant-...
+SENDGRID_API_KEY=SG....
+SENDGRID_FROM_EMAIL=noreply@pharmaos.ma
 NODE_ENV=development
 ```
 
@@ -660,7 +823,8 @@ NODE_ENV=development
 
 ## Deployment
 
-- Frontend → Vercel (connect GitHub repo, set NEXT_PUBLIC_API_URL to backend Render URL)
-- Backend → Render free tier (connect GitHub repo, set all backend env variables)
+- Frontend → Vercel (connect GitHub, set NEXT_PUBLIC_API_URL to Render backend URL)
+- Backend → Render free tier (connect GitHub, set all env variables)
 - Database → MongoDB Atlas free M0 cluster
 - Redis → Upstash free tier
+- Live frontend URL: https://pharmacy-management-system-one-drab.vercel.app/

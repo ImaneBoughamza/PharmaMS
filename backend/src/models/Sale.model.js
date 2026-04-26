@@ -4,8 +4,17 @@ const saleItemSchema = new mongoose.Schema(
   {
     batchId: { type: mongoose.Schema.Types.ObjectId, ref: "Batch", required: true },
     medicineId: { type: mongoose.Schema.Types.ObjectId, ref: "Medicine", required: true },
+    medicineName: { type: String, default: "" },
     qty: { type: Number, required: true },
     unitPrice: { type: Number, required: true },
+  },
+  { _id: false }
+);
+
+const invoiceSchema = new mongoose.Schema(
+  {
+    receiptNumber: { type: String, required: true },
+    generatedAt: { type: Date, default: Date.now },
   },
   { _id: false }
 );
@@ -22,6 +31,7 @@ const saleSchema = new mongoose.Schema(
       enum: ["not_required", "pending", "approved", "rejected"],
       default: "not_required",
     },
+    invoice: { type: invoiceSchema, default: null },
   },
   { timestamps: true }
 );

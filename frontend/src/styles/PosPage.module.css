@@ -1,20 +1,94 @@
-.page {
-  display: grid;
-  grid-template-columns: 1fr 420px;
-  gap: 1.5rem;
-  align-items: start;
-  min-height: calc(100vh - 60px - 3.5rem);
+/* POS fills the viewport; Sales History scrolls below */
+.wrapper {
+  min-height: 100%;
 }
 
+.separator {
+  border: none;
+  border-top: 1px solid var(--color-border);
+  margin: 0;
+}
+
+.page {
+  display: grid;
+  grid-template-columns: 65fr 35fr;
+  gap: 0;
+  height: calc(100vh - 60px - 3.5rem); /* viewport - topbar - content padding */
+  overflow: hidden;
+}
+
+/* ── Left column ── */
 .left {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  height: 100%;
+  overflow: hidden;
+  border-right: 1px solid var(--color-border);
+  padding-right: 1.5rem;
 }
 
+.searchSection {
+  padding: 1rem 0 0.75rem;
+  flex-shrink: 0;
+}
+
+.cartSection {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+  padding-top: 0.25rem;
+}
+
+.cartHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0.5rem 0 0.75rem;
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.sectionTitle {
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-primary);
+  margin: 0;
+}
+
+.cartCount {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  color: var(--color-text-muted);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  padding: 1px 8px;
+}
+
+.clearCartBtn {
+  margin-left: auto;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  color: var(--color-error);
+  padding: 3px 6px;
+  border-radius: var(--radius-sm);
+  transition: background 0.1s;
+}
+.clearCartBtn:hover {
+  background: color-mix(in srgb, var(--color-error) 8%, transparent);
+}
+
+/* ── Right column ── */
 .right {
-  position: sticky;
-  top: 1.75rem;
+  height: 100%;
+  overflow-y: auto;
+  padding-left: 1.5rem;
+  padding-top: 1rem;
 }
 
 .cartCard {
@@ -23,25 +97,23 @@
   border-radius: var(--radius-lg);
   padding: 1.25rem;
   box-shadow: var(--shadow-sm);
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.sectionTitle {
-  font-family: var(--font-heading);
-  font-size: 1.15rem;
-  font-weight: 600;
-  color: var(--color-primary);
-  margin: 0;
 }
 
 @media (max-width: 900px) {
   .page {
     grid-template-columns: 1fr;
+    height: auto;
+    overflow: visible;
   }
-
+  .left {
+    border-right: none;
+    padding-right: 0;
+    height: auto;
+    overflow: visible;
+  }
   .right {
-    position: static;
+    padding-left: 0;
+    height: auto;
+    overflow: visible;
   }
 }

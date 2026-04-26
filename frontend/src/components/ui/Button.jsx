@@ -6,24 +6,26 @@ export default function Button({
   size = "md",
   type = "button",
   disabled = false,
+  isLoading = false,
   onClick,
   className = "",
 }) {
   return (
     <button
       type={type}
-      disabled={disabled}
+      disabled={disabled || isLoading}
       onClick={onClick}
       className={[
         styles.btn,
         styles[variant],
         styles[size],
+        isLoading ? styles.loading : "",
         className,
       ]
         .filter(Boolean)
         .join(" ")}
     >
-      {children}
+      {isLoading ? "Saving…" : children}
     </button>
   );
 }

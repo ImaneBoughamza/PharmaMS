@@ -1,44 +1,117 @@
+/* ── Row ── */
 .row {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem 0;
+  padding: 0.7rem 0.5rem;
   border-bottom: 1px solid var(--color-border);
+  border-left: 2px solid transparent;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  transition: background 0.15s;
 }
 
 .row:last-child {
   border-bottom: none;
 }
 
-.info {
+.rowRegulated {
+  border-left-color: #D97706;
+  background: color-mix(in srgb, #D97706 5%, transparent);
+}
+
+.rowOverStock {
+  border-left-color: var(--color-error);
+  background: color-mix(in srgb, var(--color-error) 5%, transparent);
+}
+
+/* ── Top line: name + tags + remove ── */
+.top {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 0.45rem;
+}
+
+.nameAndTags {
   flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.15rem;
-  min-width: 0;
+  gap: 0.3rem;
 }
 
 .name {
   font-family: var(--font-ui);
   font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--color-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.price {
-  font-family: var(--font-ui);
-  font-size: 0.75rem;
-  color: var(--color-text-muted);
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
 }
 
-.controls {
+/* pill tags */
+.tagMedicine,
+.tagPara,
+.tagRegulated {
+  font-family: var(--font-ui);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 1px 6px;
+  border-radius: 999px;
+  line-height: 1.6;
+  white-space: nowrap;
+}
+
+.tagMedicine {
+  background: color-mix(in srgb, #3B82F6 12%, transparent);
+  color: #1D4ED8;
+}
+
+.tagPara {
+  background: color-mix(in srgb, #D97706 12%, transparent);
+  color: #92400E;
+}
+
+.tagRegulated {
+  background: color-mix(in srgb, var(--color-error) 12%, transparent);
+  color: var(--color-error);
+}
+
+/* ── Remove button ── */
+.removeBtn {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-muted);
   display: flex;
   align-items: center;
-  gap: 0.4rem;
-  flex-shrink: 0;
+  padding: 2px;
+  border-radius: var(--radius-sm);
+  transition: color 0.15s;
+  margin-top: 1px;
+}
+
+.removeBtn:hover {
+  color: var(--color-error);
+}
+
+/* ── Bottom line: qty + prices ── */
+.bottom {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.qtyGroup {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
 }
 
 .qtyBtn {
@@ -55,6 +128,7 @@
   justify-content: center;
   color: var(--color-text);
   transition: background 0.1s, border-color 0.1s;
+  flex-shrink: 0;
 }
 
 .qtyBtn:hover:not(:disabled) {
@@ -67,38 +141,57 @@
   cursor: not-allowed;
 }
 
-.qty {
-  font-family: var(--font-ui);
-  font-size: 0.875rem;
-  font-weight: 600;
-  min-width: 1.5rem;
+.qtyInput {
+  width: 48px;
+  height: 26px;
   text-align: center;
-  color: var(--color-primary);
-}
-
-.subtotal {
   font-family: var(--font-ui);
   font-size: 0.875rem;
   font-weight: 600;
   color: var(--color-primary);
-  min-width: 70px;
-  text-align: right;
-  flex-shrink: 0;
-}
-
-.removeBtn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--color-text-muted);
-  display: flex;
-  align-items: center;
-  padding: 0.2rem;
+  border: 1.5px solid var(--color-border);
   border-radius: var(--radius-sm);
-  transition: color 0.15s;
-  flex-shrink: 0;
+  background: var(--color-surface);
+  outline: none;
+  transition: border-color 0.15s;
+  /* hide spinner arrows */
+  -moz-appearance: textfield;
+}
+.qtyInput::-webkit-inner-spin-button,
+.qtyInput::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.qtyInput:focus {
+  border-color: var(--color-accent);
 }
 
-.removeBtn:hover {
+.qtyInputError {
+  border-color: var(--color-error);
+  color: var(--color-error);
+}
+
+.unitPrice {
+  font-family: var(--font-ui);
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  flex: 1;
+}
+
+.lineTotal {
+  font-family: var(--font-heading);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+/* ── Over-stock warning ── */
+.overStockWarn {
+  margin: 0.35rem 0 0;
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  font-weight: 500;
   color: var(--color-error);
 }

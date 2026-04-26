@@ -6,12 +6,21 @@ import styles from "@/styles/ReservationTrackPage.module.css";
 
 // TODO: replace with real API call: api.get(`/api/reservations/track/${code}`)
 
+function itemsSummary(items) {
+  if (!items?.length) return "—";
+  const first = `${items[0].productName} × ${items[0].qty}`;
+  if (items.length === 1) return first;
+  if (items.length === 2) return `${first}, ${items[1].productName} × ${items[1].qty}`;
+  return `${first} +${items.length - 1} more`;
+}
+
 const MOCK_DB = {
   "RES-2026-001": {
     trackingCode: "RES-2026-001",
     customerName: "Ahmed Benali",
-    medicine: { name: "Paracetamol 500mg" },
-    qty: 2,
+    items: [
+      { productName: "Paracetamol 500mg", productType: "medicine", qty: 2, unitPrice: 18 },
+    ],
     pickupDate: "2026-04-10",
     paymentMethod: "Pay on Pickup",
     status: "pending",
@@ -19,8 +28,10 @@ const MOCK_DB = {
   "RES-2026-002": {
     trackingCode: "RES-2026-002",
     customerName: "Fatima Zahra",
-    medicine: { name: "Vitamin C 1000mg" },
-    qty: 1,
+    items: [
+      { productName: "Vitamin C 1000mg", productType: "medicine", qty: 1, unitPrice: 42 },
+      { productName: "Sunscreen SPF50+", productType: "parapharmacy", qty: 1, unitPrice: 85 },
+    ],
     pickupDate: "2026-04-11",
     paymentMethod: "Online Payment",
     status: "confirmed",
@@ -28,8 +39,10 @@ const MOCK_DB = {
   "RES-2026-003": {
     trackingCode: "RES-2026-003",
     customerName: "Youssef El Amrani",
-    medicine: { name: "Ibuprofen 400mg" },
-    qty: 3,
+    items: [
+      { productName: "Ibuprofen 400mg", productType: "medicine", qty: 3, unitPrice: 24 },
+      { productName: "Hand Sanitizer 500ml", productType: "parapharmacy", qty: 2, unitPrice: 28 },
+    ],
     pickupDate: "2026-04-09",
     paymentMethod: "Pay on Pickup",
     status: "ready",
@@ -37,20 +50,20 @@ const MOCK_DB = {
 };
 
 const STATUS_VARIANT = {
-  pending: "warning",
+  pending:   "warning",
   confirmed: "info",
-  ready: "success",
-  completed: "neutral",
+  ready:     "success",
+  expired:   "neutral",
   cancelled: "error",
 };
 
-const ALL_STEPS = ["pending", "confirmed", "ready", "completed"];
+const ALL_STEPS = ["pending", "confirmed", "ready"];
 
 function stepState(step, currentStatus) {
-  if (currentStatus === "cancelled") return "done";
+  if (currentStatus === "cancelled" || currentStatus === "expired") return "done";
   const currentIdx = ALL_STEPS.indexOf(currentStatus);
-  const stepIdx = ALL_STEPS.indexOf(step);
-  if (stepIdx < currentIdx) return "done";
+  const stepIdx    = ALL_STEPS.indexOf(step);
+  if (stepIdx < currentIdx)  return "done";
   if (stepIdx === currentIdx) return "current";
   return "idle";
 }
@@ -78,16 +91,19 @@ export default function ReservationTrackPage() {
   const { code: urlCode } = router.query;
 
   const [inputCode, setInputCode] = useState(urlCode ?? "");
-  const [result, setResult] = useState(urlCode ? MOCK_DB[urlCode] ?? "not_found" : null);
+  const [result,    setResult]    = useState(urlCode ? MOCK_DB[urlCode] ?? "not_found" : null);
 
   function handleSearch(e) {
     e.preventDefault();
     const trimmed = inputCode.trim().toUpperCase();
     if (!trimmed) return;
     // TODO: replace with real API call
-    const found = MOCK_DB[trimmed];
-    setResult(found ?? "not_found");
+    setResult(MOCK_DB[trimmed] ?? "not_found");
   }
+
+  const isCancelledOrExpired =
+    result && result !== "not_found" &&
+    (result.status === "cancelled" || result.status === "expired");
 
   return (
     <div className={styles.root}>
@@ -148,12 +164,8 @@ export default function ReservationTrackPage() {
                 <dd>{result.customerName}</dd>
               </div>
               <div className={styles.dlRow}>
-                <dt>Medicine</dt>
-                <dd>{result.medicine?.name ?? "—"}</dd>
-              </div>
-              <div className={styles.dlRow}>
-                <dt>Quantity</dt>
-                <dd>{result.qty}</dd>
+                <dt>Items</dt>
+                <dd>{itemsSummary(result.items)}</dd>
               </div>
               <div className={styles.dlRow}>
                 <dt>Pickup Date</dt>
@@ -165,7 +177,7 @@ export default function ReservationTrackPage() {
               </div>
             </dl>
 
-            {result.status !== "cancelled" && (
+            {!isCancelledOrExpired && (
               <div className={styles.statusTimeline}>
                 <p className={styles.timelineTitle}>Progress</p>
                 {ALL_STEPS.map((step) => {

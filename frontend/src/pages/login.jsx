@@ -5,6 +5,24 @@ import { setToken, setRefreshToken } from "@/lib/auth";
 import PublicLayout from "@/components/layout/PublicLayout";
 import styles from "@/styles/LoginPage.module.css";
 
+function createMockToken(role) {
+  const b64 = (obj) =>
+    btoa(JSON.stringify(obj))
+      .replace(/\+/g, "-")
+      .replace(/\//g, "_")
+      .replace(/=+$/, "");
+  const names = { pharmacist: "Dr. Imane (Demo)", assistant: "Sara (Demo)", cashier: "Ahmed (Demo)" };
+  const header = b64({ alg: "HS256", typ: "JWT" });
+  const payload = b64({
+    sub: `mock-${role}`,
+    name: names[role] ?? role,
+    role,
+    iat: Math.floor(Date.now() / 1000),
+    exp: Math.floor(Date.now() / 1000) + 86400,
+  });
+  return `${header}.${payload}.mock`;
+}
+
 // ─── Icons ────────────────────────────────────────────────────────────────────
 const EyeOpen = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
@@ -140,6 +158,11 @@ export default function LoginPage() {
     setSignupError("");
     setErrs({});
     setView(v);
+  };
+
+  const handleMockLogin = (role) => {
+    setToken(createMockToken(role));
+    router.push("/dashboard");
   };
 
   const handleLogin = async (e) => {
@@ -329,17 +352,17 @@ export default function LoginPage() {
                 </button>
               </form>
 
-              <div className={styles.divider}>Sign in as</div>
+              <div className={styles.divider}>Demo quick login</div>
               <div className={styles.roles}>
                 {[
-                  ["Pharmacist", "#2563EB"],
-                  ["Assistant",  "#059669"],
-                  ["Cashier",    "#D97706"],
-                ].map(([label, color]) => (
+                  ["Pharmacist", "pharmacist", "#1B5E42"],
+                  ["Assistant",  "assistant",  "#1E3A5F"],
+                  ["Cashier",    "cashier",    "#92400E"],
+                ].map(([label, role, color]) => (
                   <div
-                    key={label}
+                    key={role}
                     className={styles.role}
-                    onClick={() => setLoginEmail(`${label.toLowerCase()}@demo.ma`)}
+                    onClick={() => handleMockLogin(role)}
                   >
                     <div className={styles.roleDot} style={{ background: color }} />
                     {label}

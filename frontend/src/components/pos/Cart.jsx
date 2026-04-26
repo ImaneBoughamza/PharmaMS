@@ -1,15 +1,17 @@
+import { ShoppingCart } from "lucide-react";
 import CartItem from "./CartItem";
 import { formatCurrency } from "@/utils/formatCurrency";
 import styles from "./Cart.module.css";
 
 export default function Cart({ items, onQtyChange, onRemove }) {
-  const subtotal = items.reduce((sum, i) => sum + i.medicine.salePrice * i.qty, 0);
+  const subtotal = items.reduce((sum, i) => sum + i.item.salePrice * i.qty, 0);
 
   if (items.length === 0) {
     return (
       <div className={styles.empty}>
-        <p>Cart is empty.</p>
-        <span>Search for a medicine on the left to add it.</span>
+        <ShoppingCart size={32} strokeWidth={1.5} />
+        <p>Cart is empty</p>
+        <span>Search for a product above to add it</span>
       </div>
     );
   }
@@ -17,10 +19,10 @@ export default function Cart({ items, onQtyChange, onRemove }) {
   return (
     <div className={styles.wrapper}>
       <div className={styles.items}>
-        {items.map((item) => (
+        {items.map((cartItem) => (
           <CartItem
-            key={item.medicine._id}
-            item={item}
+            key={cartItem.item._id}
+            item={cartItem}
             onQtyChange={onQtyChange}
             onRemove={onRemove}
           />

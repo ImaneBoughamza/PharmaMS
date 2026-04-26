@@ -7,8 +7,22 @@
 
 .title {
   font-family: var(--font-heading);
-  font-size: 1.6rem;
-  font-weight: 600;
+  font-size: 22px;
+  font-weight: 700;
   color: var(--color-primary);
   margin: 0;
 }
+
+.back {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.back:hover { color: var(--color-text); }
