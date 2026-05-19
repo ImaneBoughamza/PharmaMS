@@ -39,7 +39,7 @@ export default function SalesChart({ data = [] }) {
             }}
             formatter={(value) => [`${value} MAD`, "Sales"]}
           />
-          <Bar dataKey="total" fill="#1B5E42" radius={[2, 2, 0, 0]} />
+          <Bar dataKey="total" fill="#1F7A5A" radius={[2, 2, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
     </div>

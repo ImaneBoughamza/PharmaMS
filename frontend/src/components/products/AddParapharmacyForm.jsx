@@ -12,15 +12,10 @@ const schema = z.object({
   salePrice: z.coerce.number().positive("Must be positive"),
   stockQty: z.coerce.number().int().min(0, "Cannot be negative"),
   minStockLevel: z.coerce.number().int().min(0).optional().default(5),
-  supplierId: z.string().optional().nullable(),
+  supplierId: z.string().length(24, "Supplier is required"),
 });
 
-const MOCK_SUPPLIERS = [
-  { _id: "s1", name: "PharmaDist Maroc" },
-  { _id: "s2", name: "BioLab Supplies" },
-];
-
-export default function AddParapharmacyForm({ onSubmit, isLoading, defaultValues }) {
+export default function AddParapharmacyForm({ onSubmit, isLoading, defaultValues, suppliers = [] }) {
   const {
     register,
     handleSubmit,
@@ -60,11 +55,13 @@ export default function AddParapharmacyForm({ onSubmit, isLoading, defaultValues
           <div className={styles.field}>
             <label className={styles.label}>Supplier</label>
             <select className={styles.select} {...register("supplierId")}>
-              <option value="">No supplier</option>
-              {MOCK_SUPPLIERS.map((s) => (
+              <option value="">Select supplier...</option>
+              {suppliers.map((s) => (
                 <option key={s._id} value={s._id}>{s.name}</option>
               ))}
             </select>
+            {errors.supplierId && <p className={styles.error}>{errors.supplierId.message}</p>}
+            {suppliers.length === 0 && <p className={styles.error}>Create an active supplier before adding products.</p>}
           </div>
         </div>
       </div>
@@ -99,7 +96,7 @@ export default function AddParapharmacyForm({ onSubmit, isLoading, defaultValues
         <Button type="button" variant="secondary" onClick={() => history.back()}>
           Cancel
         </Button>
-        <Button type="submit" variant="primary" isLoading={isLoading}>
+        <Button type="submit" variant="primary" isLoading={isLoading} disabled={suppliers.length === 0}>
           Save Product
         </Button>
       </div>

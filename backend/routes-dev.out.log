@@ -1,0 +1,136 @@
+
+> pharmacy-backend@1.0.0 dev
+> nodemon src/server.js
+
+[33m[nodemon] 3.1.11[39m
+[33m[nodemon] to restart at any time, enter `rs`[39m
+[33m[nodemon] watching path(s): *.*[39m
+[33m[nodemon] watching extensions: js,mjs,cjs,json[39m
+[32m[nodemon] starting `node src/server.js`[39m
+[2026-04-27 23:39:49] [33mwarn[39m: Email transporter not ready: Invalid login: 535 Authentication failed: The provided authorization grant is invalid, expired, or revoked
+[2026-04-27 23:39:50] [32minfo[39m: MongoDB connected: ac-kqnx0we-shard-00-00.jj9g0kc.mongodb.net
+[2026-04-27 23:39:50] [33mwarn[39m: REDIS_URL not set - Redis disabled
+[2026-04-27 23:39:50] [32minfo[39m: [nearExpiry] Job scheduled — daily at 08:00
+[2026-04-27 23:39:50] [32minfo[39m: [reservationExpiry] Job scheduled — every 15 minutes
+[2026-04-27 23:39:50] [32minfo[39m: Server running on port 5000 in development mode
+[0;36mMongoose:[0m auditlogs.createIndex({ pharmacyId: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m batches.createIndex({ pharmacyId: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m suppliers.createIndex({ pharmacyId: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m parapharmacyproducts.createIndex({ pharmacyId: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m sales.createIndex({ pharmacyId: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m reservations.createIndex({ pharmacyId: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m users.createIndex({ pharmacyId: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m deliveries.createIndex({ pharmacyId: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m medicines.createIndex({ pharmacyId: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m auditlogs.createIndex({ pharmacyId: [33m1[39m, createdAt: [33m-1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m batches.createIndex({ pharmacyId: [33m1[39m, medicineId: [33m1[39m, batchNumber: [33m1[39m }, { unique: [33mtrue[39m, background: [33mtrue[39m })
+[0;36mMongoose:[0m suppliers.createIndex({ pharmacyId: [33m1[39m, name: [33m1[39m }, { unique: [33mtrue[39m, background: [33mtrue[39m })
+[0;36mMongoose:[0m parapharmacyproducts.createIndex({ pharmacyId: [33m1[39m, name: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m sales.createIndex({ pharmacyId: [33m1[39m, cashierId: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m reservations.createIndex({ confirmationCode: [33m1[39m }, { unique: [33mtrue[39m, background: [33mtrue[39m })
+[0;36mMongoose:[0m users.createIndex({ pharmacyId: [33m1[39m, email: [33m1[39m }, { unique: [33mtrue[39m, background: [33mtrue[39m })
+[0;36mMongoose:[0m deliveries.createIndex({ pharmacyId: [33m1[39m, supplierId: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m medicines.createIndex({ pharmacyId: [33m1[39m, name: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m auditlogs.createIndex({ pharmacyId: [33m1[39m, userId: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m batches.createIndex({ pharmacyId: [33m1[39m, medicineId: [33m1[39m, expiryDate: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m suppliers.createIndex({ pharmacyId: [33m1[39m, type: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m parapharmacyproducts.createIndex({ pharmacyId: [33m1[39m, isActive: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m sales.createIndex({ pharmacyId: [33m1[39m, createdAt: [33m-1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m orders.createIndex({ pharmacyId: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m users.createIndex({ pharmacyId: [33m1[39m, role: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m deliveries.createIndex({ pharmacyId: [33m1[39m, deliveryDate: [33m-1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m medicines.createIndex({ pharmacyId: [33m1[39m, isActive: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m auditlogs.createIndex({ pharmacyId: [33m1[39m, action: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m aiconsultations.createIndex({ pharmacyId: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m suppliers.createIndex({ pharmacyId: [33m1[39m, isActive: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m parapharmacyproducts.createIndex({ pharmacyId: [33m1[39m, category: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m orders.createIndex({ pharmacyId: [33m1[39m, status: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m sales.createIndex({ pharmacyId: [33m1[39m, approvalStatus: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m medicines.createIndex({ pharmacyId: [33m1[39m, category: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m auditlogs.createIndex({ pharmacyId: [33m1[39m, entity: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m aiconsultations.createIndex({ pharmacyId: [33m1[39m, staffId: [33m1[39m, createdAt: [33m-1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m parapharmacyproducts.createIndex({ name: [32m'text'[39m, brand: [32m'text'[39m }, { weights: { name: [33m10[39m, brand: [33m5[39m }, background: [33mtrue[39m })
+[0;36mMongoose:[0m orders.createIndex({ pharmacyId: [33m1[39m, supplierId: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m sales.createIndex({ [32m'invoice.receiptNumber'[39m: [33m1[39m }, { unique: [33mtrue[39m, background: [33mtrue[39m })
+[0;36mMongoose:[0m medicines.createIndex({ name: [32m'text'[39m, genericName: [32m'text'[39m }, { weights: { name: [33m10[39m, genericName: [33m5[39m }, background: [33mtrue[39m })
+[0;36mMongoose:[0m auditlogs.createIndex({ createdAt: [33m1[39m }, { expireAfterSeconds: [33m157680000[39m, background: [33mtrue[39m })
+[0;36mMongoose:[0m orders.createIndex({ pharmacyId: [33m1[39m, createdAt: [33m-1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m reservations.createIndex({ pharmacyId: [33m1[39m, status: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m reservations.createIndex({ pharmacyId: [33m1[39m, expiresAt: [33m1[39m, status: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m batches.createIndex({ pharmacyId: [33m1[39m, expiryDate: [33m1[39m, isActive: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m reservations.createIndex({ pharmacyId: [33m1[39m, createdAt: [33m-1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m batches.createIndex({ pharmacyId: [33m1[39m, remainingQty: [33m1[39m }, { background: [33mtrue[39m })
+[0mGET /health [32m200[0m 2.310 ms - 82[0m
+[0mGET /health [32m200[0m 0.364 ms - 82[0m
+[2026-04-27 23:41:34] [31merror[39m: 401 - No token provided - GET /api/medicines
+[0mGET /api/medicines [33m401[0m 1.808 ms - 47[0m
+[0;36mMongoose:[0m users.findOne({ role: [32m'pharmacist'[39m, isActive: [33mtrue[39m }, { projection: { pharmacyId: [33m1[39m } })
+[2026-04-27 23:41:41] [31merror[39m: 400 - No pharmacy account is configured - GET /api/reservations/products
+[0mGET /api/reservations/products [33m400[0m 55.621 ms - 63[0m
+[2026-04-27 23:41:50] [31merror[39m: 400 - Unexpected token \ in JSON at position 1 - POST /api/auth/login
+[2026-04-27 23:41:57] [31merror[39m: 400 - Unexpected token e in JSON at position 1 - POST /api/auth/login
+[0;36mMongoose:[0m reservations.find({ status: { [32m'$in'[39m: [ [32m'pending'[39m, [32m'confirmed'[39m ] }, expiresAt: { [32m'$lt'[39m: new Date("Mon, 27 Apr 2026 21:45:00 GMT") }}, {})
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node src/server.js`[39m
+[2026-04-27 23:46:24] [33mwarn[39m: Email transporter not ready: Invalid login: 535 Authentication failed: The provided authorization grant is invalid, expired, or revoked
+[2026-04-27 23:46:24] [32minfo[39m: MongoDB connected: ac-kqnx0we-shard-00-01.jj9g0kc.mongodb.net
+[2026-04-27 23:46:24] [33mwarn[39m: REDIS_URL not set - Redis disabled
+[2026-04-27 23:46:25] [32minfo[39m: [nearExpiry] Job scheduled — daily at 08:00
+[2026-04-27 23:46:25] [32minfo[39m: [reservationExpiry] Job scheduled — every 15 minutes
+[2026-04-27 23:46:25] [32minfo[39m: Server running on port 5000 in development mode
+[0;36mMongoose:[0m auditlogs.createIndex({ pharmacyId: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m batches.createIndex({ pharmacyId: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m suppliers.createIndex({ pharmacyId: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m parapharmacyproducts.createIndex({ pharmacyId: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m sales.createIndex({ pharmacyId: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m reservations.createIndex({ pharmacyId: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m medicines.createIndex({ pharmacyId: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m users.createIndex({ pharmacyId: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m aiconsultations.createIndex({ pharmacyId: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m auditlogs.createIndex({ pharmacyId: [33m1[39m, createdAt: [33m-1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m batches.createIndex({ pharmacyId: [33m1[39m, medicineId: [33m1[39m, batchNumber: [33m1[39m }, { unique: [33mtrue[39m, background: [33mtrue[39m })
+[0;36mMongoose:[0m suppliers.createIndex({ pharmacyId: [33m1[39m, name: [33m1[39m }, { unique: [33mtrue[39m, background: [33mtrue[39m })
+[0;36mMongoose:[0m parapharmacyproducts.createIndex({ pharmacyId: [33m1[39m, name: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m sales.createIndex({ pharmacyId: [33m1[39m, cashierId: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m reservations.createIndex({ confirmationCode: [33m1[39m }, { unique: [33mtrue[39m, background: [33mtrue[39m })
+[0;36mMongoose:[0m medicines.createIndex({ pharmacyId: [33m1[39m, name: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m users.createIndex({ pharmacyId: [33m1[39m, email: [33m1[39m }, { unique: [33mtrue[39m, background: [33mtrue[39m })
+[0;36mMongoose:[0m aiconsultations.createIndex({ pharmacyId: [33m1[39m, staffId: [33m1[39m, createdAt: [33m-1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m auditlogs.createIndex({ pharmacyId: [33m1[39m, userId: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m batches.createIndex({ pharmacyId: [33m1[39m, medicineId: [33m1[39m, expiryDate: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m suppliers.createIndex({ pharmacyId: [33m1[39m, type: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m orders.createIndex({ pharmacyId: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m deliveries.createIndex({ pharmacyId: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m reservations.createIndex({ pharmacyId: [33m1[39m, status: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m medicines.createIndex({ pharmacyId: [33m1[39m, isActive: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m users.createIndex({ pharmacyId: [33m1[39m, role: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m auditlogs.createIndex({ pharmacyId: [33m1[39m, action: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m batches.createIndex({ pharmacyId: [33m1[39m, expiryDate: [33m1[39m, isActive: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m suppliers.createIndex({ pharmacyId: [33m1[39m, isActive: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m orders.createIndex({ pharmacyId: [33m1[39m, status: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m deliveries.createIndex({ pharmacyId: [33m1[39m, supplierId: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m reservations.createIndex({ pharmacyId: [33m1[39m, expiresAt: [33m1[39m, status: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m medicines.createIndex({ pharmacyId: [33m1[39m, category: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m auditlogs.createIndex({ pharmacyId: [33m1[39m, entity: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m batches.createIndex({ pharmacyId: [33m1[39m, remainingQty: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m orders.createIndex({ pharmacyId: [33m1[39m, supplierId: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m reservations.createIndex({ pharmacyId: [33m1[39m, createdAt: [33m-1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m deliveries.createIndex({ pharmacyId: [33m1[39m, deliveryDate: [33m-1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m auditlogs.createIndex({ createdAt: [33m1[39m }, { expireAfterSeconds: [33m157680000[39m, background: [33mtrue[39m })
+[0;36mMongoose:[0m medicines.createIndex({ name: [32m'text'[39m, genericName: [32m'text'[39m }, { weights: { name: [33m10[39m, genericName: [33m5[39m }, background: [33mtrue[39m })
+[0;36mMongoose:[0m parapharmacyproducts.createIndex({ pharmacyId: [33m1[39m, isActive: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m orders.createIndex({ pharmacyId: [33m1[39m, createdAt: [33m-1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m sales.createIndex({ pharmacyId: [33m1[39m, createdAt: [33m-1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m parapharmacyproducts.createIndex({ pharmacyId: [33m1[39m, category: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m sales.createIndex({ pharmacyId: [33m1[39m, approvalStatus: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m parapharmacyproducts.createIndex({ name: [32m'text'[39m, brand: [32m'text'[39m }, { weights: { name: [33m10[39m, brand: [33m5[39m }, background: [33mtrue[39m })
+[0;36mMongoose:[0m sales.createIndex({ [32m'invoice.receiptNumber'[39m: [33m1[39m }, { unique: [33mtrue[39m, background: [33mtrue[39m })
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node src/server.js`[39m
+[2026-04-27 23:46:37] [33mwarn[39m: Email transporter not ready: Invalid login: 535 Authentication failed: The provided authorization grant is invalid, expired, or revoked
+[2026-04-27 23:46:38] [32minfo[39m: MongoDB connected: ac-kqnx0we-shard-00-01.jj9g0kc.mongodb.net
+[2026-04-27 23:46:38] [33mwarn[39m: REDIS_URL not set - Redis disabled
+[2026-04-27 23:46:38] [32minfo[39m: [nearExpiry] Job scheduled — daily at 08:00
+[2026-04-27 23:46:38] [32minfo[39m: [reservationExpiry] Job scheduled — every 15 minutes
+[2026-04-27 23:46:38] [31merror[39m: Uncaught Exception: listen EADDRINUSE: address already in use :::5000
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m

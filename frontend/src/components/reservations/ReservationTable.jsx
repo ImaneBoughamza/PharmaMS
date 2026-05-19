@@ -20,6 +20,13 @@ function getItemsSummary(items) {
   return { lines: shown, extra, tooltip: all.join("\n") };
 }
 
+function getPrescriptionState(reservation) {
+  const required = reservation.prescriptionRequired ||
+    reservation.items?.some((item) => item.productType === "medicine" && item.category === "prescription");
+  if (!required) return "none";
+  return reservation.prescriptionVerified ? "verified" : "required";
+}
+
 function ActionBtn({ icon: Icon, label, className, onClick }) {
   return (
     <button
@@ -46,6 +53,7 @@ export default function ReservationTable({ reservations, userRole, onStatusChang
             <th>Code</th>
             <th>Customer</th>
             <th>Items</th>
+            <th>Prescription</th>
             <th>Pickup Date</th>
             <th>Payment</th>
             <th>Status</th>
@@ -56,6 +64,7 @@ export default function ReservationTable({ reservations, userRole, onStatusChang
           {reservations.map((r) => {
             const isOverdue  = r.pickupDate < today && (r.status === "pending" || r.status === "confirmed");
             const { lines, extra, tooltip } = getItemsSummary(r.items);
+            const prescriptionState = getPrescriptionState(r);
 
             return (
               <tr key={r._id}>
@@ -91,6 +100,16 @@ export default function ReservationTable({ reservations, userRole, onStatusChang
                 </td>
 
                 {/* Pickup Date — red if overdue */}
+                <td>
+                  {prescriptionState === "required" && (
+                    <span className={`${styles.prescriptionBadge} ${styles.prescriptionRequired}`}>Required</span>
+                  )}
+                  {prescriptionState === "verified" && (
+                    <span className={`${styles.prescriptionBadge} ${styles.prescriptionVerified}`}>Verified</span>
+                  )}
+                  {prescriptionState === "none" && <span className={styles.dash}>-</span>}
+                </td>
+
                 <td className={isOverdue ? styles.overdueDate : undefined}>
                   {formatDate(r.pickupDate)}
                 </td>
@@ -104,9 +123,17 @@ export default function ReservationTable({ reservations, userRole, onStatusChang
 
                 {/* Status badge */}
                 <td>
-                  <Badge variant={STATUS_VARIANT[r.status] ?? "neutral"}>
-                    {r.status}
-                  </Badge>
+                  <div className={styles.statusBadges}>
+                    <Badge variant={STATUS_VARIANT[r.status] ?? "neutral"}>
+                      {r.status}
+                    </Badge>
+                    {prescriptionState === "required" && (
+                      <span className={`${styles.subBadge} ${styles.prescriptionRequired}`}>Prescription Required</span>
+                    )}
+                    {prescriptionState === "verified" && (
+                      <span className={`${styles.subBadge} ${styles.prescriptionVerified}`}>Prescription Verified</span>
+                    )}
+                  </div>
                 </td>
 
                 {/* Actions — role + status based */}
@@ -154,7 +181,13 @@ export default function ReservationTable({ reservations, userRole, onStatusChang
                         icon={ShoppingCart}
                         label="Convert to Sale"
                         className={styles.actionConvert}
-                        onClick={() => router.push("/pos")}
+                        onClick={() => {
+                          if (prescriptionState === "required") {
+                            router.push(`/reservations/${r._id}`);
+                            return;
+                          }
+                          router.push(`/pos?reservationId=${r._id}`);
+                        }}
                       />
                     )}
                     {r.status === "ready" && userRole === "pharmacist" && (

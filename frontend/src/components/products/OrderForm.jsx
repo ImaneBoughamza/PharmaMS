@@ -18,28 +18,28 @@ const schema = z.object({
     .min(1, "At least one item is required"),
 });
 
-// TODO: replace with real API data
-const MOCK_SUPPLIERS = [
-  { _id: "s1", name: "PharmaDist Maroc" },
-  { _id: "s2", name: "BioLab Supplies" },
-];
-const MOCK_MEDICINES = [
-  { _id: "m1", name: "Paracetamol 500mg" },
-  { _id: "m2", name: "Amoxicillin 1g" },
-  { _id: "m3", name: "Ibuprofen 400mg" },
-  { _id: "m4", name: "Diazepam 5mg" },
-];
-const MOCK_PARAPHARMACY = [
-  { _id: "p1", name: "Vitamin D3 1000 IU" },
-  { _id: "p2", name: "Micellar Water 400ml" },
-  { _id: "p3", name: "Digital Thermometer" },
-  { _id: "p4", name: "Hand Sanitiser 500ml" },
-  { _id: "p5", name: "Omega-3 Fish Oil" },
-];
+function supplierTypeLabel(type) {
+  return {
+    grossiste: "Grossiste",
+    laboratoire: "Laboratoire",
+    "parapharmacy-distributor": "Parapharmacy Distributor",
+    other: "Other",
+  }[type] ?? type;
+}
 
-function ItemRow({ index, control, register, errors, remove, showRemove, setValue }) {
+function ItemRow({
+  index,
+  control,
+  register,
+  errors,
+  remove,
+  showRemove,
+  setValue,
+  medicines,
+  parapharmacy,
+}) {
   const productType = useWatch({ control, name: `items.${index}.productType` });
-  const products = productType === "parapharmacy" ? MOCK_PARAPHARMACY : MOCK_MEDICINES;
+  const products = productType === "parapharmacy" ? parapharmacy : medicines;
 
   function handleTypeChange(e) {
     setValue(`items.${index}.productType`, e.target.value);
@@ -54,7 +54,7 @@ function ItemRow({ index, control, register, errors, remove, showRemove, setValu
           value={productType ?? ""}
           onChange={handleTypeChange}
         >
-          <option value="">Type…</option>
+          <option value="">Type...</option>
           <option value="medicine">Medicine</option>
           <option value="parapharmacy">Parapharmacy</option>
         </select>
@@ -69,13 +69,16 @@ function ItemRow({ index, control, register, errors, remove, showRemove, setValu
           disabled={!productType}
           {...register(`items.${index}.productId`)}
         >
-          <option value="">Select product…</option>
+          <option value="">Select product...</option>
           {products.map((p) => (
             <option key={p._id} value={p._id}>{p.name}</option>
           ))}
         </select>
         {errors.items?.[index]?.productId && (
           <p className={styles.error}>{errors.items[index].productId.message}</p>
+        )}
+        {productType && products.length === 0 && (
+          <p className={styles.error}>No active {productType} products found.</p>
         )}
       </div>
 
@@ -94,14 +97,21 @@ function ItemRow({ index, control, register, errors, remove, showRemove, setValu
 
       {showRemove && (
         <button type="button" className={styles.removeBtn} onClick={() => remove(index)}>
-          ✕
+          x
         </button>
       )}
     </div>
   );
 }
 
-export default function OrderForm({ onSubmit, isLoading }) {
+export default function OrderForm({
+  onSubmit,
+  isLoading,
+  suppliers = [],
+  medicines = [],
+  parapharmacy = [],
+  loadingOptions = false,
+}) {
   const {
     register,
     control,
@@ -123,13 +133,18 @@ export default function OrderForm({ onSubmit, isLoading }) {
     <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
       <div className={styles.field}>
         <label className={styles.label}>Supplier</label>
-        <select className={styles.select} {...register("supplierId")}>
-          <option value="">Select supplier…</option>
-          {MOCK_SUPPLIERS.map((s) => (
-            <option key={s._id} value={s._id}>{s.name}</option>
+        <select className={styles.select} {...register("supplierId")} disabled={loadingOptions}>
+          <option value="">{loadingOptions ? "Loading suppliers..." : "Select supplier..."}</option>
+          {suppliers.map((s) => (
+            <option key={s._id} value={s._id}>
+              {s.name}{s.type ? ` - ${supplierTypeLabel(s.type)}` : ""}
+            </option>
           ))}
         </select>
         {errors.supplierId && <p className={styles.error}>{errors.supplierId.message}</p>}
+        {!loadingOptions && suppliers.length === 0 && (
+          <p className={styles.error}>No active suppliers found. Register or reactivate a supplier first.</p>
+        )}
       </div>
 
       <div className={styles.itemsSection}>
@@ -160,6 +175,8 @@ export default function OrderForm({ onSubmit, isLoading }) {
             remove={remove}
             showRemove={fields.length > 1}
             setValue={setValue}
+            medicines={medicines}
+            parapharmacy={parapharmacy}
           />
         ))}
         {errors.items?.message && <p className={styles.error}>{errors.items.message}</p>}
@@ -171,7 +188,7 @@ export default function OrderForm({ onSubmit, isLoading }) {
       </div>
 
       <div className={styles.actions}>
-        <Button type="submit" disabled={isLoading} isLoading={isLoading}>
+        <Button type="submit" disabled={isLoading || loadingOptions} isLoading={isLoading}>
           Submit Order
         </Button>
       </div>

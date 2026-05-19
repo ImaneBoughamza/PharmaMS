@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Download, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
@@ -6,43 +6,9 @@ import AppLayout from "@/components/layout/AppLayout";
 import Badge from "@/components/ui/Badge";
 import { useAuth } from "@/hooks/useAuth";
 import { PHARMACIST } from "@/constants/roles";
+import api from "@/lib/axios";
+import { withRoleGuard } from "@/utils/roleGuard";
 import styles from "@/styles/StockPage.module.css";
-
-// TODO: replace with useSWR("/api/reports/stock") when backend is ready
-const MOCK_MEDICINES = [
-  { _id: "1", name: "Paracetamol 500mg", genericName: "Paracetamol",   category: "non-prescription", unit: "tablet", minStockLevel: 20,
-    batches: [
-      { _id: "b1", batchNumber: "PC-2401",  expiryDate: "2026-05-18", initialQty: 100, remainingQty: 8,  purchasePrice: 15,   salePrice: 22.5, status: "active"   },
-      { _id: "b2", batchNumber: "PC-2312",  expiryDate: "2025-09-30", initialQty: 200, remainingQty: 0,  purchasePrice: 14.5, salePrice: 22.5, status: "depleted" },
-    ]},
-  { _id: "2", name: "Amoxicillin 1g",    genericName: "Amoxicillin",   category: "prescription",     unit: "tablet", minStockLevel: 15,
-    batches: [
-      { _id: "b3", batchNumber: "AMX-2501", expiryDate: "2027-03-10", initialQty: 150, remainingQty: 42, purchasePrice: 45,   salePrice: 65,   status: "active"   },
-    ]},
-  { _id: "3", name: "Ibuprofen 400mg",   genericName: "Ibuprofen",     category: "non-prescription", unit: "tablet", minStockLevel: 25,
-    batches: [
-      { _id: "b4", batchNumber: "IBU-2504", expiryDate: "2026-06-15", initialQty: 100, remainingQty: 12, purchasePrice: 18,   salePrice: 28,   status: "active"   },
-      { _id: "b5", batchNumber: "IBU-2502", expiryDate: "2026-07-20", initialQty: 100, remainingQty: 7,  purchasePrice: 18,   salePrice: 28,   status: "active"   },
-    ]},
-  { _id: "4", name: "Vitamin C 1000mg",  genericName: "Ascorbic Acid", category: "non-prescription", unit: "tablet", minStockLevel: 10,
-    batches: [
-      { _id: "b6", batchNumber: "VC-2501",  expiryDate: "2028-01-20", initialQty: 300, remainingQty: 63, purchasePrice: 12,   salePrice: 18,   status: "active"   },
-    ]},
-  { _id: "5", name: "Diazepam 5mg",      genericName: "Diazepam",      category: "regulated",        unit: "tablet", minStockLevel: 5,  batches: [] },
-  { _id: "6", name: "Metformin 500mg",   genericName: "Metformin",     category: "prescription",     unit: "tablet", minStockLevel: 20,
-    batches: [
-      { _id: "b7", batchNumber: "MET-2501", expiryDate: "2026-07-01", initialQty: 200, remainingQty: 55, purchasePrice: 22,   salePrice: 35,   status: "active"   },
-    ]},
-];
-
-// TODO: replace with useSWR("/api/reports/parapharmacy-stock") when backend is ready
-const MOCK_PARAPHARMACY = [
-  { _id: "p1", name: "Vitamin D3 1000 IU",  brand: "Sanofi",    category: "supplements",    stockQty: 48, minStockLevel: 10, purchasePrice: 55,  salePrice: 85  },
-  { _id: "p2", name: "Micellar Water 400ml", brand: "Bioderma",  category: "cosmetics",      stockQty: 12, minStockLevel: 5,  purchasePrice: 80,  salePrice: 120 },
-  { _id: "p3", name: "Digital Thermometer",  brand: "Omron",     category: "medical-device", stockQty: 3,  minStockLevel: 5,  purchasePrice: 140, salePrice: 220 },
-  { _id: "p4", name: "Hand Sanitiser 500ml", brand: "Dettol",    category: "hygiene",        stockQty: 0,  minStockLevel: 10, purchasePrice: 28,  salePrice: 45  },
-  { _id: "p5", name: "Omega-3 Fish Oil",     brand: "Nutrident", category: "supplements",    stockQty: 30, minStockLevel: 8,  purchasePrice: 95,  salePrice: 150 },
-];
 
 const EXPIRY_THRESHOLD = 90;
 
@@ -65,36 +31,65 @@ function getExpiryClass(days) {
   return styles.okText;
 }
 
+function batchStatus(batch) {
+  if (batch.status) return batch.status;
+  if (batch.isActive === false) return "deactivated";
+  if ((batch.remainingQty ?? 0) <= 0) return "depleted";
+  if (batch.expiryDate && new Date(batch.expiryDate) < new Date()) return "expired";
+  return "active";
+}
+
 export default function StockReportPage() {
   const { role } = useAuth();
   const [generatedAt] = useState(() => new Date());
+  const [medicines, setMedicines] = useState([]);
+  const [parapharmacy, setParapharmacy] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const loadReport = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const { data } = await api.get("/api/reports/stock");
+      setMedicines(data.data?.medicines ?? []);
+      setParapharmacy(data.data?.parapharmacy ?? []);
+    } catch (error) {
+      toast.error(error?.response?.data?.message ?? "Failed to load stock report");
+      setMedicines([]);
+      setParapharmacy([]);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadReport();
+  }, [loadReport]);
 
   const enrichedMedicines = useMemo(() =>
-    MOCK_MEDICINES.map((m) => {
-      const active     = m.batches.filter((b) => b.status === "active");
+    medicines.map((m) => {
+      const active     = (m.batches ?? []).filter((b) => batchStatus(b) === "active");
       const totalStock = active.reduce((s, b) => s + b.remainingQty, 0);
       const totalValue = active.reduce((s, b) => s + b.remainingQty * b.purchasePrice, 0);
       return { ...m, totalStock, totalValue, activeBatches: active };
     }),
-  []);
+  [medicines]);
 
   const lowStockMeds = enrichedMedicines.filter((m) => m.totalStock < m.minStockLevel);
-  const lowStockPara = MOCK_PARAPHARMACY.filter((p) => p.stockQty < p.minStockLevel);
+  const lowStockPara = parapharmacy.filter((p) => p.stockQty < p.minStockLevel);
   const allClear     = lowStockMeds.length === 0 && lowStockPara.length === 0;
 
   const nearExpiryBatches = useMemo(() => {
     const result = [];
-    for (const m of MOCK_MEDICINES) {
-      for (const b of m.batches) {
-        if (b.status !== "active") continue;
+    for (const m of enrichedMedicines) {
+      for (const b of m.activeBatches) {
         if (getDaysLeft(b.expiryDate) <= EXPIRY_THRESHOLD) result.push({ ...b, medicine: m });
       }
     }
     return result.sort((a, b) => new Date(a.expiryDate) - new Date(b.expiryDate));
-  }, []);
+  }, [enrichedMedicines]);
 
   const totalMedValue  = enrichedMedicines.reduce((s, m) => s + m.totalValue, 0);
-  const totalParaValue = MOCK_PARAPHARMACY.reduce((s, p) => s + p.stockQty * p.purchasePrice, 0);
+  const totalParaValue = parapharmacy.reduce((s, p) => s + p.stockQty * p.purchasePrice, 0);
   const totalInventory = totalMedValue + totalParaValue;
   const totalRiskValue = nearExpiryBatches.reduce((s, b) => s + b.remainingQty * b.purchasePrice, 0);
 
@@ -106,7 +101,7 @@ export default function StockReportPage() {
 
   function handleExportCSV() {
     const rows = [
-      [`PharmaOS Stock Management Report — ${generatedAt.toLocaleString("en-GB")}`],
+      [`PharmaMS Stock Management Report — ${generatedAt.toLocaleString("en-GB")}`],
       [],
       ["=== REPORT SUMMARY ==="],
       ["Total Medicine Value (purchase cost)", totalMedValue.toFixed(2)],
@@ -127,20 +122,20 @@ export default function StockReportPage() {
       [],
       ["=== FULL MEDICINE STOCK BY BATCH ==="],
       ["Medicine", "Batch Number", "Expiry Date", "Remaining Qty", "Purchase Price", "Sale Price", "Value"],
-      ...MOCK_MEDICINES.flatMap((m) =>
-        m.batches.filter((b) => b.status === "active").map((b) => [m.name, b.batchNumber, fmtDate(b.expiryDate), b.remainingQty, b.purchasePrice, b.salePrice, (b.remainingQty * b.purchasePrice).toFixed(2)])
+      ...enrichedMedicines.flatMap((m) =>
+        m.activeBatches.map((b) => [m.name, b.batchNumber, fmtDate(b.expiryDate), b.remainingQty, b.purchasePrice, b.salePrice, (b.remainingQty * b.purchasePrice).toFixed(2)])
       ),
       [],
       ["=== FULL PARAPHARMACY STOCK ==="],
       ["Product", "Brand", "Category", "Stock Qty", "Purchase Price", "Sale Price", "Stock Value"],
-      ...MOCK_PARAPHARMACY.map((p) => [p.name, p.brand, p.category, p.stockQty, p.purchasePrice, p.salePrice, (p.stockQty * p.purchasePrice).toFixed(2)]),
+      ...parapharmacy.map((p) => [p.name, p.brand, p.category, p.stockQty, p.purchasePrice, p.salePrice, (p.stockQty * p.purchasePrice).toFixed(2)]),
     ];
     const csv  = rows.map((r) => r.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const url  = URL.createObjectURL(blob);
     const a    = document.createElement("a");
     a.href     = url;
-    a.download = `PharmaOS_StockReport_${dateStr}.csv`;
+    a.download = `PharmaMS_StockReport_${dateStr}.csv`;
     a.click();
     URL.revokeObjectURL(url);
     toast.success("Report downloaded");
@@ -160,7 +155,7 @@ export default function StockReportPage() {
             <button className={styles.primaryBtn} onClick={handleExportCSV}>
               <Download size={13} /> Export Report
             </button>
-            <button className={styles.secondaryBtn} onClick={() => window.location.reload()}>
+            <button className={styles.secondaryBtn} onClick={loadReport}>
               <RefreshCw size={13} /> Refresh
             </button>
           </div>
@@ -416,7 +411,7 @@ export default function StockReportPage() {
             </tr>
           </thead>
           <tbody>
-            {MOCK_PARAPHARMACY.map((p) => (
+            {parapharmacy.map((p) => (
               <tr key={p._id}>
                 <td style={{ fontWeight: 500 }}>{p.name}</td>
                 <td style={{ color: "var(--color-text-secondary)" }}>{p.brand}</td>
@@ -441,5 +436,4 @@ export default function StockReportPage() {
 
 StockReportPage.getLayout = AppLayout.getLayout;
 
-// TODO: restore when backend is ready
-// export const getServerSideProps = withRoleGuard([PHARMACIST]);
+export const getServerSideProps = withRoleGuard([PHARMACIST]);

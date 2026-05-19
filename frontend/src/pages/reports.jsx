@@ -9,6 +9,7 @@ import AppLayout from "@/components/layout/AppLayout";
 import { formatCurrency } from "@/utils/formatCurrency";
 import SaleDetailModal from "@/components/pos/SaleDetailModal";
 import VoidSaleModal from "@/components/pos/VoidSaleModal";
+import api from "@/lib/axios";
 import styles from "@/styles/ReportsPage.module.css";
 
 const MOCK_USER = { role: "pharmacist", name: "Dr. Benali" };
@@ -368,6 +369,34 @@ function ChartTooltip({ active, payload, label }) {
   );
 }
 
+function normalizeSale(sale) {
+  const medicineItems = (sale.items ?? []).map((item) => ({
+    productName: item.medicineId?.name || item.medicineName || "Medicine",
+    productType: "medicine",
+    category: item.medicineId?.category || "Medicine",
+    batchNumber: item.batchId?.batchNumber,
+    qty: item.qty,
+    unitPrice: item.unitPrice,
+  }));
+  const parapharmacyItems = (sale.parapharmacyItems ?? []).map((item) => ({
+    productName: item.productId?.name || "Parapharmacy product",
+    productType: "parapharmacy",
+    category: item.productId?.category || "Parapharmacy",
+    qty: item.qty,
+    unitPrice: item.unitPrice,
+  }));
+
+  return {
+    ...sale,
+    receiptNumber: sale.invoice?.receiptNumber || sale.receiptNumber,
+    cashierId: sale.cashierId?._id || sale.cashierId,
+    cashierName: sale.cashierId?.fullName || sale.cashierName || "Staff",
+    paymentMethod: sale.paymentMethod === "card" ? "Card" : "Cash",
+    status: sale.approvalStatus === "voided" ? "voided" : "completed",
+    items: [...medicineItems, ...parapharmacyItems],
+  };
+}
+
 const PERIOD_OPTS   = [{ value: "today", label: "Today" }, { value: "week", label: "This Week" },
                        { value: "month", label: "This Month" }, { value: "custom", label: "Custom Range" }];
 const S7_TYPE_OPTS  = [{ v: "all", l: "All" }, { v: "medicine", l: "Medicine Only" },
@@ -387,7 +416,7 @@ export default function ReportsPage() {
   const [isLoading,    setIsLoading]    = useState(false);  // sections 1-6
 
   /* ── Data ── */
-  const [salesData, setSalesData] = useState(MOCK_SALES_BASE);
+  const [salesData, setSalesData] = useState([]);
 
   /* ── Section 4 sort ── */
   const [sortField, setSortField] = useState("totalRevenue");
@@ -405,6 +434,29 @@ export default function ReportsPage() {
   /* ── Modals ── */
   const [detailSale, setDetailSale] = useState(null);
   const [voidSale,   setVoidSale]   = useState(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadSales() {
+      setIsLoading(true);
+      setS7Loading(true);
+      try {
+        const { data } = await api.get("/api/sales", { params: { limit: 1000 } });
+        if (!cancelled) setSalesData((data.data ?? []).map(normalizeSale));
+      } catch (error) {
+        if (!cancelled) toast.error(error?.response?.data?.message ?? "Failed to load sales report");
+      } finally {
+        if (!cancelled) {
+          setIsLoading(false);
+          setS7Loading(false);
+        }
+      }
+    }
+
+    loadSales();
+    return () => { cancelled = true; };
+  }, []);
 
   /* ── Period logic ── */
   function applyPeriod(p, from = "", to = "") {
@@ -557,7 +609,7 @@ export default function ReportsPage() {
       const url  = URL.createObjectURL(blob);
       const a    = document.createElement("a");
       a.href     = url;
-      a.download = `PharmaOS_SalesReport_${from}_to_${to}.csv`;
+      a.download = `PharmaMS_SalesReport_${from}_to_${to}.csv`;
       a.click();
       URL.revokeObjectURL(url);
       toast.success("Report downloaded");

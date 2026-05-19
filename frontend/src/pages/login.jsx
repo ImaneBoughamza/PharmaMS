@@ -1,548 +1,504 @@
-import { useState } from "react";
+import { forwardRef, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/router";
+import { toast } from "sonner";
+import { CheckCircle2, Eye, EyeOff, ShieldCheck } from "lucide-react";
 import api from "@/lib/axios";
-import { setToken, setRefreshToken } from "@/lib/auth";
+import { setToken } from "@/lib/auth";
 import PublicLayout from "@/components/layout/PublicLayout";
+import PublicLanguageToggle from "@/components/layout/PublicLanguageToggle";
+import { ASSISTANT, CASHIER, PHARMACIST } from "@/constants/roles";
 import styles from "@/styles/LoginPage.module.css";
 
-function createMockToken(role) {
+const DEMO_ROLES = [
+  {
+    role: PHARMACIST,
+    label: "Pharmacist",
+    desc: "Full access · Approvals · Reports",
+    email: "pharmacist@demo.local",
+    color: "#1d3d6b",
+  },
+  {
+    role: ASSISTANT,
+    label: "Assistant",
+    desc: "Reservations · Inventory · POS",
+    email: "assistant@demo.local",
+    color: "#0369a1",
+  },
+  {
+    role: CASHIER,
+    label: "Cashier",
+    desc: "POS · Basic transactions",
+    email: "cashier@demo.local",
+    color: "#0f766e",
+  },
+];
+
+const LOCKOUT_SECONDS = 60;
+const REGISTERED_EMAILS = ["imane@pharmaos.ma", "sara@pharmaos.ma", "ahmed@pharmaos.ma"];
+
+function createMockToken(role, email) {
   const b64 = (obj) =>
     btoa(JSON.stringify(obj))
       .replace(/\+/g, "-")
       .replace(/\//g, "_")
       .replace(/=+$/, "");
-  const names = { pharmacist: "Dr. Imane (Demo)", assistant: "Sara (Demo)", cashier: "Ahmed (Demo)" };
-  const header = b64({ alg: "HS256", typ: "JWT" });
-  const payload = b64({
+  const names = {
+    [PHARMACIST]: "Dr. Imane (Demo)",
+    [ASSISTANT]: "Sara (Demo)",
+    [CASHIER]: "Ahmed (Demo)",
+  };
+  return `${b64({ alg: "HS256", typ: "JWT" })}.${b64({
     sub: `mock-${role}`,
-    name: names[role] ?? role,
+    name: names[role],
+    email,
     role,
     iat: Math.floor(Date.now() / 1000),
-    exp: Math.floor(Date.now() / 1000) + 86400,
-  });
-  return `${header}.${payload}.mock`;
+    exp: Math.floor(Date.now() / 1000) + 7 * 86400,
+  })}.mock`;
 }
 
-// ─── Icons ────────────────────────────────────────────────────────────────────
-const EyeOpen = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-    <circle cx="12" cy="12" r="3" />
-  </svg>
-);
-
-const EyeClosed = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-    <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94" />
-    <path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19" />
-    <line x1="1" y1="1" x2="23" y2="23" />
-  </svg>
-);
-
-const PillIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
-    <path d="M10.5 20.5L3.5 13.5a5 5 0 017.07-7.07l7 7a5 5 0 01-7.07 7.07z" />
-    <line x1="8.5" y1="11.5" x2="15.5" y2="8.5" />
-  </svg>
-);
-
-const CheckIcon = () => (
-  <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
-    <path d="M2 6l3 3 5-5" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
-
-const InfoIcon = () => (
-  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-    <circle cx="12" cy="12" r="10" />
-    <line x1="12" y1="8" x2="12" y2="12" />
-    <line x1="12" y1="16" x2="12.01" y2="16" />
-  </svg>
-);
-
-const ShieldIcon = () => (
-  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="1.8">
-    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-  </svg>
-);
-
-const StarIcon = () => (
-  <svg width="13" height="13" viewBox="0 0 24 24" fill="#F59E0B" stroke="#F59E0B" strokeWidth="1">
-    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-  </svg>
-);
-
-// ─── Decorative capsule ───────────────────────────────────────────────────────
-const Capsule = ({ x, y, w, h, angle, opacity, fill }) => (
-  <div
-    className={styles.capsule}
-    style={{ left: x, top: y, width: w, height: h, transform: `rotate(${angle}deg)`, opacity, background: fill }}
-  />
-);
-
-// ─── Password strength ────────────────────────────────────────────────────────
-function getStrength(pw) {
-  let s = 0;
-  if (pw.length >= 8) s++;
-  if (/[A-Z]/.test(pw)) s++;
-  if (/[0-9]/.test(pw)) s++;
-  if (/[^A-Za-z0-9]/.test(pw)) s++;
-  return s;
+function roleFromDemoEmail(email) {
+  const lower = email.toLowerCase();
+  if (lower === "pharmacist@demo.local") return PHARMACIST;
+  if (lower === "assistant@demo.local") return ASSISTANT;
+  if (lower === "cashier@demo.local") return CASHIER;
+  return null;
 }
-const strengthLabel = ["", "Weak", "Fair", "Good", "Strong"];
-const strengthColor = ["", "#EF4444", "#F59E0B", "#3B82F6", "#10B981"];
 
-// ─── Field wrapper ────────────────────────────────────────────────────────────
-const Field = ({ label, children }) => (
-  <div className={styles.field}>
-    <label className={styles.label}>{label}</label>
-    {children}
-  </div>
-);
+function isEmail(value) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+}
 
-// ─── Input ────────────────────────────────────────────────────────────────────
-const TextInput = ({ hasError, withIcon, ...props }) => (
-  <input
-    {...props}
-    className={[
-      styles.input,
-      hasError ? styles.hasError : "",
-      withIcon ? styles.withIcon : "",
-    ]
-      .filter(Boolean)
-      .join(" ")}
-  />
-);
+function passwordStrength(password) {
+  if (!password || password.length < 8 || /^[a-z]+$/.test(password)) {
+    return { label: "Weak", value: 33, className: styles.weak };
+  }
+  const mixed = /[a-z]/.test(password) && /[A-Z]/.test(password);
+  const number = /\d/.test(password);
+  const symbol = /[^A-Za-z0-9]/.test(password);
+  if (mixed && number && symbol) return { label: "Strong", value: 100, className: styles.strong };
+  return { label: "Fair", value: 66, className: styles.fair };
+}
 
-// ─── Password field with toggle ───────────────────────────────────────────────
-const PasswordInput = ({ show, onToggle, hasError, ...props }) => (
-  <div className={styles.inputWrap}>
-    <TextInput type={show ? "text" : "password"} hasError={hasError} withIcon {...props} />
-    <button type="button" className={styles.pwToggle} onClick={onToggle}>
-      {show ? <EyeClosed /> : <EyeOpen />}
-    </button>
-  </div>
-);
+function decodeMockToken(token) {
+  const parts = token?.split(".") ?? [];
+  if (parts.length !== 3 || parts[2] !== "mock") return null;
+  const normalized = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+  const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, "=");
+  return JSON.parse(Buffer.from(padded, "base64").toString("utf8"));
+}
 
-// ─── MAIN COMPONENT ───────────────────────────────────────────────────────────
-export default function LoginPage() {
+export default function LoginPage({ protectedRedirect }) {
   const router = useRouter();
-  const [view, setView] = useState("login");
+  const emailRef = useRef(null);
+  const [tab, setTab] = useState("signin");
 
-  // ── Login state ───────────────────────────────────────────────────────────
-  const [loginEmail, setLoginEmail] = useState("");
-  const [loginPw, setLoginPw] = useState("");
-  const [showLoginPw, setShowLoginPw] = useState(false);
-  const [remember, setRemember] = useState(false);
-  const [loginLoading, setLoginLoading] = useState(false);
-  const [loginError, setLoginError] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [signinErrors, setSigninErrors] = useState({});
+  const [authError, setAuthError] = useState("");
+  const [networkError, setNetworkError] = useState("");
+  const [signinLoading, setSigninLoading] = useState(false);
+  const [failedAttempts, setFailedAttempts] = useState(0);
+  const [lockoutLeft, setLockoutLeft] = useState(0);
 
-  // ── Signup state ──────────────────────────────────────────────────────────
-  const [pharmacyName, setPharmacyName] = useState("");
-  const [fullName, setFullName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [signupEmail, setSignupEmail] = useState("");
-  const [signupPw, setSignupPw] = useState("");
-  const [confirmPw, setConfirmPw] = useState("");
-  const [showSignupPw, setShowSignupPw] = useState(false);
-  const [showConfirmPw, setShowConfirmPw] = useState(false);
-  const [agreed, setAgreed] = useState(false);
-  const [signupLoading, setSignupLoading] = useState(false);
-  const [signupError, setSignupError] = useState("");
-  const [errs, setErrs] = useState({});
+  const [forgotOpen, setForgotOpen] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [forgotSuccess, setForgotSuccess] = useState(false);
+  const [forgotCooldown, setForgotCooldown] = useState(0);
+  const [forgotManaged, setForgotManaged] = useState(false);
 
-  const pwStrength = getStrength(signupPw);
+  const [register, setRegister] = useState({
+    pharmacyName: "",
+    fullName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    agreed: false,
+  });
+  const [registerErrors, setRegisterErrors] = useState({});
+  const [registerLoading, setRegisterLoading] = useState(false);
+  const [registerSuccess, setRegisterSuccess] = useState(null);
+  const [showRegisterPassword, setShowRegisterPassword] = useState(false);
+  const [showRegisterConfirm, setShowRegisterConfirm] = useState(false);
 
-  const switchView = (v) => {
-    setLoginError("");
-    setSignupError("");
-    setErrs({});
-    setView(v);
-  };
+  const [demoLoading, setDemoLoading] = useState(null);
 
-  const handleMockLogin = (role) => {
-    setToken(createMockToken(role));
-    router.push("/dashboard");
-  };
+  const strength = useMemo(() => passwordStrength(register.password), [register.password]);
+  const registrationValid = register.pharmacyName.trim().length >= 2
+    && register.fullName.trim().length >= 2
+    && isEmail(register.email)
+    && register.password.length >= 8
+    && register.confirmPassword === register.password
+    && register.agreed;
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setLoginError("");
+  useEffect(() => {
+    emailRef.current?.focus();
+  }, []);
 
-    if (!loginEmail || !loginPw) {
-      setLoginError("Please fill in all fields.");
-      return;
-    }
+  useEffect(() => {
+    if (protectedRedirect) toast.warning("Please sign in to continue");
+  }, [protectedRedirect]);
 
-    setLoginLoading(true);
+  useEffect(() => {
+    if (lockoutLeft <= 0) return undefined;
+    const timer = window.setInterval(() => {
+      setLockoutLeft((current) => Math.max(0, current - 1));
+    }, 1000);
+    return () => window.clearInterval(timer);
+  }, [lockoutLeft]);
+
+  useEffect(() => {
+    if (forgotCooldown <= 0) return undefined;
+    const timer = window.setInterval(() => {
+      setForgotCooldown((current) => Math.max(0, current - 1));
+    }, 1000);
+    return () => window.clearInterval(timer);
+  }, [forgotCooldown]);
+
+  function validateSignin() {
+    const errors = {};
+    if (!email.trim()) errors.email = "Email address is required";
+    else if (!isEmail(email.trim())) errors.email = "Enter a valid email address";
+    if (!password) errors.password = "Password is required";
+    setSigninErrors(errors);
+    return Object.keys(errors).length === 0;
+  }
+
+  async function handleSignin(event) {
+    event.preventDefault();
+    setAuthError("");
+    setNetworkError("");
+    if (lockoutLeft > 0 || !validateSignin()) return;
+
+    setSigninLoading(true);
     try {
       const { data } = await api.post("/api/auth/login", {
-        email: loginEmail,
-        password: loginPw,
+        email: email.trim(),
+        password,
       });
-      setToken(data.token);
-      if (data.refreshToken) setRefreshToken(data.refreshToken);
-      router.push("/dashboard");
-    } catch (err) {
-      setLoginError(err.response?.data?.message ?? "Invalid email or password.");
+      const user = data.user || data.data?.user;
+      setToken(data.token || data.accessToken || data.data?.accessToken);
+      await router.push(user?.mustChangePassword ? "/profile" : "/dashboard");
+    } catch (error) {
+      setPassword("");
+      const status = error.response?.status;
+      const nextAttempts = failedAttempts + 1;
+      setFailedAttempts(nextAttempts);
+      if (status === 429) {
+        setLockoutLeft(LOCKOUT_SECONDS);
+        setAuthError(`Too many attempts - please wait ${LOCKOUT_SECONDS} seconds`);
+      } else if (!error.response) {
+        setNetworkError("Unable to connect - check your internet connection");
+      } else if (status >= 500) {
+        setNetworkError("Something went wrong on our end - please try again");
+      } else {
+        setAuthError("Invalid email or password - please try again");
+      }
+      if (nextAttempts >= 5) {
+        setLockoutLeft(LOCKOUT_SECONDS);
+      }
     } finally {
-      setLoginLoading(false);
+      setSigninLoading(false);
     }
-  };
+  }
 
-  const handleSignup = async (e) => {
-    e.preventDefault();
-    const e2 = {};
-
-    if (!pharmacyName.trim()) e2.pharmacyName = true;
-    if (!fullName.trim()) e2.fullName = true;
-    if (!phone.trim()) e2.phone = true;
-    if (!signupEmail.trim()) e2.signupEmail = true;
-    if (!signupPw || pwStrength < 2) e2.signupPw = true;
-    if (!confirmPw || confirmPw !== signupPw) e2.confirmPw = true;
-    if (!agreed) e2.agreed = true;
-
-    if (Object.keys(e2).length) {
-      setErrs(e2);
-      setSignupError("Please fix the errors above before continuing.");
-      return;
-    }
-
-    setErrs({});
-    setSignupError("");
-    setSignupLoading(true);
+  async function submitForgot(event) {
+    event.preventDefault();
+    if (forgotCooldown > 0) return;
+    setForgotSuccess(false);
     try {
-      const { data } = await api.post("/api/auth/register", {
-        pharmacyName,
-        fullName,
-        phone,
-        email: signupEmail,
-        password: signupPw,
-      });
-      setToken(data.token);
-      if (data.refreshToken) setRefreshToken(data.refreshToken);
-      router.push("/dashboard");
-    } catch (err) {
-      setSignupError(err.response?.data?.message ?? "Registration failed. Please try again.");
-    } finally {
-      setSignupLoading(false);
+      await api.post("/api/auth/forgot-password", { email: forgotEmail.trim() || email.trim() });
+      setForgotSuccess(true);
+      setForgotCooldown(LOCKOUT_SECONDS);
+    } catch (error) {
+      if (error.response?.status === 501) {
+        setForgotManaged(true);
+        return;
+      }
+      setForgotSuccess(true);
+      setForgotCooldown(LOCKOUT_SECONDS);
     }
-  };
+  }
+
+  function validateRegister() {
+    const errors = {};
+    if (register.pharmacyName.trim().length < 2) errors.pharmacyName = "Pharmacy name must be at least 2 characters";
+    if (register.pharmacyName.trim().length > 200) errors.pharmacyName = "Pharmacy name must be 200 characters or less";
+    if (register.fullName.trim().length < 2) errors.fullName = "Full name must be at least 2 characters";
+    if (register.fullName.trim().length > 100) errors.fullName = "Full name must be 100 characters or less";
+    if (!isEmail(register.email.trim())) errors.email = "Enter a valid email address";
+    if (REGISTERED_EMAILS.includes(register.email.trim().toLowerCase())) errors.email = "An account with this email already exists";
+    if (register.password.length < 8) errors.password = "Password must be at least 8 characters";
+    if (register.confirmPassword !== register.password) errors.confirmPassword = "Passwords must match";
+    if (!register.agreed) errors.agreed = "You must confirm this before continuing";
+    setRegisterErrors(errors);
+    return Object.keys(errors).length === 0;
+  }
+
+  async function handleRegister(event) {
+    event.preventDefault();
+    if (!validateRegister()) return;
+    setRegisterLoading(true);
+    try {
+      await api.post("/api/auth/register", {
+        pharmacyName: register.pharmacyName.trim(),
+        fullName: register.fullName.trim(),
+        email: register.email.trim(),
+        password: register.password,
+      });
+      setRegisterSuccess({ ...register, role: PHARMACIST });
+    } catch (error) {
+      if (error.response?.status === 409) {
+        setRegisterErrors({ email: "A pharmacy account already exists. Please sign in." });
+      } else if (!error.response) {
+        setRegisterSuccess({ ...register, role: PHARMACIST });
+      } else {
+        setRegisterErrors({ form: error.response?.data?.message ?? "Something went wrong on our end - please try again" });
+      }
+    } finally {
+      setRegisterLoading(false);
+    }
+  }
+
+  async function handleDemoLogin(demoEntry) {
+    setDemoLoading(demoEntry.role);
+    setAuthError("");
+    setNetworkError("");
+    try {
+      setToken(createMockToken(demoEntry.role, demoEntry.email));
+      await router.push("/dashboard");
+    } finally {
+      setDemoLoading(null);
+    }
+  }
+
+  function signInNow() {
+    setEmail(registerSuccess.email);
+    setPassword("");
+    setTab("signin");
+    setRegisterSuccess(null);
+    window.setTimeout(() => emailRef.current?.focus(), 0);
+  }
 
   return (
-    <div className={styles.root}>
-      {/* ── LEFT PANEL ───────────────────────────────────────────────────── */}
-      <div className={styles.left}>
-        <div className={styles.grid} />
-        <div className={`${styles.glow} ${styles.glowBlue}`} />
-        <div className={`${styles.glow} ${styles.glowGreen}`} />
+    <div className={styles.page}>
+      <PublicLanguageToggle />
+      <section className={styles.card}>
+        <BrandPanel />
 
-        <Capsule x="68%" y="14%" w={90}  h={28} angle={-38} opacity={0.18} fill="#2563EB" />
-        <Capsule x="12%" y="62%" w={70}  h={22} angle={52}  opacity={0.12} fill="#34D399" />
-        <Capsule x="74%" y="55%" w={120} h={24} angle={20}  opacity={0.1}  fill="#93C5FD" />
-        <Capsule x="30%" y="78%" w={60}  h={18} angle={-15} opacity={0.14} fill="#60A5FA" />
-        <Capsule x="55%" y="34%" w={50}  h={16} angle={70}  opacity={0.11} fill="#A7F3D0" />
-
-        <div className={styles.logo}>
-          <div className={styles.logoIcon}><PillIcon /></div>
-          <div>
-            <div className={styles.logoText}>PharmaOS</div>
-            <div className={styles.logoSub}>Management System</div>
-          </div>
-        </div>
-
-        <div className={styles.hero}>
-          <div className={styles.heroTag}>
-            <div className={styles.dot} />
-            <span className={styles.tagText}>Platform Active</span>
-          </div>
-          <h1>
-            Pharmacy<br />management,<br /><em>reimagined.</em>
-          </h1>
-          <p>
-            A complete SaaS solution for inventory control, point-of-sale,
-            supplier tracking, and AI-assisted medication recommendations —
-            built for modern pharmacies.
-          </p>
-        </div>
-
-        <div className={styles.stats}>
-          {[
-            ["FIFO",  "Batch Allocation"],
-            ["AI",    "OTC Suggestions"],
-            ["FR/AR", "Multilingual"],
-          ].map(([num, lbl]) => (
-            <div className={styles.stat} key={num}>
-              <div className={styles.statNum}>{num}</div>
-              <div className={styles.statLbl}>{lbl}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* ── RIGHT PANEL ──────────────────────────────────────────────────── */}
-      <div className={styles.right}>
-        <div className={styles.formWrap}>
+        <section className={styles.formPanel}>
           <div className={styles.tabs}>
-            <button
-              type="button"
-              className={`${styles.tab}${view === "login" ? ` ${styles.active}` : ""}`}
-              onClick={() => switchView("login")}
-            >
-              Sign In
-            </button>
-            <button
-              type="button"
-              className={`${styles.tab}${view === "signup" ? ` ${styles.active}` : ""}`}
-              onClick={() => switchView("signup")}
-            >
-              Create Pharmacy Account
-            </button>
+            <button type="button" className={tab === "signin" ? styles.activeTab : ""} onClick={() => setTab("signin")}>Sign In</button>
+            <button type="button" className={tab === "register" ? styles.activeTab : ""} onClick={() => setTab("register")}>Create Pharmacy Account</button>
           </div>
 
-          {view === "login" && (
-            <div className={styles.view}>
-              <div className={styles.viewHeader}>
-                <h2 className={styles.heading}>Welcome back.</h2>
-                <p className={styles.subheading}>Sign in to access your pharmacy dashboard.</p>
-              </div>
+          {tab === "signin" && (
+            <div className={styles.formView}>
+              <h1>Welcome back</h1>
+              <p>Sign in to your PharmaMS account</p>
 
-              <form onSubmit={handleLogin} noValidate>
-                <Field label="Email address">
-                  <TextInput
-                    type="email"
-                    placeholder="pharmacist@clinique.ma"
-                    value={loginEmail}
-                    onChange={(e) => setLoginEmail(e.target.value)}
-                    autoComplete="email"
-                  />
-                </Field>
+              {authError && <Banner tone="red">{authError}</Banner>}
+              {networkError && <Banner tone="red">{networkError}<button type="button" onClick={() => setNetworkError("")}>Retry</button></Banner>}
+              {lockoutLeft > 0 && <Banner tone="amber">Too many failed attempts - please wait {lockoutLeft} seconds before trying again</Banner>}
 
-                <Field label="Password">
-                  <PasswordInput
-                    placeholder="••••••••••"
-                    value={loginPw}
-                    onChange={(e) => setLoginPw(e.target.value)}
-                    show={showLoginPw}
-                    onToggle={() => setShowLoginPw((v) => !v)}
-                    autoComplete="current-password"
-                  />
-                </Field>
+              <form onSubmit={handleSignin} noValidate>
+                <TextField
+                  ref={emailRef}
+                  label="Email Address"
+                  type="email"
+                  placeholder="your@email.com"
+                  value={email}
+                  disabled={signinLoading}
+                  error={signinErrors.email}
+                  onChange={(value) => setEmail(value)}
+                />
+                <PasswordField
+                  label="Password"
+                  placeholder="••••••••"
+                  value={password}
+                  visible={showPassword}
+                  disabled={signinLoading}
+                  error={signinErrors.password}
+                  toggle={() => setShowPassword((current) => !current)}
+                  onChange={(value) => setPassword(value)}
+                />
+                <button type="button" className={styles.forgotLink} onClick={() => { setForgotOpen(true); setForgotEmail(email); }}>
+                  Forgot Password?
+                </button>
 
-                <div className={styles.row}>
-                  <div className={styles.checkRow} onClick={() => setRemember((v) => !v)}>
-                    <div className={`${styles.check}${remember ? ` ${styles.on}` : ""}`}>
-                      {remember && <CheckIcon />}
-                    </div>
-                    <span className={styles.checkLabel}>Remember me</span>
-                  </div>
-                  <button type="button" className={styles.forgot}>Forgot password?</button>
-                </div>
-
-                {loginError && (
-                  <div className={styles.error}>
-                    <InfoIcon />{loginError}
-                  </div>
-                )}
-
-                <button type="submit" className={styles.submit} disabled={loginLoading}>
-                  {loginLoading
-                    ? <><div className={styles.spinner} /> Signing in…</>
-                    : "Sign in to dashboard"}
+                <button type="submit" className={styles.submitBtn} disabled={signinLoading || lockoutLeft > 0}>
+                  {lockoutLeft > 0 ? `Try again in ${lockoutLeft}s` : signinLoading ? <><span className={styles.spinner} />Signing in...</> : "Sign In"}
                 </button>
               </form>
 
-              <div className={styles.divider}>Demo quick login</div>
-              <div className={styles.roles}>
-                {[
-                  ["Pharmacist", "pharmacist", "#1B5E42"],
-                  ["Assistant",  "assistant",  "#1E3A5F"],
-                  ["Cashier",    "cashier",    "#92400E"],
-                ].map(([label, role, color]) => (
-                  <div
-                    key={role}
-                    className={styles.role}
-                    onClick={() => handleMockLogin(role)}
-                  >
-                    <div className={styles.roleDot} style={{ background: color }} />
-                    {label}
-                  </div>
-                ))}
-              </div>
-
-              <div className={styles.notice}>
-                <ShieldIcon />
-                <p>
-                  <strong>Need a staff account?</strong> Assistant and cashier accounts are
-                  created by the pharmacist administrator from{" "}
-                  <span className={styles.noticeLink}>Settings → Users</span>.
-                </p>
-              </div>
-
-              <div className={styles.footer}>
-                Protected by JWT authentication &amp; RBAC
-                <br />
-                <span className={styles.footerMuted}>PharmaOS © 2026</span>
-              </div>
+              {forgotOpen && (
+                <ForgotPanel
+                  email={forgotEmail}
+                  setEmail={setForgotEmail}
+                  success={forgotSuccess}
+                  cooldown={forgotCooldown}
+                  managed={forgotManaged}
+                  onSubmit={submitForgot}
+                  onClose={() => setForgotOpen(false)}
+                />
+              )}
             </div>
           )}
 
-          {view === "signup" && (
-            <div className={styles.view}>
-              <div className={styles.badge}>
-                <StarIcon />
-                Pharmacist / Administrator Account
-              </div>
-
-              <div className={styles.viewHeader}>
-                <h2 className={styles.headingSignup}>Set up your pharmacy.</h2>
-                <p className={styles.subheading}>
-                  Create the administrator account for your pharmacy. You'll add assistants
-                  and cashiers from the dashboard afterward.
-                </p>
-              </div>
-
-              <div className={styles.info}>
-                <InfoIcon />
-                <span>
-                  <strong>One-time setup.</strong> Only one pharmacist/administrator account
-                  can be created per pharmacy. All other staff accounts are managed from{" "}
-                  <strong>Settings → Users</strong>.
-                </span>
-              </div>
-
-              <form onSubmit={handleSignup} noValidate>
-                <Field label="Pharmacy name">
-                  <TextInput
-                    type="text"
-                    placeholder="Pharmacie Al Amal"
-                    value={pharmacyName}
-                    onChange={(e) => setPharmacyName(e.target.value)}
-                    hasError={errs.pharmacyName}
-                    autoComplete="organization"
-                  />
-                </Field>
-
-                <div className={styles.twoCol}>
-                  <Field label="Full name">
-                    <TextInput
-                      type="text"
-                      placeholder="Dr. Youssef Alami"
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
-                      hasError={errs.fullName}
-                      autoComplete="name"
-                    />
-                  </Field>
-                  <Field label="Phone">
-                    <TextInput
-                      type="tel"
-                      placeholder="+212 6XX XXX XXX"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      hasError={errs.phone}
-                      autoComplete="tel"
-                    />
-                  </Field>
-                </div>
-
-                <Field label="Email address">
-                  <TextInput
-                    type="email"
-                    placeholder="admin@pharmacie.ma"
-                    value={signupEmail}
-                    onChange={(e) => setSignupEmail(e.target.value)}
-                    hasError={errs.signupEmail}
-                    autoComplete="email"
-                  />
-                </Field>
-
-                <Field label="Password">
-                  <PasswordInput
-                    placeholder="Min. 8 characters"
-                    value={signupPw}
-                    onChange={(e) => setSignupPw(e.target.value)}
-                    hasError={errs.signupPw}
-                    show={showSignupPw}
-                    onToggle={() => setShowSignupPw((v) => !v)}
-                    autoComplete="new-password"
-                  />
-                  {signupPw && (
-                    <>
-                      <div className={styles.pwBar}>
-                        {[1, 2, 3, 4].map((i) => (
-                          <div
-                            key={i}
-                            className={styles.pwSeg}
-                            style={{ background: i <= pwStrength ? strengthColor[pwStrength] : "#E2E8F0" }}
-                          />
-                        ))}
-                      </div>
-                      <div className={styles.pwStrengthLabel} style={{ color: strengthColor[pwStrength] }}>
-                        {strengthLabel[pwStrength]}
-                      </div>
-                    </>
-                  )}
-                </Field>
-
-                <Field label="Confirm password">
-                  <PasswordInput
-                    placeholder="Re-enter password"
-                    value={confirmPw}
-                    onChange={(e) => setConfirmPw(e.target.value)}
-                    hasError={errs.confirmPw}
-                    show={showConfirmPw}
-                    onToggle={() => setShowConfirmPw((v) => !v)}
-                    autoComplete="new-password"
-                  />
-                  {errs.confirmPw && <p className={styles.fieldError}>Passwords do not match.</p>}
-                </Field>
-
-                <div className={styles.field}>
-                  <div className={styles.checkRowTop} onClick={() => setAgreed((v) => !v)}>
-                    <div className={[
-                      styles.check,
-                      agreed ? styles.on : "",
-                      errs.agreed ? styles.err : "",
-                    ].filter(Boolean).join(" ")}>
-                      {agreed && <CheckIcon />}
-                    </div>
-                    <span className={styles.checkLabel}>
-                      I confirm that I am the licensed pharmacist and administrator of this
-                      pharmacy, and I agree to the{" "}
-                      <span className={styles.termsLink}>Terms of Use</span>.
-                    </span>
+          {tab === "register" && (
+            <div className={styles.formView}>
+              {registerSuccess ? (
+                <RegistrationSuccess data={registerSuccess} onSignIn={signInNow} />
+              ) : (
+                <>
+                  <h1>Register your pharmacy</h1>
+                  <p>Create the administrator account for your pharmacy</p>
+                  <div className={styles.noteBanner}>
+                    This creates the pharmacist administrator account. Staff accounts (assistants, cashiers) are added later from the Users settings page.
                   </div>
-                  {errs.agreed && <p className={styles.fieldError}>You must confirm before continuing.</p>}
-                </div>
+                  {registerErrors.form && <Banner tone="red">{registerErrors.form}</Banner>}
+                  <form onSubmit={handleRegister} noValidate>
+                    <fieldset disabled={registerLoading} className={styles.fieldset}>
+                      <h2>Pharmacy Information</h2>
+                      <TextField label="Pharmacy Name" placeholder="e.g. Pharmacie Al Amal" value={register.pharmacyName} error={registerErrors.pharmacyName} onChange={(value) => setRegister({ ...register, pharmacyName: value })} />
 
-                {signupError && (
-                  <div className={styles.error}>
-                    <InfoIcon />{signupError}
-                  </div>
-                )}
+                      <h2>Administrator Account</h2>
+                      <TextField label="Full Name" value={register.fullName} error={registerErrors.fullName} onChange={(value) => setRegister({ ...register, fullName: value })} />
+                      <TextField label="Email Address" type="email" value={register.email} error={registerErrors.email} onChange={(value) => setRegister({ ...register, email: value })} />
+                      <PasswordField label="Password" value={register.password} visible={showRegisterPassword} error={registerErrors.password} toggle={() => setShowRegisterPassword((current) => !current)} onChange={(value) => setRegister({ ...register, password: value })} />
+                      {register.password && <StrengthIndicator strength={strength} />}
+                      <PasswordField label="Confirm Password" value={register.confirmPassword} visible={showRegisterConfirm} error={registerErrors.confirmPassword} toggle={() => setShowRegisterConfirm((current) => !current)} onChange={(value) => setRegister({ ...register, confirmPassword: value })} />
 
-                <button type="submit" className={styles.submit} disabled={signupLoading}>
-                  {signupLoading
-                    ? <><div className={styles.spinner} /> Creating your account…</>
-                    : "Create pharmacy account"}
-                </button>
-              </form>
-
-              <div className={styles.footer}>
-                Already have an account?{" "}
-                <span className={styles.footerLink} onClick={() => switchView("login")}>
-                  Sign in
-                </span>
-                <br />
-                <span className={styles.footerMuted}>PharmaOS © 2026</span>
-              </div>
+                      <h2>Agreement</h2>
+                      <label className={styles.checkboxRow}>
+                        <input type="checkbox" checked={register.agreed} onChange={(event) => setRegister({ ...register, agreed: event.target.checked })} />
+                        <span>I confirm that I am a licensed pharmacist and the legal owner or operator of this pharmacy</span>
+                      </label>
+                      {registerErrors.agreed && <em className={styles.fieldError}>{registerErrors.agreed}</em>}
+                    </fieldset>
+                    <button type="submit" className={styles.submitBtn} disabled={registerLoading || !registrationValid}>
+                      {registerLoading ? <><span className={styles.spinner} />Creating account...</> : "Create Pharmacy Account"}
+                    </button>
+                  </form>
+                </>
+              )}
             </div>
           )}
-        </div>
-      </div>
+
+        </section>
+      </section>
     </div>
   );
 }
 
 LoginPage.getLayout = PublicLayout.getLayout;
+
+export async function getServerSideProps(context) {
+  return { props: { protectedRedirect: context.query?.redirected === "true" } };
+}
+
+function BrandPanel() {
+  return (
+    <aside className={styles.brandPanel}>
+      <div className={styles.brandCenter}>
+        <div className={styles.logoRow}>
+          <img className={styles.brandLogo} src="/pharmaos-logo.svg" alt="" aria-hidden="true" />
+          <strong>PharmaMS</strong>
+        </div>
+        <p>Automated pharmacy management</p>
+      </div>
+    </aside>
+  );
+}
+
+function Banner({ tone, children }) {
+  return <div className={`${styles.banner} ${styles[`banner_${tone}`]}`} role="alert">{children}</div>;
+}
+
+const TextField = forwardRef(function TextFieldComponent({ label, value, onChange, error, ...props }, ref) {
+  return (
+    <label className={styles.field}>
+      <span>{label}</span>
+      <input ref={ref} value={value} onChange={(event) => onChange(event.target.value)} aria-invalid={Boolean(error)} {...props} />
+      {error && <em role="alert">{error}</em>}
+    </label>
+  );
+});
+
+function PasswordField({ label, value, onChange, visible, toggle, error, ...props }) {
+  return (
+    <label className={styles.field}>
+      <span>{label}</span>
+      <div className={styles.passwordWrap}>
+        <input type={visible ? "text" : "password"} value={value} onChange={(event) => onChange(event.target.value)} aria-invalid={Boolean(error)} {...props} />
+        <button type="button" onClick={toggle} aria-label={visible ? "Hide password" : "Show password"}>
+          {visible ? <EyeOff size={16} /> : <Eye size={16} />}
+        </button>
+      </div>
+      {error && <em role="alert">{error}</em>}
+    </label>
+  );
+}
+
+function StrengthIndicator({ strength }) {
+  return (
+    <div className={`${styles.strength} ${strength.className}`}>
+      <div><span style={{ width: `${strength.value}%` }} /></div>
+      <strong>{strength.label}</strong>
+    </div>
+  );
+}
+
+function ForgotPanel({ email, setEmail, success, cooldown, managed, onSubmit, onClose }) {
+  if (managed) {
+    return (
+      <div className={styles.forgotPanel}>
+        <h2>Reset Password</h2>
+        <Banner tone="amber">Password reset is managed by your pharmacist. Contact them to reset your password.</Banner>
+        <button type="button" className={styles.textBtn} onClick={onClose}>Close</button>
+      </div>
+    );
+  }
+
+  return (
+    <form className={styles.forgotPanel} onSubmit={onSubmit}>
+      <h2>Reset Password</h2>
+      <p>Enter your email address. If an account exists, a reset link will be sent.</p>
+      <TextField label="Email Address" type="email" value={email} onChange={setEmail} />
+      {success && <Banner tone="green">Check your inbox for the reset link</Banner>}
+      <div className={styles.inlineActions}>
+        <button type="submit" className={styles.smallPrimaryBtn} disabled={cooldown > 0}>{cooldown > 0 ? `Resend in ${cooldown}s` : "Send Reset Link"}</button>
+        <button type="button" className={styles.textBtn} onClick={onClose}>Cancel</button>
+      </div>
+    </form>
+  );
+}
+
+function RegistrationSuccess({ data, onSignIn }) {
+  return (
+    <div className={styles.successScreen}>
+      <CheckCircle2 size={46} />
+      <h1>Pharmacy account created</h1>
+      <p>Welcome to PharmaMS, {data.fullName}</p>
+      <div className={styles.summaryBox}>
+        <span>Pharmacy:<strong>{data.pharmacyName}</strong></span>
+        <span>Role:<strong>Pharmacist (Administrator)</strong></span>
+        <span>Email:<strong>{data.email}</strong></span>
+      </div>
+      <p>You can now sign in with your email and password.</p>
+      <p>Add your staff accounts from Settings &gt; Users after signing in.</p>
+      <button type="button" className={styles.submitBtn} onClick={onSignIn}>Sign In Now</button>
+    </div>
+  );
+}
+
+function LanguageToggle({ language, switchLanguage, mobile = false }) {
+  return (
+    <div className={`${styles.languageToggle} ${mobile ? styles.mobileLanguage : ""}`}>
+      <button type="button" className={language === "fr" ? styles.languageActive : ""} onClick={() => switchLanguage("fr")}>Français</button>
+      <button type="button" className={language === "ar" ? styles.languageActive : ""} onClick={() => switchLanguage("ar")}>العربية</button>
+    </div>
+  );
+}

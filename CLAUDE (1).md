@@ -24,6 +24,27 @@ Student: Imane Boughamza
 Supervisor: Dr. Driss Kettani
 Live URL: https://pharmacy-management-system-one-drab.vercel.app/
 
+## TWO-APP ARCHITECTURE
+
+PharmaOS has two separate Next.js applications:
+
+1. Staff Management App — folder: frontend/
+   URL: pharmacy-management-system-one-drab.vercel.app
+   Contains: all authenticated staff pages
+   Does NOT contain: /reservations/new or /reservations/track
+
+2. Customer Reservation Portal — folder: customer-portal/
+   URL: pharmaos-reservations.vercel.app
+   Contains: reservation form (index.jsx) and tracking page (track/[code].jsx)
+   No authentication required on any page
+
+Both apps communicate with the same backend at the same API URL.
+They never communicate directly with each other.
+
+customer-portal/.env.local:
+  NEXT_PUBLIC_API_URL=https://your-backend.render.com
+
+CORS on the backend allows both origins.
 ## Monorepo Structure
 
 ```

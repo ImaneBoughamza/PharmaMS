@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { Search } from "lucide-react";
 import { toast } from "sonner";
+import api from "@/lib/axios";
 import { formatCurrency } from "@/utils/formatCurrency";
 import SaleDetailModal from "./SaleDetailModal";
 import VoidSaleModal from "./VoidSaleModal";
@@ -138,8 +139,39 @@ const TYPE_OPTS = [
 
 const PAGE_SIZE = 10;
 
-export default function SalesHistory({ userRole, userId }) {
-  const [sales,       setSales]       = useState(INITIAL_SALES);
+function normalizeSale(sale) {
+  const medicineItems = (sale.items || []).map((item) => ({
+    productName: item.medicineId?.name || item.medicineName || "Medicine",
+    productType: "medicine",
+    qty: item.qty,
+    unitPrice: item.unitPrice,
+    batchNumber: item.batchId?.batchNumber || "",
+  }));
+
+  const parapharmacyItems = (sale.parapharmacyItems || []).map((item) => ({
+    productName: item.productId?.name || "Parapharmacy product",
+    productType: "parapharmacy",
+    qty: item.qty,
+    unitPrice: item.unitPrice,
+  }));
+
+  return {
+    _id: sale._id,
+    receiptNumber: sale.invoice?.receiptNumber || sale.receiptNumber || "—",
+    createdAt: sale.createdAt,
+    cashierId: sale.cashierId?._id || sale.cashierId,
+    cashierName: sale.cashierId?.fullName || sale.cashierName || "Staff",
+    paymentMethod: sale.paymentMethod === "card" ? "Card" : "Cash",
+    status: sale.approvalStatus === "voided" || sale.status === "voided" ? "voided" : "completed",
+    voidedAt: sale.voidedAt,
+    voidReason: sale.voidReason,
+    items: [...medicineItems, ...parapharmacyItems],
+  };
+}
+
+export default function SalesHistory({ userRole, userId, refreshKey = 0 }) {
+  const [sales,       setSales]       = useState([]);
+  const [loading,     setLoading]     = useState(true);
   const [search,      setSearch]      = useState("");
   const [dateFilter,  setDateFilter]  = useState("today");
   const [customStart, setCustomStart] = useState("");
@@ -152,13 +184,29 @@ export default function SalesHistory({ userRole, userId }) {
   const isCashier    = userRole === "cashier";
   const isPharmacist = userRole === "pharmacist";
 
+  async function loadSales() {
+    try {
+      setLoading(true);
+      const { data } = await api.get("/api/sales", { params: { limit: 100 } });
+      setSales((data.data || []).map(normalizeSale));
+    } catch (error) {
+      toast.error(error?.response?.data?.message ?? "Failed to load sales history");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    loadSales();
+  }, [refreshKey]);
+
   useEffect(() => { setPage(1); }, [search, dateFilter, customStart, customEnd, typeFilter]);
 
   const filtered = useMemo(() => {
     const now = new Date();
     let r = sales;
 
-    if (isCashier) r = r.filter((s) => s.cashierId === userId);
+    if (isCashier && userId) r = r.filter((s) => s.cashierId === userId);
 
     if (search.trim()) {
       const q = search.trim().toLowerCase();
@@ -197,16 +245,15 @@ export default function SalesHistory({ userRole, userId }) {
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const pageSales  = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
-  function handleVoidConfirm(sale, reason) {
-    setSales((prev) =>
-      prev.map((s) =>
-        s._id === sale._id
-          ? { ...s, status: "voided", voidedAt: new Date().toISOString(), voidReason: reason }
-          : s
-      )
-    );
-    setVoidSale(null);
-    toast.success(`Sale #${sale.receiptNumber} voided`);
+  async function handleVoidConfirm(sale, reason) {
+    try {
+      await api.patch(`/api/sales/${sale._id}/void`, { reason });
+      await loadSales();
+      setVoidSale(null);
+      toast.success(`Sale #${sale.receiptNumber} voided`);
+    } catch (error) {
+      toast.error(error?.response?.data?.message ?? "Failed to void sale");
+    }
   }
 
   function handleOpenVoidFromDetail(sale) {
@@ -270,7 +317,9 @@ export default function SalesHistory({ userRole, userId }) {
 
       {/* Table */}
       <div className={styles.tableWrap}>
-        {pageSales.length === 0 ? (
+        {loading ? (
+          <div className={styles.empty}>Loading sales history...</div>
+        ) : pageSales.length === 0 ? (
           <div className={styles.empty}>No sales found for the selected filters.</div>
         ) : (
           <table className={styles.table}>

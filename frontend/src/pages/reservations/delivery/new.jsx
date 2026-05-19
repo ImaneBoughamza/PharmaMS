@@ -1,13 +1,6 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 
-const PillIcon = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-    <path d="M10.5 20.5L3.5 13.5a5 5 0 017.07-7.07l7 7a5 5 0 01-7.07 7.07z" />
-    <line x1="8.5" y1="11.5" x2="15.5" y2="8.5" />
-  </svg>
-);
-
 const SearchIcon = () => (
   <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
     <circle cx="11" cy="11" r="7" />
@@ -124,11 +117,9 @@ export default function NewReservationPage() {
       <div className="pub-root">
         <header className="pub-header">
           <div className="pub-brand" onClick={() => router.push("/")}>
-            <div className="pub-brand-icon">
-              <PillIcon />
-            </div>
+            <img className="pub-brand-logo" src="/pharmaos-logo.svg" alt="" aria-hidden="true" />
             <div>
-              <div className="pub-brand-title">PharmaOS</div>
+              <div className="pub-brand-title">PharmaMS</div>
               <div className="pub-brand-sub">Online Reservation</div>
             </div>
           </div>
@@ -370,16 +361,11 @@ export default function NewReservationPage() {
           cursor: pointer;
         }
 
-        .pub-brand-icon {
-          width: 44px;
+        .pub-brand-logo {
+          width: 48px;
           height: 44px;
-          border-radius: 14px;
-          background: linear-gradient(135deg, #2563eb, #1d4ed8);
-          color: white;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          box-shadow: 0 10px 24px rgba(37, 99, 235, 0.28);
+          object-fit: contain;
+          flex-shrink: 0;
         }
 
         .pub-brand-title {

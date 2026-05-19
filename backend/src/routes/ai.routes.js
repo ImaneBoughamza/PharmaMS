@@ -1,27 +1,22 @@
 import express from "express";
-import { z } from "zod";
-import { requireAuth } from "../middleware/auth.js";
-import { requireRole } from "../middleware/rbac.js";
-import { validate } from "../middleware/validate.js";
-import { asyncHandler } from "../utils/asyncHandler.js";
-import { getOTCSuggestion } from "../services/ai.service.js";
+import auth from "../middleware/auth.js";
+import { allow } from "../middleware/rbac.js";
+import validate from "../middleware/validate.js";
+import audit from "../middleware/audit.js";
+import { ROLES } from "../constants/roles.js";
+import * as controller from "../controllers/ai.controller.js";
+import {
+  recommendSchema,
+  saveConsultationSchema,
+  scanPrescriptionSchema,
+} from "../validators/ai.validators.js";
 
 const router = express.Router();
 
-const suggestSchema = z.object({
-  prompt: z.string().min(1).max(2000),
-});
-
-// POST /api/ai/suggest
-router.post(
-  "/suggest",
-  requireAuth,
-  requireRole("pharmacist", "assistant"),
-  validate(suggestSchema),
-  asyncHandler(async (req, res) => {
-    const suggestion = await getOTCSuggestion(req.body.prompt);
-    res.json({ suggestion });
-  })
-);
+router.post("/scan", auth, allow(ROLES.PHARMACIST, ROLES.ASSISTANT), validate(scanPrescriptionSchema), audit, controller.scan);
+router.post("/recommendations", auth, allow(ROLES.PHARMACIST, ROLES.ASSISTANT), validate(recommendSchema), controller.recommend);
+router.post("/consultations", auth, allow(ROLES.PHARMACIST, ROLES.ASSISTANT), validate(saveConsultationSchema), audit, controller.save);
+router.get("/consultations", auth, allow(ROLES.PHARMACIST, ROLES.ASSISTANT), controller.list);
+router.get("/consultations/:id", auth, allow(ROLES.PHARMACIST, ROLES.ASSISTANT), controller.getById);
 
 export default router;

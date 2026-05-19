@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,27 +8,13 @@ import { RefreshCw } from "lucide-react";
 import AppLayout from "@/components/layout/AppLayout";
 import Badge from "@/components/ui/Badge";
 import Modal from "@/components/ui/Modal";
+import api from "@/lib/axios";
 import styles from "@/styles/ParapharmacyDetailPage.module.css";
-
-// TODO: replace with useSWR(`/api/parapharmacy/${id}`) when backend is ready
-const MOCK = {
-  _id: "p1",
-  name: "Vitamin D3 1000 IU",
-  brand: "Sanofi",
-  category: "supplements",
-  stockQty: 48,
-  minStockLevel: 10,
-  purchasePrice: 55,
-  salePrice: 85,
-  supplier: { _id: "s2", name: "BioLab Supplies" },
-  isActive: true,
-  createdAt: "2026-01-10T00:00:00Z",
-};
 
 const adjustSchema = z.object({
   mode:   z.enum(["add", "subtract"]),
   qty:    z.coerce.number().int().min(1, "Must be ≥ 1"),
-  reason: z.string().min(1, "Reason is required"),
+  reason: z.string().min(10, "At least 10 characters required"),
 });
 
 function fmtMAD(v) {
@@ -41,8 +27,46 @@ function fmtDate(iso) {
 
 export default function ParapharmacyDetailPage() {
   const router = useRouter();
-  const [product, setProduct] = useState(MOCK);
+  const { id } = router.query;
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [adjustModal, setAdjustModal] = useState(false);
+
+  async function loadProduct() {
+    if (!id) return;
+    try {
+      setLoading(true);
+      const { data } = await api.get(`/api/parapharmacy/${id}`);
+      setProduct(data.data);
+    } catch (error) {
+      toast.error(error?.response?.data?.message ?? "Failed to load product");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    loadProduct();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className={styles.page}>
+        <p className={styles.formHint}>Loading product...</p>
+      </div>
+    );
+  }
+
+  if (!product) {
+    return (
+      <div className={styles.page}>
+        <button className={styles.back} onClick={() => router.push("/products")}>
+          ← Back to Products
+        </button>
+        <p className={styles.formError}>Product not found</p>
+      </div>
+    );
+  }
 
   const isLow = product.stockQty > 0 && product.stockQty <= product.minStockLevel;
   const stockStatus =
@@ -61,13 +85,22 @@ export default function ParapharmacyDetailPage() {
 
   const mode = watch("mode");
 
-  function handleAdjust(data) {
-    const delta = data.mode === "add" ? data.qty : -data.qty;
-    const newQty = Math.max(0, product.stockQty + delta);
-    setProduct((prev) => ({ ...prev, stockQty: newQty }));
-    toast.success(`Stock ${data.mode === "add" ? "increased" : "decreased"} by ${data.qty} units`);
-    reset({ mode: "add", qty: 1, reason: "" });
-    setAdjustModal(false);
+  async function handleAdjust(data) {
+    try {
+      await api.patch("/api/stock/adjust", {
+        productType: "parapharmacy",
+        productId: product._id,
+        adjustmentType: data.mode,
+        quantity: data.qty,
+        reason: data.reason,
+      });
+      await loadProduct();
+      toast.success(`Stock ${data.mode === "add" ? "increased" : "decreased"} by ${data.qty} units`);
+      reset({ mode: "add", qty: 1, reason: "" });
+      setAdjustModal(false);
+    } catch (error) {
+      toast.error(error?.response?.data?.message ?? "Failed to adjust stock");
+    }
   }
 
   return (

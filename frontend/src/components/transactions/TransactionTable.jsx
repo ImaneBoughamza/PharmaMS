@@ -1,66 +1,114 @@
-// TODO [PROVISIONAL-2]: scope to be confirmed with supervisor
+import { Eye } from "lucide-react";
 import Badge from "@/components/ui/Badge";
+import { formatCurrency } from "@/utils/formatCurrency";
 import styles from "@/styles/TransactionsPage.module.css";
 
-function formatCurrency(amount) {
-  return new Intl.NumberFormat("fr-MA", { style: "currency", currency: "MAD" }).format(amount ?? 0);
-}
+const TYPE_LABEL = {
+  sale: "Sale",
+  reservation: "Reservation",
+  delivery: "Delivery",
+};
 
-function formatDate(d) {
-  return new Date(d).toLocaleString("en-GB", {
-    day: "2-digit", month: "short", year: "numeric",
-    hour: "2-digit", minute: "2-digit",
+const TYPE_VARIANT = {
+  sale: "success",
+  reservation: "info",
+  delivery: "warning",
+};
+
+const STATUS_VARIANT = {
+  completed: "success",
+  voided: "error",
+  pending: "warning",
+  confirmed: "info",
+  ready: "success",
+  expired: "neutral",
+  cancelled: "error",
+  ordered: "warning",
+  received: "success",
+};
+
+function formatDateTime(value) {
+  return new Date(value).toLocaleString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
   });
 }
 
-const TYPE_LABEL = { sale: "Sale", reservation: "Reservation", delivery: "Delivery" };
-const TYPE_VARIANT = { sale: "info", reservation: "success", delivery: "warning" };
-const DOT_CLASS = { sale: styles.typeSale, reservation: styles.typeReservation, delivery: styles.typeDelivery };
+function titleCase(value) {
+  if (!value) return "";
+  return value.charAt(0).toUpperCase() + value.slice(1);
+}
 
-export default function TransactionTable({ transactions }) {
-  const rows = transactions ?? [];
+function amountOrQty(tx) {
+  if (tx._type === "delivery") return `${tx.itemCount} items received`;
+  return formatCurrency(tx.amount);
+}
 
-  if (rows.length === 0) {
-    return (
-      <div className={styles.tableWrap}>
-        <p style={{ padding: "2rem", textAlign: "center", fontFamily: "var(--font-ui)", fontSize: "0.9rem", color: "var(--color-text-muted)" }}>
-          No transactions found.
-        </p>
-      </div>
-    );
-  }
-
+export default function TransactionTable({ transactions, onView }) {
   return (
     <div className={styles.tableWrap}>
-      <table style={{ width: "100%", borderCollapse: "collapse" }}>
+      <table className={styles.table}>
         <thead>
-          <tr style={{ background: "var(--color-bg)", borderBottom: "1px solid var(--color-border)" }}>
-            {["Type", "Reference", "Amount / Details", "Date"].map((h) => (
-              <th key={h} style={{ padding: "0.75rem 1rem", textAlign: "left", fontFamily: "var(--font-ui)", fontSize: "0.78rem", fontWeight: 600, color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.04em" }}>{h}</th>
-            ))}
+          <tr>
+            <th>Reference</th>
+            <th>Type</th>
+            <th>Date / Time</th>
+            <th>Product Types</th>
+            <th>Staff</th>
+            <th>Amount / Qty</th>
+            <th>Status</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
-          {rows.map((tx) => (
-            <tr key={`${tx._type}-${tx._id}`} style={{ borderBottom: "1px solid var(--color-border)" }}>
-              <td style={{ padding: "0.85rem 1rem" }}>
-                <span style={{ display: "inline-flex", alignItems: "center", fontFamily: "var(--font-ui)", fontSize: "0.85rem" }}>
-                  <span className={`${styles.typeDot} ${DOT_CLASS[tx._type]}`} />
-                  {TYPE_LABEL[tx._type]}
+          {transactions.map((tx) => (
+            <tr
+              key={`${tx._type}-${tx._id}`}
+              className={styles.clickableRow}
+              onClick={() => onView(tx)}
+            >
+              <td>
+                <span className={[styles.reference, styles[`reference_${tx._type}`]].join(" ")}>
+                  {tx.reference}
                 </span>
               </td>
-              <td style={{ padding: "0.85rem 1rem", fontFamily: "var(--font-ui)", fontSize: "0.82rem", color: "var(--color-text-muted)" }}>
-                {tx.invoice?.receiptNumber ?? tx.confirmationCode ?? tx._id?.toString().slice(-6)}
+              <td>
+                <Badge variant={TYPE_VARIANT[tx._type]}>{TYPE_LABEL[tx._type]}</Badge>
               </td>
-              <td style={{ padding: "0.85rem 1rem", fontFamily: "var(--font-ui)", fontSize: "0.88rem" }}>
-                {tx._type === "sale" && formatCurrency(tx.totalAmount)}
-                {tx._type === "reservation" && (
-                  <span>{tx.customerName} — <Badge variant={tx.status === "confirmed" ? "success" : "warning"}>{tx.status}</Badge></span>
-                )}
-                {tx._type === "delivery" && (tx.supplierId?.name ?? "Delivery")}
+              <td className={styles.mutedCell}>{formatDateTime(tx.createdAt)}</td>
+              <td>
+                <div className={styles.tagRow}>
+                  {tx.productTypes.includes("medicine") && (
+                    <span className={styles.productTagMedicine}>Medicine</span>
+                  )}
+                  {tx.productTypes.includes("parapharmacy") && (
+                    <span className={styles.productTagParapharmacy}>Parapharmacy</span>
+                  )}
+                </div>
               </td>
-              <td style={{ padding: "0.85rem 1rem", fontFamily: "var(--font-ui)", fontSize: "0.82rem", color: "var(--color-text-muted)" }}>
-                {formatDate(tx.createdAt)}
+              <td>{tx.staffName}</td>
+              <td>{amountOrQty(tx)}</td>
+              <td>
+                <Badge variant={STATUS_VARIANT[tx.status] ?? "neutral"}>
+                  {titleCase(tx.status)}
+                </Badge>
+              </td>
+              <td>
+                <button
+                  type="button"
+                  className={styles.iconBtn}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onView(tx);
+                  }}
+                  title="View"
+                  aria-label={`View ${tx.reference}`}
+                >
+                  <Eye size={15} />
+                </button>
               </td>
             </tr>
           ))}

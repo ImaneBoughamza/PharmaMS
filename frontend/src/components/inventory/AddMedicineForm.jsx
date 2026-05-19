@@ -11,7 +11,7 @@ const schema = z.object({
   category:      z.enum(["non-prescription", "prescription", "regulated"], { required_error: "Category is required" }),
   unit:          z.string().min(1, "Unit is required"),
   description:   z.string().optional().default(""),
-  supplierId:    z.string().optional(),
+  supplierId:    z.string().length(24, "Supplier is required"),
   // Pricing
   salePrice:     z.coerce.number().positive("Must be positive"),
   purchasePrice: z.coerce.number().positive("Must be positive"),
@@ -23,12 +23,7 @@ const schema = z.object({
   initialQty:    z.coerce.number().int().min(1, "Must be ≥ 1"),
 });
 
-const MOCK_SUPPLIERS = [
-  { _id: "s1", name: "PharmaDist Maroc" },
-  { _id: "s2", name: "BioLab Supplies" },
-];
-
-export default function AddMedicineForm({ onSubmit, isLoading }) {
+export default function AddMedicineForm({ onSubmit, isLoading, suppliers = [] }) {
   const {
     register,
     handleSubmit,
@@ -63,17 +58,26 @@ export default function AddMedicineForm({ onSubmit, isLoading }) {
           </div>
           <div className={styles.fieldWrap}>
             <label className={styles.label} htmlFor="unit">Unit *</label>
-            <input id="unit" className={styles.input} placeholder="tablet, bottle, vial…" {...register("unit")} />
+            <select id="unit" className={styles.select} {...register("unit")}>
+              <option value="">Select...</option>
+              <option value="tablet">Tablet</option>
+              <option value="capsule">Capsule</option>
+              <option value="ml">ml</option>
+              <option value="g">g</option>
+              <option value="unit">Unit</option>
+              <option value="other">Other</option>
+            </select>
             {errors.unit && <p className={styles.error}>{errors.unit.message}</p>}
           </div>
           <div className={styles.fieldWrap}>
             <label className={styles.label} htmlFor="supplierId">Supplier</label>
             <select id="supplierId" className={styles.select} {...register("supplierId")}>
-              <option value="">No supplier</option>
-              {MOCK_SUPPLIERS.map((s) => (
+              <option value="">Select supplier...</option>
+              {suppliers.map((s) => (
                 <option key={s._id} value={s._id}>{s.name}</option>
               ))}
             </select>
+            {suppliers.length === 0 && <p className={styles.error}>Create an active supplier before adding medicines.</p>}
           </div>
           <div className={[styles.fieldWrap, styles.fullWidth].join(" ")}>
             <label className={styles.label} htmlFor="description">Description</label>
@@ -135,7 +139,7 @@ export default function AddMedicineForm({ onSubmit, isLoading }) {
       </div>
 
       <div className={styles.actions}>
-        <Button type="submit" variant="primary" size="md" disabled={isLoading}>
+        <Button type="submit" variant="primary" size="md" disabled={isLoading || suppliers.length === 0}>
           {isLoading ? "Saving…" : "Add Medicine"}
         </Button>
       </div>

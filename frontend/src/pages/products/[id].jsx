@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,27 +8,8 @@ import { Plus } from "lucide-react";
 import AppLayout from "@/components/layout/AppLayout";
 import Badge from "@/components/ui/Badge";
 import Modal from "@/components/ui/Modal";
+import api from "@/lib/axios";
 import styles from "@/styles/MedicineDetailPage.module.css";
-
-// TODO: replace with useSWR(`/api/medicines/${id}`) when backend is ready
-const MOCK = {
-  _id: "1",
-  name: "Paracetamol 500mg",
-  genericName: "Paracetamol",
-  category: "non-prescription",
-  unit: "tablet",
-  description: "Analgesic and antipyretic for mild to moderate pain.",
-  supplier: { _id: "s1", name: "PharmaDist Maroc" },
-  minStockLevel: 20,
-  salePrice: 22.5,
-  purchasePrice: 15,
-  isActive: true,
-  batches: [
-    { _id: "b1", batchNumber: "PC-2401", expiryDate: "2026-05-18", initialQty: 100, remainingQty: 8,  purchasePrice: 15,   salePrice: 22.5, status: "active"   },
-    { _id: "b2", batchNumber: "PC-2312", expiryDate: "2025-11-30", initialQty: 200, remainingQty: 0,  purchasePrice: 14.5, salePrice: 22.5, status: "depleted" },
-    { _id: "b3", batchNumber: "PC-2502", expiryDate: "2027-02-14", initialQty: 150, remainingQty: 0,  purchasePrice: 15.2, salePrice: 23.0, status: "returned" },
-  ],
-};
 
 const BATCH_STATUS_META = {
   active:   { label: "Active",    variant: "confirmed" },
@@ -63,11 +44,72 @@ function fmtMAD(v) {
   return new Intl.NumberFormat("fr-MA", { style: "currency", currency: "MAD" }).format(v ?? 0);
 }
 
+function batchStatus(batch) {
+  if (batch.status) return batch.status;
+  if (batch.isActive === false) return "deactivated";
+  if (batch.remainingQty <= 0) return "depleted";
+  if (batch.expiryDate && new Date(batch.expiryDate) < new Date()) return "expired";
+  return "active";
+}
+
+function normalizeMedicine(item) {
+  const supplier = item.supplierId && typeof item.supplierId === "object" ? item.supplierId : item.supplier;
+  return {
+    ...item,
+    supplier: supplier ? { _id: supplier._id, name: supplier.name } : null,
+    batches: (item.batches ?? []).map((batch) => ({ ...batch, status: batchStatus(batch) })),
+  };
+}
+
 export default function MedicineDetailPage() {
   const router = useRouter();
-  const [medicine, setMedicine] = useState(MOCK);
+  const { id } = router.query;
+  const [medicine, setMedicine] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
   const [registerModal, setRegisterModal] = useState(false);
   const [returnModal, setReturnModal]     = useState({ open: false, batch: null });
+  const registerForm = useForm({ resolver: zodResolver(registerBatchSchema) });
+  const returnForm   = useForm({ resolver: zodResolver(returnBatchSchema) });
+
+  useEffect(() => {
+    if (!router.isReady || !id) return;
+    let cancelled = false;
+
+    async function loadMedicine() {
+      setLoading(true);
+      setLoadError("");
+      try {
+        const { data } = await api.get(`/api/medicines/${id}`);
+        if (!cancelled) setMedicine(normalizeMedicine(data.data));
+      } catch (err) {
+        if (!cancelled) setLoadError(err?.response?.data?.message ?? "Failed to load medicine.");
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+
+    loadMedicine();
+    return () => { cancelled = true; };
+  }, [router.isReady, id]);
+
+  if (loading) {
+    return (
+      <div className={styles.page}>
+        <button className={styles.back} onClick={() => router.push("/products")}>← Back to Products</button>
+        <div className={styles.card}><p className={styles.emptyCell}>Loading medicine...</p></div>
+      </div>
+    );
+  }
+
+  if (loadError || !medicine) {
+    return (
+      <div className={styles.page}>
+        <button className={styles.back} onClick={() => router.push("/products")}>← Back to Products</button>
+        <div className={styles.card}><p className={styles.emptyCell}>{loadError || "Medicine not found"}</p></div>
+      </div>
+    );
+  }
 
   const totalStock    = medicine.batches?.reduce((s, b) => s + (b.status === "active" ? b.remainingQty : 0), 0) ?? 0;
   const activeBatches = medicine.batches?.filter((b) => b.status === "active").length ?? 0;
@@ -83,10 +125,6 @@ export default function MedicineDetailPage() {
     !medicine.isActive ? "Inactive" :
     totalStock === 0   ? "Out of Stock" :
     totalStock < medicine.minStockLevel ? "Low Stock" : "In Stock";
-
-  // Register batch form
-  const registerForm = useForm({ resolver: zodResolver(registerBatchSchema) });
-  const returnForm   = useForm({ resolver: zodResolver(returnBatchSchema) });
 
   function handleRegisterBatch(data) {
     const newBatch = {

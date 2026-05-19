@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { CheckCircle, XCircle } from "lucide-react";
+import { CheckCircle, Upload, XCircle } from "lucide-react";
 import styles from "./PharmacistApprovalModal.module.css";
 
 const COUNTDOWN = 120;
@@ -11,11 +11,15 @@ export default function PharmacistApprovalModal({
   approvedBy,
   rejectedBy,
   rejectionReason,
+  onSubmitPrescription,
   onCancel,
   onTimeout,
   onBackToCart,
 }) {
   const [secondsLeft, setSecondsLeft] = useState(COUNTDOWN);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState("");
+  const [uploadError, setUploadError] = useState("");
 
   useEffect(() => {
     if (!isOpen || status !== "waiting") return;
@@ -37,13 +41,58 @@ export default function PharmacistApprovalModal({
 
   const isTerminal = status === "rejected" || status === "timeout";
 
+  function handleFileChange(event) {
+    const file = event.target.files?.[0];
+    setSelectedFile(null);
+    setPreviewUrl("");
+    setUploadError("");
+
+    if (!file) return;
+    if (!["image/jpeg", "image/png"].includes(file.type)) {
+      setUploadError("Only JPEG and PNG prescription images are accepted");
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      setUploadError("File too large - maximum size is 10MB");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      setSelectedFile(file);
+      setPreviewUrl(String(reader.result || ""));
+    };
+    reader.onerror = () => {
+      setUploadError("Could not read the prescription image");
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function handleSubmitPrescription() {
+    if (!selectedFile || !previewUrl) {
+      setUploadError(
+        "Upload the prescription before requesting pharmacist approval",
+      );
+      return;
+    }
+
+    onSubmitPrescription?.({
+      filename: selectedFile.name,
+      mimeType: selectedFile.type,
+      size: selectedFile.size,
+      dataUrl: previewUrl,
+    });
+  }
+
   return (
     <div className={styles.overlay}>
       <div className={styles.card} role="dialog" aria-modal="true">
         {/* Header */}
         <div className={styles.header}>
           <h2 className={styles.title}>Pharmacist Approval Required</h2>
-          <p className={styles.subtitle}>This sale contains regulated medicines</p>
+          <p className={styles.subtitle}>
+            This sale contains regulated medicines
+          </p>
         </div>
 
         {/* Regulated items list */}
@@ -66,9 +115,13 @@ export default function PharmacistApprovalModal({
             <>
               <div className={styles.waitingRow}>
                 <span className={styles.pulseDot} />
-                <span className={styles.statusText}>Waiting for pharmacist approval...</span>
+                <span className={styles.statusText}>
+                  Waiting for pharmacist approval...
+                </span>
               </div>
-              <p className={styles.countdown}>{secondsLeft} seconds remaining</p>
+              <p className={styles.countdown}>
+                {secondsLeft} seconds remaining
+              </p>
               <div className={styles.timerBar}>
                 <div
                   className={styles.timerFill}
@@ -78,19 +131,56 @@ export default function PharmacistApprovalModal({
             </>
           )}
 
+          {status === "upload" && (
+            <div className={styles.uploadBox}>
+              <label className={styles.uploadLabel}>
+                <Upload size={18} />
+                <span>Upload prescription image</span>
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png"
+                  onChange={handleFileChange}
+                />
+              </label>
+              {previewUrl && (
+                <div className={styles.previewWrap}>
+                  <img src={previewUrl} alt="Prescription preview" />
+                  <p>{selectedFile?.name}</p>
+                </div>
+              )}
+              {uploadError && (
+                <p className={styles.uploadError}>{uploadError}</p>
+              )}
+              <p className={styles.uploadHint}>
+                The pharmacist will review this image with the regulated
+                medicines before approving the sale.
+              </p>
+            </div>
+          )}
+
           {status === "approved" && (
             <>
-              <CheckCircle size={38} className={styles.iconSuccess} strokeWidth={1.75} />
+              <CheckCircle
+                size={38}
+                className={styles.iconSuccess}
+                strokeWidth={1.75}
+              />
               <p className={styles.statusTextSuccess}>
                 Approved by {approvedBy ?? "Pharmacist"}
               </p>
-              <p className={styles.autoNote}>Proceeding to checkout in 1 second…</p>
+              <p className={styles.autoNote}>
+                Proceeding to checkout in 1 second…
+              </p>
             </>
           )}
 
           {status === "rejected" && (
             <>
-              <XCircle size={38} className={styles.iconError} strokeWidth={1.75} />
+              <XCircle
+                size={38}
+                className={styles.iconError}
+                strokeWidth={1.75}
+              />
               <p className={styles.statusTextError}>
                 Rejected by {rejectedBy ?? "Pharmacist"}
               </p>
@@ -102,7 +192,11 @@ export default function PharmacistApprovalModal({
 
           {status === "timeout" && (
             <>
-              <XCircle size={38} className={styles.iconError} strokeWidth={1.75} />
+              <XCircle
+                size={38}
+                className={styles.iconError}
+                strokeWidth={1.75}
+              />
               <p className={styles.statusTextError}>
                 No pharmacist responded within 120 seconds
               </p>
@@ -114,9 +208,31 @@ export default function PharmacistApprovalModal({
         {/* Footer */}
         <div className={styles.footer}>
           {isTerminal ? (
-            <button type="button" className={styles.backBtn} onClick={onBackToCart}>
+            <button
+              type="button"
+              className={styles.backBtn}
+              onClick={onBackToCart}
+            >
               Back to Cart
             </button>
+          ) : status === "upload" ? (
+            <div className={styles.uploadActions}>
+              <button
+                type="button"
+                className={styles.cancelBtn}
+                onClick={onCancel}
+              >
+                Cancel Sale
+              </button>
+              <button
+                type="button"
+                className={styles.sendBtn}
+                onClick={handleSubmitPrescription}
+                disabled={!previewUrl}
+              >
+                Send to Pharmacist
+              </button>
+            </div>
           ) : (
             <button
               type="button"

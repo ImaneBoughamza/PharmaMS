@@ -1,0 +1,346 @@
+node:internal/errors:496
+    ErrorCaptureStackTrace(err);
+    ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module 'C:\Users\Administrateur\Desktop\Pharmacy-ms\backend\src\models\Medicine.model.js' imported from C:\Users\Administrateur\Desktop\Pharmacy-ms\backend\src\routes\sale.routes.js
+    at new NodeError (node:internal/errors:405:5)
+    at finalizeResolution (node:internal/modules/esm/resolve:327:11)
+    at moduleResolve (node:internal/modules/esm/resolve:980:10)
+    at defaultResolve (node:internal/modules/esm/resolve:1206:11)
+    at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:404:12)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:373:25)
+    at ModuleLoader.getModuleJob (node:internal/modules/esm/loader:250:38)
+    at ModuleWrap.<anonymous> (node:internal/modules/esm/module_job:76:39)
+    at link (node:internal/modules/esm/module_job:75:36) {
+  url: 'file:///C:/Users/Administrateur/Desktop/Pharmacy-ms/backend/src/models/Medicine.model.js',
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v18.20.5
+(node:36296) [MONGOOSE] Warning: Duplicate schema index on {"confirmationCode":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:6844) [MONGOOSE] Warning: Duplicate schema index on {"confirmationCode":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(Use `node --trace-warnings ...` to show where the warning was created)
+node:internal/errors:496
+    ErrorCaptureStackTrace(err);
+    ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module 'C:\Users\Administrateur\Desktop\Pharmacy-ms\backend\src\services\fifo.service.js' imported from C:\Users\Administrateur\Desktop\Pharmacy-ms\backend\src\routes\sale.routes.js
+    at new NodeError (node:internal/errors:405:5)
+    at finalizeResolution (node:internal/modules/esm/resolve:327:11)
+    at moduleResolve (node:internal/modules/esm/resolve:980:10)
+    at defaultResolve (node:internal/modules/esm/resolve:1206:11)
+    at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:404:12)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:373:25)
+    at ModuleLoader.getModuleJob (node:internal/modules/esm/loader:250:38)
+    at ModuleWrap.<anonymous> (node:internal/modules/esm/module_job:76:39)
+    at link (node:internal/modules/esm/module_job:75:36) {
+  url: 'file:///C:/Users/Administrateur/Desktop/Pharmacy-ms/backend/src/services/fifo.service.js',
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v18.20.5
+node:internal/errors:496
+    ErrorCaptureStackTrace(err);
+    ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module 'C:\Users\Administrateur\Desktop\Pharmacy-ms\backend\src\services\pharmacistGate.service.js' imported from C:\Users\Administrateur\Desktop\Pharmacy-ms\backend\src\server.js
+    at new NodeError (node:internal/errors:405:5)
+    at finalizeResolution (node:internal/modules/esm/resolve:327:11)
+    at moduleResolve (node:internal/modules/esm/resolve:980:10)
+    at defaultResolve (node:internal/modules/esm/resolve:1206:11)
+    at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:404:12)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:373:25)
+    at ModuleLoader.getModuleJob (node:internal/modules/esm/loader:250:38)
+    at ModuleWrap.<anonymous> (node:internal/modules/esm/module_job:76:39)
+    at link (node:internal/modules/esm/module_job:75:36) {
+  url: 'file:///C:/Users/Administrateur/Desktop/Pharmacy-ms/backend/src/services/pharmacistGate.service.js',
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v18.20.5
+node:internal/errors:496
+    ErrorCaptureStackTrace(err);
+    ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module 'C:\Users\Administrateur\Desktop\Pharmacy-ms\backend\src\services\ai.service.js' imported from C:\Users\Administrateur\Desktop\Pharmacy-ms\backend\src\routes\ai.routes.js
+    at new NodeError (node:internal/errors:405:5)
+    at finalizeResolution (node:internal/modules/esm/resolve:327:11)
+    at moduleResolve (node:internal/modules/esm/resolve:980:10)
+    at defaultResolve (node:internal/modules/esm/resolve:1206:11)
+    at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:404:12)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:373:25)
+    at ModuleLoader.getModuleJob (node:internal/modules/esm/loader:250:38)
+    at ModuleWrap.<anonymous> (node:internal/modules/esm/module_job:76:39)
+    at link (node:internal/modules/esm/module_job:75:36) {
+  url: 'file:///C:/Users/Administrateur/Desktop/Pharmacy-ms/backend/src/services/ai.service.js',
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v18.20.5
+node:internal/errors:496
+    ErrorCaptureStackTrace(err);
+    ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module 'C:\Users\Administrateur\Desktop\Pharmacy-ms\backend\src\routes\auth.routes.js' imported from C:\Users\Administrateur\Desktop\Pharmacy-ms\backend\src\server.js
+    at new NodeError (node:internal/errors:405:5)
+    at finalizeResolution (node:internal/modules/esm/resolve:327:11)
+    at moduleResolve (node:internal/modules/esm/resolve:980:10)
+    at defaultResolve (node:internal/modules/esm/resolve:1206:11)
+    at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:404:12)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:373:25)
+    at ModuleLoader.getModuleJob (node:internal/modules/esm/loader:250:38)
+    at ModuleWrap.<anonymous> (node:internal/modules/esm/module_job:76:39)
+    at link (node:internal/modules/esm/module_job:75:36) {
+  url: 'file:///C:/Users/Administrateur/Desktop/Pharmacy-ms/backend/src/routes/auth.routes.js',
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v18.20.5
+node:internal/errors:496
+    ErrorCaptureStackTrace(err);
+    ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module 'C:\Users\Administrateur\Desktop\Pharmacy-ms\backend\src\routes\medicine.routes.js' imported from C:\Users\Administrateur\Desktop\Pharmacy-ms\backend\src\server.js
+    at new NodeError (node:internal/errors:405:5)
+    at finalizeResolution (node:internal/modules/esm/resolve:327:11)
+    at moduleResolve (node:internal/modules/esm/resolve:980:10)
+    at defaultResolve (node:internal/modules/esm/resolve:1206:11)
+    at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:404:12)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:373:25)
+    at ModuleLoader.getModuleJob (node:internal/modules/esm/loader:250:38)
+    at ModuleWrap.<anonymous> (node:internal/modules/esm/module_job:76:39)
+    at link (node:internal/modules/esm/module_job:75:36) {
+  url: 'file:///C:/Users/Administrateur/Desktop/Pharmacy-ms/backend/src/routes/medicine.routes.js',
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v18.20.5
+node:internal/errors:496
+    ErrorCaptureStackTrace(err);
+    ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module 'C:\Users\Administrateur\Desktop\Pharmacy-ms\backend\src\routes\batch.routes.js' imported from C:\Users\Administrateur\Desktop\Pharmacy-ms\backend\src\server.js
+    at new NodeError (node:internal/errors:405:5)
+    at finalizeResolution (node:internal/modules/esm/resolve:327:11)
+    at moduleResolve (node:internal/modules/esm/resolve:980:10)
+    at defaultResolve (node:internal/modules/esm/resolve:1206:11)
+    at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:404:12)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:373:25)
+    at ModuleLoader.getModuleJob (node:internal/modules/esm/loader:250:38)
+    at ModuleWrap.<anonymous> (node:internal/modules/esm/module_job:76:39)
+    at link (node:internal/modules/esm/module_job:75:36) {
+  url: 'file:///C:/Users/Administrateur/Desktop/Pharmacy-ms/backend/src/routes/batch.routes.js',
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v18.20.5
+node:internal/errors:496
+    ErrorCaptureStackTrace(err);
+    ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module 'C:\Users\Administrateur\Desktop\Pharmacy-ms\backend\src\routes\order.routes.js' imported from C:\Users\Administrateur\Desktop\Pharmacy-ms\backend\src\server.js
+    at new NodeError (node:internal/errors:405:5)
+    at finalizeResolution (node:internal/modules/esm/resolve:327:11)
+    at moduleResolve (node:internal/modules/esm/resolve:980:10)
+    at defaultResolve (node:internal/modules/esm/resolve:1206:11)
+    at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:404:12)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:373:25)
+    at ModuleLoader.getModuleJob (node:internal/modules/esm/loader:250:38)
+    at ModuleWrap.<anonymous> (node:internal/modules/esm/module_job:76:39)
+    at link (node:internal/modules/esm/module_job:75:36) {
+  url: 'file:///C:/Users/Administrateur/Desktop/Pharmacy-ms/backend/src/routes/order.routes.js',
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v18.20.5
+node:internal/errors:496
+    ErrorCaptureStackTrace(err);
+    ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module 'C:\Users\Administrateur\Desktop\Pharmacy-ms\backend\src\routes\stock.routes.js' imported from C:\Users\Administrateur\Desktop\Pharmacy-ms\backend\src\server.js
+    at new NodeError (node:internal/errors:405:5)
+    at finalizeResolution (node:internal/modules/esm/resolve:327:11)
+    at moduleResolve (node:internal/modules/esm/resolve:980:10)
+    at defaultResolve (node:internal/modules/esm/resolve:1206:11)
+    at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:404:12)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:373:25)
+    at ModuleLoader.getModuleJob (node:internal/modules/esm/loader:250:38)
+    at ModuleWrap.<anonymous> (node:internal/modules/esm/module_job:76:39)
+    at link (node:internal/modules/esm/module_job:75:36) {
+  url: 'file:///C:/Users/Administrateur/Desktop/Pharmacy-ms/backend/src/routes/stock.routes.js',
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v18.20.5
+node:internal/errors:496
+    ErrorCaptureStackTrace(err);
+    ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module 'C:\Users\Administrateur\Desktop\Pharmacy-ms\backend\src\routes\sale.routes.js' imported from C:\Users\Administrateur\Desktop\Pharmacy-ms\backend\src\server.js
+    at new NodeError (node:internal/errors:405:5)
+    at finalizeResolution (node:internal/modules/esm/resolve:327:11)
+    at moduleResolve (node:internal/modules/esm/resolve:980:10)
+    at defaultResolve (node:internal/modules/esm/resolve:1206:11)
+    at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:404:12)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:373:25)
+    at ModuleLoader.getModuleJob (node:internal/modules/esm/loader:250:38)
+    at ModuleWrap.<anonymous> (node:internal/modules/esm/module_job:76:39)
+    at link (node:internal/modules/esm/module_job:75:36) {
+  url: 'file:///C:/Users/Administrateur/Desktop/Pharmacy-ms/backend/src/routes/sale.routes.js',
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v18.20.5
+node:internal/errors:496
+    ErrorCaptureStackTrace(err);
+    ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module 'C:\Users\Administrateur\Desktop\Pharmacy-ms\backend\src\routes\reservation.routes.js' imported from C:\Users\Administrateur\Desktop\Pharmacy-ms\backend\src\server.js
+    at new NodeError (node:internal/errors:405:5)
+    at finalizeResolution (node:internal/modules/esm/resolve:327:11)
+    at moduleResolve (node:internal/modules/esm/resolve:980:10)
+    at defaultResolve (node:internal/modules/esm/resolve:1206:11)
+    at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:404:12)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:373:25)
+    at ModuleLoader.getModuleJob (node:internal/modules/esm/loader:250:38)
+    at ModuleWrap.<anonymous> (node:internal/modules/esm/module_job:76:39)
+    at link (node:internal/modules/esm/module_job:75:36) {
+  url: 'file:///C:/Users/Administrateur/Desktop/Pharmacy-ms/backend/src/routes/reservation.routes.js',
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v18.20.5
+node:internal/errors:496
+    ErrorCaptureStackTrace(err);
+    ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module 'C:\Users\Administrateur\Desktop\Pharmacy-ms\backend\src\routes\transaction.routes.js' imported from C:\Users\Administrateur\Desktop\Pharmacy-ms\backend\src\server.js
+    at new NodeError (node:internal/errors:405:5)
+    at finalizeResolution (node:internal/modules/esm/resolve:327:11)
+    at moduleResolve (node:internal/modules/esm/resolve:980:10)
+    at defaultResolve (node:internal/modules/esm/resolve:1206:11)
+    at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:404:12)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:373:25)
+    at ModuleLoader.getModuleJob (node:internal/modules/esm/loader:250:38)
+    at ModuleWrap.<anonymous> (node:internal/modules/esm/module_job:76:39)
+    at link (node:internal/modules/esm/module_job:75:36) {
+  url: 'file:///C:/Users/Administrateur/Desktop/Pharmacy-ms/backend/src/routes/transaction.routes.js',
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v18.20.5
+node:internal/errors:496
+    ErrorCaptureStackTrace(err);
+    ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module 'C:\Users\Administrateur\Desktop\Pharmacy-ms\backend\src\routes\supplier.routes.js' imported from C:\Users\Administrateur\Desktop\Pharmacy-ms\backend\src\server.js
+    at new NodeError (node:internal/errors:405:5)
+    at finalizeResolution (node:internal/modules/esm/resolve:327:11)
+    at moduleResolve (node:internal/modules/esm/resolve:980:10)
+    at defaultResolve (node:internal/modules/esm/resolve:1206:11)
+    at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:404:12)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:373:25)
+    at ModuleLoader.getModuleJob (node:internal/modules/esm/loader:250:38)
+    at ModuleWrap.<anonymous> (node:internal/modules/esm/module_job:76:39)
+    at link (node:internal/modules/esm/module_job:75:36) {
+  url: 'file:///C:/Users/Administrateur/Desktop/Pharmacy-ms/backend/src/routes/supplier.routes.js',
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v18.20.5
+node:internal/errors:496
+    ErrorCaptureStackTrace(err);
+    ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module 'C:\Users\Administrateur\Desktop\Pharmacy-ms\backend\src\routes\delivery.routes.js' imported from C:\Users\Administrateur\Desktop\Pharmacy-ms\backend\src\server.js
+    at new NodeError (node:internal/errors:405:5)
+    at finalizeResolution (node:internal/modules/esm/resolve:327:11)
+    at moduleResolve (node:internal/modules/esm/resolve:980:10)
+    at defaultResolve (node:internal/modules/esm/resolve:1206:11)
+    at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:404:12)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:373:25)
+    at ModuleLoader.getModuleJob (node:internal/modules/esm/loader:250:38)
+    at ModuleWrap.<anonymous> (node:internal/modules/esm/module_job:76:39)
+    at link (node:internal/modules/esm/module_job:75:36) {
+  url: 'file:///C:/Users/Administrateur/Desktop/Pharmacy-ms/backend/src/routes/delivery.routes.js',
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v18.20.5
+node:internal/errors:496
+    ErrorCaptureStackTrace(err);
+    ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module 'C:\Users\Administrateur\Desktop\Pharmacy-ms\backend\src\routes\report.routes.js' imported from C:\Users\Administrateur\Desktop\Pharmacy-ms\backend\src\server.js
+    at new NodeError (node:internal/errors:405:5)
+    at finalizeResolution (node:internal/modules/esm/resolve:327:11)
+    at moduleResolve (node:internal/modules/esm/resolve:980:10)
+    at defaultResolve (node:internal/modules/esm/resolve:1206:11)
+    at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:404:12)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:373:25)
+    at ModuleLoader.getModuleJob (node:internal/modules/esm/loader:250:38)
+    at ModuleWrap.<anonymous> (node:internal/modules/esm/module_job:76:39)
+    at link (node:internal/modules/esm/module_job:75:36) {
+  url: 'file:///C:/Users/Administrateur/Desktop/Pharmacy-ms/backend/src/routes/report.routes.js',
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v18.20.5
+node:internal/errors:496
+    ErrorCaptureStackTrace(err);
+    ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module 'C:\Users\Administrateur\Desktop\Pharmacy-ms\backend\src\routes\auditLog.routes.js' imported from C:\Users\Administrateur\Desktop\Pharmacy-ms\backend\src\server.js
+    at new NodeError (node:internal/errors:405:5)
+    at finalizeResolution (node:internal/modules/esm/resolve:327:11)
+    at moduleResolve (node:internal/modules/esm/resolve:980:10)
+    at defaultResolve (node:internal/modules/esm/resolve:1206:11)
+    at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:404:12)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:373:25)
+    at ModuleLoader.getModuleJob (node:internal/modules/esm/loader:250:38)
+    at ModuleWrap.<anonymous> (node:internal/modules/esm/module_job:76:39)
+    at link (node:internal/modules/esm/module_job:75:36) {
+  url: 'file:///C:/Users/Administrateur/Desktop/Pharmacy-ms/backend/src/routes/auditLog.routes.js',
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v18.20.5
+node:internal/errors:496
+    ErrorCaptureStackTrace(err);
+    ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module 'C:\Users\Administrateur\Desktop\Pharmacy-ms\backend\src\routes\user.routes.js' imported from C:\Users\Administrateur\Desktop\Pharmacy-ms\backend\src\server.js
+    at new NodeError (node:internal/errors:405:5)
+    at finalizeResolution (node:internal/modules/esm/resolve:327:11)
+    at moduleResolve (node:internal/modules/esm/resolve:980:10)
+    at defaultResolve (node:internal/modules/esm/resolve:1206:11)
+    at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:404:12)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:373:25)
+    at ModuleLoader.getModuleJob (node:internal/modules/esm/loader:250:38)
+    at ModuleWrap.<anonymous> (node:internal/modules/esm/module_job:76:39)
+    at link (node:internal/modules/esm/module_job:75:36) {
+  url: 'file:///C:/Users/Administrateur/Desktop/Pharmacy-ms/backend/src/routes/user.routes.js',
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v18.20.5
+node:internal/errors:496
+    ErrorCaptureStackTrace(err);
+    ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module 'C:\Users\Administrateur\Desktop\Pharmacy-ms\backend\src\routes\ai.routes.js' imported from C:\Users\Administrateur\Desktop\Pharmacy-ms\backend\src\server.js
+    at new NodeError (node:internal/errors:405:5)
+    at finalizeResolution (node:internal/modules/esm/resolve:327:11)
+    at moduleResolve (node:internal/modules/esm/resolve:980:10)
+    at defaultResolve (node:internal/modules/esm/resolve:1206:11)
+    at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:404:12)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:373:25)
+    at ModuleLoader.getModuleJob (node:internal/modules/esm/loader:250:38)
+    at ModuleWrap.<anonymous> (node:internal/modules/esm/module_job:76:39)
+    at link (node:internal/modules/esm/module_job:75:36) {
+  url: 'file:///C:/Users/Administrateur/Desktop/Pharmacy-ms/backend/src/routes/ai.routes.js',
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v18.20.5

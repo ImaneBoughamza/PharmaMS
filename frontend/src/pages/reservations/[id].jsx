@@ -1,124 +1,84 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { toast } from "sonner";
-import { ArrowLeft, Check, Package, Ban, ShoppingCart } from "lucide-react";
+import { ArrowLeft, Check, Package, Ban, ShoppingCart, X, TriangleAlert } from "lucide-react";
 import AppLayout from "@/components/layout/AppLayout";
 import ReservationDetail from "@/components/reservations/ReservationDetail";
+import {
+  ApproveModal,
+  RejectModal,
+  MarkReadyModal,
+  CancelModal,
+} from "@/components/reservations/ReservationActionModals";
+import api from "@/lib/axios";
+import { withRoleGuard } from "@/utils/roleGuard";
 import { formatDate } from "@/utils/formatDate";
 import styles from "@/styles/ReservationDetailPage.module.css";
 
-// TODO: restore when backend is ready
-// export const getServerSideProps = withRoleGuard([ROLES.PHARMACIST, ROLES.ASSISTANT, ROLES.CASHIER]);
+export const getServerSideProps = withRoleGuard(["pharmacist", "assistant", "cashier"]);
 
-const MOCK_USER = { id: "u1", role: "pharmacist", name: "Imane B." };
+function paymentLabel(value) {
+  if (value === "online" || value === "card") return "Online Payment";
+  return "Pay on Pickup";
+}
 
-const MOCK_RESERVATIONS = {
-  r1: {
-    _id: "r1",
-    trackingCode: "RES-2026-001",
-    customerName: "Ahmed Benali",
-    phone: "+212 612345678",
-    email: "ahmed.benali@example.com",
-    items: [
-      { productName: "Paracetamol 500mg", productType: "medicine", qty: 2, unitPrice: 18 },
-    ],
-    pickupDate: "2026-04-28",
-    paymentMethod: "Pay on Pickup",
-    status: "pending",
-    notes: "",
-    createdAt: "2026-04-26T09:00:00.000Z",
-  },
-  r2: {
-    _id: "r2",
-    trackingCode: "RES-2026-002",
-    customerName: "Fatima Zahra",
-    phone: "+212 698765432",
-    email: "fatima.zahra@example.com",
-    items: [
-      { productName: "Vitamin C 1000mg",  productType: "medicine",     qty: 1, unitPrice: 42 },
-      { productName: "Sunscreen SPF50+",  productType: "parapharmacy", qty: 1, unitPrice: 85 },
-    ],
-    pickupDate: "2026-04-27",
-    paymentMethod: "Online Payment",
-    status: "confirmed",
-    notes: "Please pack separately.",
-    createdAt: "2026-04-25T14:30:00.000Z",
-  },
-  r3: {
-    _id: "r3",
-    trackingCode: "RES-2026-003",
-    customerName: "Youssef El Amrani",
-    phone: "+212 655443322",
-    email: "youssef.elamrani@example.com",
-    items: [
-      { productName: "Ibuprofen 400mg",      productType: "medicine",     qty: 3, unitPrice: 24 },
-      { productName: "Hand Sanitizer 500ml", productType: "parapharmacy", qty: 2, unitPrice: 28 },
-      { productName: "Efferalgan 500mg",     productType: "medicine",     qty: 1, unitPrice: 21 },
-    ],
-    pickupDate: "2026-04-27",
-    paymentMethod: "Pay on Pickup",
-    status: "ready",
-    notes: "",
-    createdAt: "2026-04-24T11:00:00.000Z",
-  },
-  r4: {
-    _id: "r4",
-    trackingCode: "RES-2026-004",
-    customerName: "Nadia Chraibi",
-    phone: "+212 677889900",
-    email: "nadia.chraibi@example.com",
-    items: [
-      { productName: "Cough Syrup", productType: "medicine", qty: 1, unitPrice: 39 },
-    ],
-    pickupDate: "2026-04-20",
-    paymentMethod: "Pay on Pickup",
-    status: "expired",
-    notes: "",
-    createdAt: "2026-04-17T16:00:00.000Z",
-  },
-  r5: {
-    _id: "r5",
-    trackingCode: "RES-2026-005",
-    customerName: "Karim Mansouri",
-    phone: "+212 661122334",
-    email: "karim.mansouri@example.com",
-    items: [
-      { productName: "Vitamin D3", productType: "medicine", qty: 2, unitPrice: 48 },
-    ],
-    pickupDate: "2026-04-22",
-    paymentMethod: "Online Payment",
-    status: "cancelled",
-    notes: "Customer changed mind.",
-    rejectionReason: "Customer called to cancel — they found the medication at another pharmacy.",
-    createdAt: "2026-04-19T08:30:00.000Z",
-  },
-  r6: {
-    _id: "r6",
-    trackingCode: "RES-2026-006",
-    customerName: "Sara El Idrissi",
-    phone: "+212 677001122",
-    email: "sara.elidrissi@example.com",
-    items: [
-      { productName: "Baby Shampoo",     productType: "parapharmacy", qty: 2, unitPrice: 35 },
-      { productName: "Sunscreen SPF50+", productType: "parapharmacy", qty: 1, unitPrice: 85 },
-    ],
-    pickupDate: "2026-04-20",
-    paymentMethod: "Online Payment",
-    status: "pending",
-    notes: "",
-    createdAt: "2026-04-18T10:00:00.000Z",
-  },
-};
+function normalizeReservation(reservation) {
+  return {
+    ...reservation,
+    trackingCode: reservation.confirmationCode,
+    phone: reservation.customerPhone || reservation.customerId?.phone || "",
+    email: reservation.customerEmail || reservation.customerId?.email || "",
+    pickupDate: (reservation.pickupDate || reservation.expiresAt || reservation.createdAt || "").slice(0, 10),
+    paymentMethod: paymentLabel(reservation.paymentMethod),
+    items: (reservation.items || []).map((item) => ({
+      ...item,
+      productName: item.name || item.product?.name || item.productName || "Unknown product",
+      unitPrice: Number(item.salePrice ?? item.unitPrice ?? item.product?.salePrice ?? 0),
+    })),
+  };
+}
 
-export default function ReservationDetailPage() {
-  const router  = useRouter();
-  const { id }  = router.query;
+export default function ReservationDetailPage({ user }) {
+  const router = useRouter();
+  const { id } = router.query;
 
-  const [reservation, setReservation] = useState(
-    id ? MOCK_RESERVATIONS[id] ?? null : null
-  );
+  const [reservation, setReservation] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
+  const [activeModal, setActiveModal] = useState(null);
+  const [showVerifyStep, setShowVerifyStep] = useState(false);
+  const [verificationChecked, setVerificationChecked] = useState(false);
+
+  async function loadReservation() {
+    if (!id) return;
+    setIsLoading(true);
+    setLoadError("");
+    try {
+      const response = await api.get(`/api/reservations/${id}`);
+      setReservation(normalizeReservation(response.data.data));
+    } catch (err) {
+      setReservation(null);
+      setLoadError(err.response?.data?.message || "Reservation not found");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    loadReservation();
+    setShowVerifyStep(false);
+    setVerificationChecked(false);
+  }, [id]);
 
   if (!id) return null;
+
+  if (isLoading) {
+    return (
+      <div className={styles.page}>
+        <p className={styles.notFound}>Loading reservation...</p>
+      </div>
+    );
+  }
 
   if (!reservation) {
     return (
@@ -127,32 +87,84 @@ export default function ReservationDetailPage() {
           <ArrowLeft size={15} />
           Back to Reservations
         </button>
-        <p className={styles.notFound}>Reservation not found.</p>
+        <p className={styles.notFound}>{loadError || "Reservation not found."}</p>
       </div>
     );
   }
 
-  const { status }   = reservation;
-  const userRole     = MOCK_USER.role;
+  const { status, trackingCode } = reservation;
+  const userRole = user.role;
+  const prescriptionRequired = reservation.prescriptionRequired ||
+    reservation.items?.some((item) => item.productType === "medicine" && item.category === "prescription");
+  const prescriptionVerified = Boolean(reservation.prescriptionVerified);
+  const prescriptionImage = reservation.prescriptionImage || reservation.prescriptionImageUrl;
 
-  function handleStatusChange(newStatus) {
-    setReservation((prev) => ({ ...prev, status: newStatus }));
-    const label =
-      newStatus === "confirmed" ? "Reservation confirmed." :
-      newStatus === "ready"     ? "Reservation marked as ready." :
-      newStatus === "cancelled" ? "Reservation cancelled." :
-      `Reservation marked as ${newStatus}.`;
-    toast.success(label);
+  async function runAction(callback, successMessage) {
+    try {
+      const response = await callback();
+      if (response?.data?.data) setReservation(normalizeReservation(response.data.data));
+      await loadReservation();
+      setActiveModal(null);
+      toast.success(successMessage);
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Reservation action failed");
+    }
+  }
+
+  function handleApproveConfirm() {
+    runAction(
+      () => api.patch(`/api/reservations/${reservation._id}/confirm`),
+      `Reservation ${trackingCode} confirmed - customer notified`
+    );
+  }
+
+  function handleRejectConfirm(reason) {
+    runAction(
+      () => api.patch(`/api/reservations/${reservation._id}/reject`, { reason }),
+      `Reservation ${trackingCode} rejected - customer notified`
+    );
+  }
+
+  function handleMarkReadyConfirm() {
+    runAction(
+      () => api.patch(`/api/reservations/${reservation._id}/ready`),
+      `Reservation ${trackingCode} marked as ready`
+    );
+  }
+
+  function handleCancelConfirm(reason) {
+    runAction(
+      () => api.patch(`/api/reservations/${reservation._id}/cancel`, { reason }),
+      `Reservation ${trackingCode} cancelled`
+    );
   }
 
   function handleConvertToSale() {
-    toast.success("Opening POS — reservation items pre-loaded.");
-    router.push("/pos");
+    if (prescriptionRequired && !prescriptionVerified) {
+      setShowVerifyStep(true);
+      setVerificationChecked(false);
+      toast.error("Please verify the prescription before dispensing");
+      return;
+    }
+    router.push(`/pos?reservationId=${reservation._id}`);
+  }
+
+  async function handleConfirmPrescriptionAndContinue() {
+    if (!verificationChecked) {
+      toast.error("Please verify the prescription before dispensing");
+      return;
+    }
+    try {
+      await api.patch(`/api/reservations/${reservation._id}/verify-prescription`, { verified: true });
+      toast.success("Prescription verified - sale can proceed");
+      router.push(`/pos?reservationId=${reservation._id}`);
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Prescription verification failed");
+    }
   }
 
   return (
     <div className={styles.page}>
-      {/* Page header */}
       <div className={styles.pageHeader}>
         <div className={styles.headerLeft}>
           <button className={styles.back} onClick={() => router.push("/reservations")}>
@@ -160,7 +172,7 @@ export default function ReservationDetailPage() {
             Back to Reservations
           </button>
           <div>
-            <h1 className={styles.title}>Reservation {reservation.trackingCode}</h1>
+            <h1 className={styles.title}>Reservation {trackingCode}</h1>
             <p className={styles.subtitle}>
               Submitted {formatDate(reservation.createdAt)} by {reservation.customerName}
             </p>
@@ -170,62 +182,38 @@ export default function ReservationDetailPage() {
         <div className={styles.headerActions}>
           {status === "pending" && userRole === "pharmacist" && (
             <>
-              <button
-                type="button"
-                className={`${styles.actionBtn} ${styles.actionBtnPrimary}`}
-                onClick={() => handleStatusChange("confirmed")}
-              >
+              <button type="button" className={`${styles.actionBtn} ${styles.actionBtnPrimary}`} onClick={() => setActiveModal("approve")}>
                 <Check size={15} />
-                Confirm Reservation
+                Approve
               </button>
-              <button
-                type="button"
-                className={`${styles.actionBtn} ${styles.actionBtnDanger}`}
-                onClick={() => handleStatusChange("cancelled")}
-              >
-                <Ban size={15} />
-                Cancel
+              <button type="button" className={`${styles.actionBtn} ${styles.actionBtnDanger}`} onClick={() => setActiveModal("reject")}>
+                <X size={15} />
+                Reject
               </button>
             </>
           )}
 
           {status === "confirmed" && (
-            <button
-              type="button"
-              className={`${styles.actionBtn} ${styles.actionBtnPrimary}`}
-              onClick={() => handleStatusChange("ready")}
-            >
+            <button type="button" className={`${styles.actionBtn} ${styles.actionBtnPrimary}`} onClick={() => setActiveModal("markReady")}>
               <Package size={15} />
               Mark as Ready
             </button>
           )}
-          {status === "confirmed" && userRole === "pharmacist" && (
-            <button
-              type="button"
-              className={`${styles.actionBtn} ${styles.actionBtnDanger}`}
-              onClick={() => handleStatusChange("cancelled")}
-            >
+          {status === "confirmed" && (userRole === "pharmacist" || userRole === "assistant") && (
+            <button type="button" className={`${styles.actionBtn} ${styles.actionBtnDanger}`} onClick={() => setActiveModal("cancel")}>
               <Ban size={15} />
               Cancel
             </button>
           )}
 
           {status === "ready" && (
-            <button
-              type="button"
-              className={`${styles.actionBtn} ${styles.actionBtnSuccess}`}
-              onClick={handleConvertToSale}
-            >
+            <button type="button" className={`${styles.actionBtn} ${styles.actionBtnSuccess}`} onClick={handleConvertToSale}>
               <ShoppingCart size={15} />
               Convert to Sale
             </button>
           )}
-          {status === "ready" && userRole === "pharmacist" && (
-            <button
-              type="button"
-              className={`${styles.actionBtn} ${styles.actionBtnDanger}`}
-              onClick={() => handleStatusChange("cancelled")}
-            >
+          {status === "ready" && (userRole === "pharmacist" || userRole === "assistant") && (
+            <button type="button" className={`${styles.actionBtn} ${styles.actionBtnDanger}`} onClick={() => setActiveModal("cancel")}>
               <Ban size={15} />
               Cancel
             </button>
@@ -233,8 +221,54 @@ export default function ReservationDetailPage() {
         </div>
       </div>
 
-      {/* Two-column content */}
       <ReservationDetail reservation={reservation} />
+
+      {showVerifyStep && (
+        <section className={styles.verifyPanel}>
+          <div className={styles.verifyHeader}>
+            <TriangleAlert size={19} />
+            <div>
+              <h2>Verify Prescription Before Dispensing</h2>
+              <p>Confirm the original prescription presented by the customer before continuing to POS.</p>
+            </div>
+          </div>
+
+          {prescriptionImage && (
+            <img className={styles.verifyImage} src={prescriptionImage} alt="Uploaded prescription" />
+          )}
+
+          <label className={styles.verifyCheckbox}>
+            <input
+              type="checkbox"
+              checked={verificationChecked}
+              onChange={(event) => setVerificationChecked(event.target.checked)}
+            />
+            <span>I have verified the original prescription presented by the customer matches the uploaded image and authorise dispensing</span>
+          </label>
+
+          <div className={styles.verifyActions}>
+            <button type="button" className={`${styles.actionBtn} ${styles.actionBtnSecondary}`} onClick={() => setShowVerifyStep(false)}>
+              Cancel
+            </button>
+            <button type="button" className={`${styles.actionBtn} ${styles.actionBtnPrimary}`} disabled={!verificationChecked} onClick={handleConfirmPrescriptionAndContinue}>
+              Confirm and Continue
+            </button>
+          </div>
+        </section>
+      )}
+
+      {activeModal === "approve" && (
+        <ApproveModal reservation={reservation} onClose={() => setActiveModal(null)} onConfirm={handleApproveConfirm} />
+      )}
+      {activeModal === "reject" && (
+        <RejectModal reservation={reservation} onClose={() => setActiveModal(null)} onConfirm={handleRejectConfirm} />
+      )}
+      {activeModal === "markReady" && (
+        <MarkReadyModal reservation={reservation} onClose={() => setActiveModal(null)} onConfirm={handleMarkReadyConfirm} />
+      )}
+      {activeModal === "cancel" && (
+        <CancelModal reservation={reservation} onClose={() => setActiveModal(null)} onConfirm={handleCancelConfirm} />
+      )}
     </div>
   );
 }

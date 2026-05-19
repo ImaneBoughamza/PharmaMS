@@ -201,9 +201,148 @@
 
 .badgeWarning { background: #FEF3C7; color: #92400E; border-color: #FDE68A; }
 .badgeInfo    { background: #DBEAFE; color: #1E3A5F; border-color: #93C5FD; }
-.badgeSuccess { background: #D1FAE5; color: #1B5E42; border-color: #6EE7B7; }
+.badgeSuccess { background: #DDEEDB; color: #1F7A5A; border-color: #A6C99F; }
 .badgeNeutral { background: #F3F4F6; color: #5C5C5C; border-color: #D1D5DB; }
 .badgeError   { background: #FEE2E2; color: #7F1D1D; border-color: #FECACA; }
+
+.statusWrap {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.prescriptionRequiredBadge {
+  background: #FEF3C7;
+  color: #92400E;
+  border-color: #FDE68A;
+  font-size: 0.76rem;
+}
+
+.prescriptionVerifiedBadge {
+  background: #DDEEDB;
+  color: #1F7A5A;
+  border-color: #A6C99F;
+  font-size: 0.76rem;
+}
+
+.prescriptionBannerAmber,
+.prescriptionBannerGreen {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  border-radius: var(--radius-md);
+  padding: 0.8rem 0.9rem;
+  margin-bottom: 0.9rem;
+  font-family: var(--font-ui);
+}
+
+.prescriptionBannerAmber {
+  background: #FFFBEB;
+  border: 1px solid #FDE68A;
+  color: #92400E;
+}
+
+.prescriptionBannerGreen {
+  background: #ECFDF5;
+  border: 1px solid #A7F3D0;
+  color: #047857;
+}
+
+.prescriptionBannerAmber p,
+.prescriptionBannerGreen p {
+  margin: 0;
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.prescriptionImageBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.prescriptionThumbBtn {
+  width: 100%;
+  max-width: 360px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  padding: 0;
+  overflow: hidden;
+  cursor: zoom-in;
+}
+
+.prescriptionThumbBtn img {
+  display: block;
+  width: 100%;
+  max-height: 220px;
+  object-fit: contain;
+}
+
+.viewFullLink {
+  width: max-content;
+  border: none;
+  background: transparent;
+  color: var(--color-accent);
+  cursor: pointer;
+  font-family: var(--font-ui);
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.prescriptionMissing {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+}
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, 0.72);
+  padding: 2rem;
+}
+
+.lightboxPanel {
+  position: relative;
+  max-width: min(960px, 92vw);
+  max-height: 90vh;
+  border-radius: var(--radius-lg);
+  background: #fff;
+  overflow: auto;
+}
+
+.lightboxPanel img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+.lightboxClose {
+  position: sticky;
+  top: 0.75rem;
+  float: right;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border: none;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.78);
+  color: #fff;
+  cursor: pointer;
+  margin: 0.75rem;
+}
 
 /* Copyable tracking code */
 .codeBtn {

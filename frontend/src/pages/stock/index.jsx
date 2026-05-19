@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { useRouter } from "next/router";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -13,44 +13,10 @@ import ExpiryTab from "@/components/stock/ExpiryTab";
 import BatchManagementTab from "@/components/stock/BatchManagementTab";
 import { useAuth } from "@/hooks/useAuth";
 import { PHARMACIST } from "@/constants/roles";
+import api from "@/lib/axios";
 import styles from "@/styles/StockPage.module.css";
 
 // ── Mock data ─────────────────────────────────────────────────────────────
-// TODO: replace with useSWR when backend is ready
-const INITIAL_MEDICINES = [
-  { _id: "1", name: "Paracetamol 500mg", genericName: "Paracetamol",   category: "non-prescription", unit: "tablet", minStockLevel: 20, isActive: true,
-    batches: [
-      { _id: "b1", batchNumber: "PC-2401",  expiryDate: "2026-05-18", initialQty: 100, remainingQty: 8,  purchasePrice: 15,   salePrice: 22.5, status: "active"   },
-      { _id: "b2", batchNumber: "PC-2312",  expiryDate: "2025-09-30", initialQty: 200, remainingQty: 0,  purchasePrice: 14.5, salePrice: 22.5, status: "depleted" },
-    ]},
-  { _id: "2", name: "Amoxicillin 1g",    genericName: "Amoxicillin",   category: "prescription",     unit: "tablet", minStockLevel: 15, isActive: true,
-    batches: [
-      { _id: "b3", batchNumber: "AMX-2501", expiryDate: "2027-03-10", initialQty: 150, remainingQty: 42, purchasePrice: 45,   salePrice: 65,   status: "active"   },
-    ]},
-  { _id: "3", name: "Ibuprofen 400mg",   genericName: "Ibuprofen",     category: "non-prescription", unit: "tablet", minStockLevel: 25, isActive: true,
-    batches: [
-      { _id: "b4", batchNumber: "IBU-2504", expiryDate: "2026-06-15", initialQty: 100, remainingQty: 12, purchasePrice: 18,   salePrice: 28,   status: "active"   },
-      { _id: "b5", batchNumber: "IBU-2502", expiryDate: "2026-07-20", initialQty: 100, remainingQty: 7,  purchasePrice: 18,   salePrice: 28,   status: "active"   },
-    ]},
-  { _id: "4", name: "Vitamin C 1000mg",  genericName: "Ascorbic Acid", category: "non-prescription", unit: "tablet", minStockLevel: 10, isActive: true,
-    batches: [
-      { _id: "b6", batchNumber: "VC-2501",  expiryDate: "2028-01-20", initialQty: 300, remainingQty: 63, purchasePrice: 12,   salePrice: 18,   status: "active"   },
-    ]},
-  { _id: "5", name: "Diazepam 5mg",      genericName: "Diazepam",      category: "regulated",        unit: "tablet", minStockLevel: 5,  isActive: true, batches: [] },
-  { _id: "6", name: "Metformin 500mg",   genericName: "Metformin",      category: "prescription",     unit: "tablet", minStockLevel: 20, isActive: true,
-    batches: [
-      { _id: "b7", batchNumber: "MET-2501", expiryDate: "2026-07-01", initialQty: 200, remainingQty: 55, purchasePrice: 22,   salePrice: 35,   status: "active"   },
-    ]},
-];
-
-const INITIAL_PARAPHARMACY = [
-  { _id: "p1", name: "Vitamin D3 1000 IU",  brand: "Sanofi",    category: "supplements",    stockQty: 48, minStockLevel: 10, purchasePrice: 55,  salePrice: 85,  isActive: true },
-  { _id: "p2", name: "Micellar Water 400ml", brand: "Bioderma",  category: "cosmetics",      stockQty: 12, minStockLevel: 5,  purchasePrice: 80,  salePrice: 120, isActive: true },
-  { _id: "p3", name: "Digital Thermometer",  brand: "Omron",     category: "medical-device", stockQty: 3,  minStockLevel: 5,  purchasePrice: 140, salePrice: 220, isActive: true },
-  { _id: "p4", name: "Hand Sanitiser 500ml", brand: "Dettol",    category: "hygiene",        stockQty: 0,  minStockLevel: 10, purchasePrice: 28,  salePrice: 45,  isActive: true },
-  { _id: "p5", name: "Omega-3 Fish Oil",     brand: "Nutrident", category: "supplements",    stockQty: 30, minStockLevel: 8,  purchasePrice: 95,  salePrice: 150, isActive: true },
-];
-
 const MOCK_BATCH_HISTORY = [
   { _id: "h1", date: "2026-04-20T10:30:00Z", type: "Sale",              qtyChange: -5, reference: "SALE-1234", staff: "Ahmed (cashier)"       },
   { _id: "h2", date: "2026-04-18T14:00:00Z", type: "Sale",              qtyChange: -3, reference: "SALE-1198", staff: "Sara (assistant)"      },
@@ -64,6 +30,26 @@ function enrichMed(m) {
   const totalStock    = activeBatches.reduce((s, b) => s + b.remainingQty, 0);
   const nearestExpiry = [...activeBatches].sort((a, b) => new Date(a.expiryDate) - new Date(b.expiryDate))[0]?.expiryDate ?? null;
   return { ...m, totalStock, activeBatchCount: activeBatches.length, nearestExpiry };
+}
+
+function batchStatus(batch) {
+  if (batch.status) return batch.status;
+  if (batch.isActive === false) return "deactivated";
+  if (batch.remainingQty <= 0) return "depleted";
+  if (batch.expiryDate && new Date(batch.expiryDate) < new Date()) return "expired";
+  return "active";
+}
+
+function normalizeMedicine(item, batches = []) {
+  return {
+    ...item,
+    batches: batches
+      .filter((batch) => {
+        const medicineId = batch.medicineId?._id ?? batch.medicineId;
+        return String(medicineId) === String(item._id);
+      })
+      .map((batch) => ({ ...batch, status: batchStatus(batch) })),
+  };
 }
 
 function getNearExpiry(medicines, thresholdDays) {
@@ -161,7 +147,7 @@ function AdjustStockModal({ open, onClose, medicines, parapharmacy, onSubmit, pr
         </>
       }
     >
-      <form id="adjust-stock-form" onSubmit={handleSubmit((data) => { if (onSubmit(data) !== false) handleClose(); })} noValidate>
+      <form id="adjust-stock-form" onSubmit={handleSubmit(async (data) => { if (await onSubmit(data) !== false) handleClose(); })} noValidate>
         <div className={styles.formGrid2}>
           <div className={styles.formField}>
             <label className={styles.formLabel}>Product Type *</label>
@@ -416,9 +402,30 @@ export default function StockPage() {
   const router = useRouter();
   const [tab, setTab] = useState("overview");
 
-  const [medicines,       setMedicines]       = useState(INITIAL_MEDICINES);
-  const [parapharmacy,    setParapharmacy]    = useState(INITIAL_PARAPHARMACY);
+  const [medicines,       setMedicines]       = useState([]);
+  const [parapharmacy,    setParapharmacy]    = useState([]);
   const [expiryThreshold, setExpiryThreshold] = useState(90);
+
+  const loadStock = useCallback(async ({ silent = false } = {}) => {
+    try {
+      const [medicineResponse, batchResponse, parapharmacyResponse] = await Promise.all([
+        api.get("/api/medicines", { params: { status: "all", limit: 500 } }),
+        api.get("/api/batches", { params: { status: "all", limit: 1000 } }),
+        api.get("/api/parapharmacy", { params: { status: "all", limit: 500 } }),
+      ]);
+
+      const batches = batchResponse.data.data ?? [];
+      setMedicines((medicineResponse.data.data ?? []).map((medicine) => normalizeMedicine(medicine, batches)));
+      setParapharmacy(parapharmacyResponse.data.data ?? []);
+    } catch (err) {
+      if (!silent) toast.error(err?.response?.data?.message ?? "Failed to load stock data.");
+      throw err;
+    }
+  }, []);
+
+  useEffect(() => {
+    loadStock().catch(() => {});
+  }, [loadStock]);
 
   // Modal state
   const [adjustModal,   setAdjustModal]   = useState({ open: false });
@@ -438,7 +445,7 @@ export default function StockPage() {
   const lowStockCount = lowStockMeds.length + lowStockPara.length;
 
   // ── Handlers ──────────────────────────────────────────────────────────
-  function handleAdjustStock(data) {
+  async function handleAdjustStock(data) {
     if (data.adjustmentType === "subtract") {
       const current = data.productType === "medicine"
         ? medicines.find((m) => m._id === data.productId)?.batches.find((b) => b._id === data.batchId)?.remainingQty ?? 0
@@ -448,21 +455,16 @@ export default function StockPage() {
         return false;
       }
     }
-    if (data.productType === "medicine") {
-      setMedicines((prev) => prev.map((m) => ({
-        ...m,
-        batches: m.batches.map((b) => b._id === data.batchId
-          ? { ...b, remainingQty: data.adjustmentType === "add" ? b.remainingQty + data.quantity : b.remainingQty - data.quantity }
-          : b
-        ),
-      })));
-    } else {
-      setParapharmacy((prev) => prev.map((p) => p._id !== data.productId ? p : {
-        ...p,
-        stockQty: data.adjustmentType === "add" ? p.stockQty + data.quantity : p.stockQty - data.quantity,
-      }));
+
+    try {
+      await api.patch("/api/stock/adjust", data);
+      await loadStock({ silent: true });
+      toast.success("Stock adjustment recorded");
+      return true;
+    } catch (err) {
+      toast.error(err?.response?.data?.message ?? "Failed to record stock adjustment");
+      return false;
     }
-    toast.success("Stock adjustment recorded");
   }
 
   function handleReturnBatch(data, batch) {

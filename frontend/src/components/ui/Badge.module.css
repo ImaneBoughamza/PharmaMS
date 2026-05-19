@@ -2,7 +2,7 @@
   display: inline-flex;
   align-items: center;
   padding: 2px 7px;
-  border-radius: 3px;
+  border-radius: var(--radius-sm);
   font-family: var(--font-ui);
   font-size: 11px;
   font-weight: 600;
@@ -13,21 +13,21 @@
 
 /* ── Status variants (reservation / sale lifecycle) ── */
 .pending {
-  background: #FEF3C7;
-  color: #92400E;
-  border-color: #FDE68A;
+  background: #FBF0C6;
+  color: #85620F;
+  border-color: #EAD57D;
 }
 
 .confirmed {
-  background: #D1FAE5;
-  color: #1B5E42;
-  border-color: #6EE7B7;
+  background: #DDEEDB;
+  color: #1F7A5A;
+  border-color: #A6C99F;
 }
 
 .ready {
-  background: #DBEAFE;
-  color: #1E3A5F;
-  border-color: #93C5FD;
+  background: #F1F7EF;
+  color: #24716B;
+  border-color: #BFD9C5;
 }
 
 .expired {
@@ -44,21 +44,21 @@
 
 .regulated {
   background: #FFF7ED;
-  color: #92400E;
+  color: #85620F;
   border-color: #FED7AA;
 }
 
 /* ── Generic semantic variants ── */
 .success {
-  background: #D1FAE5;
-  color: #1B5E42;
-  border-color: #6EE7B7;
+  background: #DDEEDB;
+  color: #1F7A5A;
+  border-color: #A6C99F;
 }
 
 .warning {
-  background: #FEF3C7;
-  color: #92400E;
-  border-color: #FDE68A;
+  background: #FBF0C6;
+  color: #85620F;
+  border-color: #EAD57D;
 }
 
 .error {
@@ -68,9 +68,9 @@
 }
 
 .info {
-  background: #DBEAFE;
-  color: #1E3A5F;
-  border-color: #93C5FD;
+  background: #F1F7EF;
+  color: #24716B;
+  border-color: #BFD9C5;
 }
 
 .neutral,
@@ -82,24 +82,24 @@
 
 .primary {
   background: #E6F0EB;
-  color: #1B5E42;
+  color: #1F7A5A;
   border-color: #A7D4B8;
 }
 
 .completed {
-  background: #D1FAE5;
-  color: #1B5E42;
-  border-color: #6EE7B7;
+  background: #DDEEDB;
+  color: #1F7A5A;
+  border-color: #A6C99F;
 }
 
 .ordered {
-  background: #FEF3C7;
-  color: #92400E;
-  border-color: #FDE68A;
+  background: #FBF0C6;
+  color: #85620F;
+  border-color: #EAD57D;
 }
 
 .received {
-  background: #D1FAE5;
-  color: #1B5E42;
-  border-color: #6EE7B7;
+  background: #DDEEDB;
+  color: #1F7A5A;
+  border-color: #A6C99F;
 }

@@ -13,6 +13,7 @@ import {
   Bot,
   Settings,
   User,
+  Users,
   X,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
@@ -33,6 +34,7 @@ const NAV = [
       { label: "Stock",         href: "/stock",        icon: Layers,         roles: [PHARMACIST, ASSISTANT] },
       { label: "Point of Sale", href: "/pos",          icon: ShoppingCart,   roles: [] },
       { label: "Reservations",  href: "/reservations", icon: CalendarCheck,  roles: [] },
+      { label: "Customers",     href: "/customers",    icon: Users,          roles: [PHARMACIST, ASSISTANT] },
       { label: "Transactions",  href: "/transactions", icon: ArrowLeftRight, roles: [PHARMACIST] },
       { label: "Suppliers",     href: "/suppliers",    icon: Truck,          roles: [PHARMACIST] },
     ],
@@ -65,10 +67,8 @@ export default function Sidebar({ isOpen, onClose }) {
 
         {/* Logo */}
         <div className={styles.logo}>
-          <div className={styles.logoCross}>
-            <span className={styles.logoCrossInner}>+</span>
-          </div>
-          <span className={styles.logoText}>PharmaOS</span>
+          <img className={styles.logoMark} src="/pharmaos-logo.svg" alt="" aria-hidden="true" />
+          <span className={styles.logoText}>PharmaMS</span>
           <button className={styles.closeBtn} onClick={onClose} aria-label="Close menu">
             <X size={16} />
           </button>

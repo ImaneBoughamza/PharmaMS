@@ -17,7 +17,7 @@ export default function BillView({ receipt, onNewSale }) {
         {/* Receipt */}
         <div className={styles.receipt} id="pos-receipt">
           <div className={styles.receiptHeader}>
-            <p className={styles.brand}>PharmaOS</p>
+            <p className={styles.brand}>PharmaMS</p>
             <p className={styles.pharmacyName}>{pharmacyName}</p>
             <p className={styles.meta}>{date} — {time}</p>
             <p className={styles.meta}>Receipt #{receiptNumber}</p>

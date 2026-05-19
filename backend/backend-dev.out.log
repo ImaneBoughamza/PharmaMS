@@ -1,0 +1,536 @@
+
+> pharmacy-backend@1.0.0 dev
+> nodemon src/server.js
+
+[33m[nodemon] 3.1.11[39m
+[33m[nodemon] to restart at any time, enter `rs`[39m
+[33m[nodemon] watching path(s): *.*[39m
+[33m[nodemon] watching extensions: js,mjs,cjs,json[39m
+[32m[nodemon] starting `node src/server.js`[39m
+[2026-04-30 18:19:11] [33mwarn[39m: Email transporter not ready: Invalid login: 535 Authentication failed: The provided authorization grant is invalid, expired, or revoked
+[2026-04-30 18:19:12] [32minfo[39m: MongoDB connected: ac-kqnx0we-shard-00-00.jj9g0kc.mongodb.net
+[2026-04-30 18:19:12] [33mwarn[39m: REDIS_URL not set - Redis disabled
+[2026-04-30 18:19:12] [32minfo[39m: Near-expiry job scheduled - runs daily at 08:00 (Casablanca time)
+[2026-04-30 18:19:12] [32minfo[39m: Reservation expiry job scheduled - runs every 15 minutes
+[2026-04-30 18:19:12] [32minfo[39m: Server running on port 5000 in development mode
+[0;36mMongoose:[0m users.createIndex({ pharmacyId: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m batches.createIndex({ pharmacyId: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m suppliers.createIndex({ pharmacyId: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m parapharmacyproducts.createIndex({ pharmacyId: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m sales.createIndex({ pharmacyId: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m reservations.createIndex({ pharmacyId: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m auditlogs.createIndex({ pharmacyId: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m customers.createIndex({ pharmacyId: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m medicines.createIndex({ pharmacyId: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m aiconsultations.createIndex({ pharmacyId: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m users.createIndex({ pharmacyId: [33m1[39m, email: [33m1[39m }, { unique: [33mtrue[39m, background: [33mtrue[39m })
+[0;36mMongoose:[0m batches.createIndex({ pharmacyId: [33m1[39m, medicineId: [33m1[39m, batchNumber: [33m1[39m }, { unique: [33mtrue[39m, background: [33mtrue[39m })
+[0;36mMongoose:[0m suppliers.createIndex({ pharmacyId: [33m1[39m, name: [33m1[39m }, { unique: [33mtrue[39m, background: [33mtrue[39m })
+[0;36mMongoose:[0m parapharmacyproducts.createIndex({ pharmacyId: [33m1[39m, name: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m sales.createIndex({ pharmacyId: [33m1[39m, cashierId: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m reservations.createIndex({ confirmationCode: [33m1[39m }, { unique: [33mtrue[39m, background: [33mtrue[39m })
+[0;36mMongoose:[0m auditlogs.createIndex({ pharmacyId: [33m1[39m, createdAt: [33m-1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m customers.createIndex({ pharmacyId: [33m1[39m, email: [33m1[39m }, { unique: [33mtrue[39m, background: [33mtrue[39m })
+[0;36mMongoose:[0m medicines.createIndex({ pharmacyId: [33m1[39m, name: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m aiconsultations.createIndex({ customerId: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m users.createIndex({ pharmacyId: [33m1[39m, role: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m batches.createIndex({ pharmacyId: [33m1[39m, medicineId: [33m1[39m, expiryDate: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m orders.createIndex({ pharmacyId: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m suppliers.createIndex({ pharmacyId: [33m1[39m, type: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m sales.createIndex({ pharmacyId: [33m1[39m, createdAt: [33m-1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m reservations.createIndex({ pharmacyId: [33m1[39m, status: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m deliveries.createIndex({ pharmacyId: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m medicines.createIndex({ pharmacyId: [33m1[39m, isActive: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m aiconsultations.createIndex({ pharmacyId: [33m1[39m, staffId: [33m1[39m, createdAt: [33m-1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m batches.createIndex({ pharmacyId: [33m1[39m, expiryDate: [33m1[39m, isActive: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m orders.createIndex({ pharmacyId: [33m1[39m, status: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m sales.createIndex({ pharmacyId: [33m1[39m, approvalStatus: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m suppliers.createIndex({ pharmacyId: [33m1[39m, isActive: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m reservations.createIndex({ pharmacyId: [33m1[39m, expiresAt: [33m1[39m, status: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m deliveries.createIndex({ pharmacyId: [33m1[39m, supplierId: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m medicines.createIndex({ pharmacyId: [33m1[39m, category: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m orders.createIndex({ pharmacyId: [33m1[39m, supplierId: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m batches.createIndex({ pharmacyId: [33m1[39m, remainingQty: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m sales.createIndex({ [32m'invoice.receiptNumber'[39m: [33m1[39m }, { unique: [33mtrue[39m, background: [33mtrue[39m })
+[0;36mMongoose:[0m reservations.createIndex({ pharmacyId: [33m1[39m, createdAt: [33m-1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m deliveries.createIndex({ pharmacyId: [33m1[39m, deliveryDate: [33m-1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m medicines.createIndex({ name: [32m'text'[39m, genericName: [32m'text'[39m }, { weights: { name: [33m10[39m, genericName: [33m5[39m }, background: [33mtrue[39m })
+[0;36mMongoose:[0m orders.createIndex({ pharmacyId: [33m1[39m, createdAt: [33m-1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m parapharmacyproducts.createIndex({ pharmacyId: [33m1[39m, isActive: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m auditlogs.createIndex({ pharmacyId: [33m1[39m, userId: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m parapharmacyproducts.createIndex({ pharmacyId: [33m1[39m, category: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m auditlogs.createIndex({ pharmacyId: [33m1[39m, action: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m parapharmacyproducts.createIndex({ name: [32m'text'[39m, brand: [32m'text'[39m }, { weights: { name: [33m10[39m, brand: [33m5[39m }, background: [33mtrue[39m })
+[0;36mMongoose:[0m auditlogs.createIndex({ pharmacyId: [33m1[39m, entity: [33m1[39m }, { background: [33mtrue[39m })
+[0;36mMongoose:[0m auditlogs.createIndex({ createdAt: [33m1[39m }, { expireAfterSeconds: [33m157680000[39m, background: [33mtrue[39m })
+[0;36mMongoose:[0m users.findOne({ email: [32m'pharmacist@pharmaos.ma'[39m, pharmacyId: { [32m'$ne'[39m: [1mnull[22m }, isActive: [33mtrue[39m}, {})
+[2026-04-30 18:35:45] [31merror[39m: 401 - Invalid email or password - POST /api/auth/login
+[0mPOST /api/auth/login [33m401[0m 22253.735 ms - 55[0m
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m suppliers.findOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), name: [32m'Test Supplier'[39m}, {})
+[2026-04-30 18:37:31] [31merror[39m: 409 - Supplier name already exists - POST /api/suppliers
+[0mPOST /api/suppliers [33m409[0m 108.370 ms - 58[0m
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m suppliers.findOne({ _id: ObjectId("69f3736be29d4c7c9666f557"), pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), isActive: [33mtrue[39m}, {})
+[0;36mMongoose:[0m medicines.insertOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), name: [32m'Doliprane 500mg'[39m, genericName: [32m'Paracétamol'[39m, category: [32m'non-prescription'[39m, unit: [32m'tablet'[39m, purchasePrice: [33m8.5[39m, salePrice: [33m12[39m, minStockLevel: [33m50[39m, supplierId: ObjectId("69f3736be29d4c7c9666f557"), isActive: [33mtrue[39m, _id: ObjectId("69f3857285e04f162e168f3c"), createdAt: new Date("Thu, 30 Apr 2026 16:38:10 GMT"), updatedAt: new Date("Thu, 30 Apr 2026 16:38:10 GMT"), __v: [33m0[39m}, {})
+[0;36mMongoose:[0m batches.insertOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), medicineId: ObjectId("69f3857285e04f162e168f3c"), deliveryId: [1mnull[22m, batchNumber: [32m'LOT-2024-001'[39m, expiryDate: new Date("Fri, 31 Dec 2027 00:00:00 GMT"), purchasePrice: [33m8.5[39m, salePrice: [33m12[39m, initialQty: [33m200[39m, remainingQty: [33m200[39m, isActive: [33mtrue[39m, _id: ObjectId("69f3857285e04f162e168f3e"), createdAt: new Date("Thu, 30 Apr 2026 16:38:10 GMT"), updatedAt: new Date("Thu, 30 Apr 2026 16:38:10 GMT"), __v: [33m0[39m}, {})
+[0mPOST /api/medicines [32m201[0m 229.318 ms - 394[0m
+[0;36mMongoose:[0m auditlogs.insertOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), userId: ObjectId("69f078cccdde9c739a33f20d"), action: [32m'MEDICINE_REGISTERED'[39m, entity: [32m'medicines'[39m, entityId: ObjectId("69f3857285e04f162e168f3c"), payload: { name: [32m'Doliprane 500mg'[39m, category: [32m'non-prescription'[39m, supplierId: ObjectId("69f3736be29d4c7c9666f557") }, _id: ObjectId("69f3857285e04f162e168f40"), createdAt: new Date("Thu, 30 Apr 2026 16:38:10 GMT"), __v: [33m0[39m}, {})
+[0;36mMongoose:[0m users.findOne({ email: [32m'i.boughamza@pharmams.ma'[39m, pharmacyId: { [32m'$ne'[39m: [1mnull[22m }, isActive: [33mtrue[39m}, {})
+[0;36mMongoose:[0m users.updateOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { [32m'$set'[39m: { lastLoginAt: new Date("Thu, 30 Apr 2026 16:38:55 GMT"), updatedAt: new Date("Thu, 30 Apr 2026 16:38:55 GMT") }}, {})
+[0mPOST /api/auth/login [32m200[0m 677.987 ms - 2841[0m
+[0;36mMongoose:[0m auditlogs.insertOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), userId: ObjectId("69f078cccdde9c739a33f20d"), action: [32m'LOGIN'[39m, entity: [32m'users'[39m, entityId: ObjectId("69f078cccdde9c739a33f20d"), payload: { email: [32m'i.boughamza@pharmams.ma'[39m, role: [32m'pharmacist'[39m }, _id: ObjectId("69f3859f85e04f162e168f44"), createdAt: new Date("Thu, 30 Apr 2026 16:38:55 GMT"), __v: [33m0[39m}, {})
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d"), pharmacyId: ObjectId("69f078cbcdde9c739a33f20c")}, { projection: { passwordHash: [33m0[39m } })
+[0mGET /api/auth/me [32m200[0m 89.193 ms - 343[0m
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m parapharmacyproducts.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m parapharmacyproducts.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0mGET /api/parapharmacy?status=all&limit=500 [36m304[0m 135.573 ms - -[0m
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m parapharmacyproducts.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m parapharmacyproducts.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0mGET /api/parapharmacy?status=all&limit=500 [36m304[0m 132.250 ms - -[0m
+[0;36mMongoose:[0m suppliers.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m suppliers.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0;36mMongoose:[0m medicines.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m deliveries.findOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), supplierId: ObjectId("69f370071560d458a8f20a27")}, { sort: { deliveryDate: [33m-1[39m }, projection: { deliveryDate: [33m1[39m } })
+[0;36mMongoose:[0m deliveries.findOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), supplierId: ObjectId("69f3736be29d4c7c9666f557")}, { sort: { deliveryDate: [33m-1[39m }, projection: { deliveryDate: [33m1[39m } })
+[0;36mMongoose:[0m suppliers.find({ _id: { [32m'$in'[39m: [ ObjectId("69f3736be29d4c7c9666f557") ] } }, { projection: { name: [33m1[39m } })
+[0mGET /api/suppliers?status=all&limit=500 [32m200[0m 409.483 ms - 848[0m
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m batches.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), medicineId: ObjectId("69f3857285e04f162e168f3c"), isActive: [33mtrue[39m, remainingQty: { [32m'$gt'[39m: [33m0[39m }}, { sort: { expiryDate: [33m1[39m } })
+[0;36mMongoose:[0m suppliers.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m suppliers.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0;36mMongoose:[0m medicines.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0;36mMongoose:[0m deliveries.findOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), supplierId: ObjectId("69f370071560d458a8f20a27")}, { sort: { deliveryDate: [33m-1[39m }, projection: { deliveryDate: [33m1[39m } })
+[0;36mMongoose:[0m deliveries.findOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), supplierId: ObjectId("69f3736be29d4c7c9666f557")}, { sort: { deliveryDate: [33m-1[39m }, projection: { deliveryDate: [33m1[39m } })
+[0mGET /api/medicines?status=all&limit=500 [32m200[0m 503.258 ms - 576[0m
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0mGET /api/suppliers?status=all&limit=500 [36m304[0m 135.634 ms - -[0m
+[0;36mMongoose:[0m medicines.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m suppliers.find({ _id: { [32m'$in'[39m: [ ObjectId("69f3736be29d4c7c9666f557") ] } }, { projection: { name: [33m1[39m } })
+[0;36mMongoose:[0m batches.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), medicineId: ObjectId("69f3857285e04f162e168f3c"), isActive: [33mtrue[39m, remainingQty: { [32m'$gt'[39m: [33m0[39m }}, { sort: { expiryDate: [33m1[39m } })
+[0;36mMongoose:[0m medicines.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0mGET /api/medicines?status=all&limit=500 [36m304[0m 213.273 ms - -[0m
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m suppliers.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), isActive: [33mtrue[39m }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m suppliers.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), isActive: [33mtrue[39m }, {})
+[0;36mMongoose:[0m deliveries.findOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), supplierId: ObjectId("69f370071560d458a8f20a27")}, { sort: { deliveryDate: [33m-1[39m }, projection: { deliveryDate: [33m1[39m } })
+[0;36mMongoose:[0m deliveries.findOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), supplierId: ObjectId("69f3736be29d4c7c9666f557")}, { sort: { deliveryDate: [33m-1[39m }, projection: { deliveryDate: [33m1[39m } })
+[0mGET /api/suppliers?status=active&limit=200 [32m200[0m 131.613 ms - 848[0m
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m suppliers.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), isActive: [33mtrue[39m }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m suppliers.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), isActive: [33mtrue[39m }, {})
+[0;36mMongoose:[0m deliveries.findOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), supplierId: ObjectId("69f370071560d458a8f20a27")}, { sort: { deliveryDate: [33m-1[39m }, projection: { deliveryDate: [33m1[39m } })
+[0;36mMongoose:[0m deliveries.findOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), supplierId: ObjectId("69f3736be29d4c7c9666f557")}, { sort: { deliveryDate: [33m-1[39m }, projection: { deliveryDate: [33m1[39m } })
+[0mGET /api/suppliers?status=active&limit=200 [36m304[0m 134.535 ms - -[0m
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m suppliers.findOne({ _id: ObjectId("69f370071560d458a8f20a27"), pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), isActive: [33mtrue[39m}, {})
+[0;36mMongoose:[0m medicines.insertOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), name: [32m'Abiraterone'[39m, genericName: [32m'ABIRANAT 250 MG'[39m, category: [32m'prescription'[39m, unit: [32m'tablet'[39m, purchasePrice: [33m10215[39m, salePrice: [33m10411[39m, minStockLevel: [33m20[39m, supplierId: ObjectId("69f370071560d458a8f20a27"), isActive: [33mtrue[39m, _id: ObjectId("69f3864085e04f162e168f6e"), createdAt: new Date("Thu, 30 Apr 2026 16:41:36 GMT"), updatedAt: new Date("Thu, 30 Apr 2026 16:41:36 GMT"), __v: [33m0[39m}, {})
+[0;36mMongoose:[0m batches.insertOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), medicineId: ObjectId("69f3864085e04f162e168f6e"), deliveryId: [1mnull[22m, batchNumber: [32m'L02BX03'[39m, expiryDate: new Date("Sun, 17 May 2026 00:00:00 GMT"), purchasePrice: [33m10215[39m, salePrice: [33m10411[39m, initialQty: [33m100[39m, remainingQty: [33m100[39m, isActive: [33mtrue[39m, _id: ObjectId("69f3864085e04f162e168f70"), createdAt: new Date("Thu, 30 Apr 2026 16:41:36 GMT"), updatedAt: new Date("Thu, 30 Apr 2026 16:41:36 GMT"), __v: [33m0[39m}, {})
+[0mPOST /api/medicines [32m201[0m 189.686 ms - 394[0m
+[0;36mMongoose:[0m auditlogs.insertOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), userId: ObjectId("69f078cccdde9c739a33f20d"), action: [32m'MEDICINE_REGISTERED'[39m, entity: [32m'medicines'[39m, entityId: ObjectId("69f3864085e04f162e168f6e"), payload: { name: [32m'Abiraterone'[39m, category: [32m'prescription'[39m, supplierId: ObjectId("69f370071560d458a8f20a27") }, _id: ObjectId("69f3864085e04f162e168f72"), createdAt: new Date("Thu, 30 Apr 2026 16:41:36 GMT"), __v: [33m0[39m}, {})
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m medicines.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m parapharmacyproducts.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m parapharmacyproducts.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0;36mMongoose:[0m suppliers.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m suppliers.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0;36mMongoose:[0m suppliers.find({ _id: { [32m'$in'[39m: [ ObjectId("69f370071560d458a8f20a27"), ObjectId("69f3736be29d4c7c9666f557") ] }}, { projection: { name: [33m1[39m } })
+[0;36mMongoose:[0m batches.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), medicineId: ObjectId("69f3864085e04f162e168f6e"), isActive: [33mtrue[39m, remainingQty: { [32m'$gt'[39m: [33m0[39m }}, { sort: { expiryDate: [33m1[39m } })
+[0;36mMongoose:[0m batches.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), medicineId: ObjectId("69f3857285e04f162e168f3c"), isActive: [33mtrue[39m, remainingQty: { [32m'$gt'[39m: [33m0[39m }}, { sort: { expiryDate: [33m1[39m } })
+[0;36mMongoose:[0m medicines.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0mGET /api/medicines?status=all&limit=500 [32m200[0m 238.102 ms - 1084[0m
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m medicines.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m suppliers.find({ _id: { [32m'$in'[39m: [ ObjectId("69f370071560d458a8f20a27"), ObjectId("69f3736be29d4c7c9666f557") ] }}, { projection: { name: [33m1[39m } })
+[0;36mMongoose:[0m batches.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), medicineId: ObjectId("69f3864085e04f162e168f6e"), isActive: [33mtrue[39m, remainingQty: { [32m'$gt'[39m: [33m0[39m }}, { sort: { expiryDate: [33m1[39m } })
+[0;36mMongoose:[0m batches.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), medicineId: ObjectId("69f3857285e04f162e168f3c"), isActive: [33mtrue[39m, remainingQty: { [32m'$gt'[39m: [33m0[39m }}, { sort: { expiryDate: [33m1[39m } })
+[0;36mMongoose:[0m medicines.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0mGET /api/parapharmacy?status=all&limit=500 [36m304[0m 449.973 ms - -[0m
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0mGET /api/medicines?status=all&limit=500 [36m304[0m 223.058 ms - -[0m
+[0;36mMongoose:[0m deliveries.findOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), supplierId: ObjectId("69f370071560d458a8f20a27")}, { sort: { deliveryDate: [33m-1[39m }, projection: { deliveryDate: [33m1[39m } })
+[0;36mMongoose:[0m deliveries.findOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), supplierId: ObjectId("69f3736be29d4c7c9666f557")}, { sort: { deliveryDate: [33m-1[39m }, projection: { deliveryDate: [33m1[39m } })
+[0;36mMongoose:[0m parapharmacyproducts.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m parapharmacyproducts.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0mGET /api/suppliers?status=all&limit=500 [36m304[0m 533.205 ms - -[0m
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0mGET /api/parapharmacy?status=all&limit=500 [36m304[0m 93.784 ms - -[0m
+[0;36mMongoose:[0m suppliers.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m suppliers.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0;36mMongoose:[0m deliveries.findOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), supplierId: ObjectId("69f370071560d458a8f20a27")}, { sort: { deliveryDate: [33m-1[39m }, projection: { deliveryDate: [33m1[39m } })
+[0;36mMongoose:[0m deliveries.findOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), supplierId: ObjectId("69f3736be29d4c7c9666f557")}, { sort: { deliveryDate: [33m-1[39m }, projection: { deliveryDate: [33m1[39m } })
+[0mGET /api/suppliers?status=all&limit=500 [36m304[0m 137.292 ms - -[0m
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d"), pharmacyId: ObjectId("69f078cbcdde9c739a33f20c")}, { projection: { passwordHash: [33m0[39m } })
+[0mGET /api/auth/me [32m200[0m 84.618 ms - 343[0m
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m parapharmacyproducts.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m parapharmacyproducts.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0;36mMongoose:[0m medicines.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m suppliers.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m suppliers.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0;36mMongoose:[0m suppliers.find({ _id: { [32m'$in'[39m: [ ObjectId("69f370071560d458a8f20a27"), ObjectId("69f3736be29d4c7c9666f557") ] }}, { projection: { name: [33m1[39m } })
+[0mGET /api/parapharmacy?status=all&limit=500 [36m304[0m 84.503 ms - -[0m
+[0;36mMongoose:[0m deliveries.findOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), supplierId: ObjectId("69f370071560d458a8f20a27")}, { sort: { deliveryDate: [33m-1[39m }, projection: { deliveryDate: [33m1[39m } })
+[0;36mMongoose:[0m deliveries.findOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), supplierId: ObjectId("69f3736be29d4c7c9666f557")}, { sort: { deliveryDate: [33m-1[39m }, projection: { deliveryDate: [33m1[39m } })
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m batches.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), medicineId: ObjectId("69f3864085e04f162e168f6e"), isActive: [33mtrue[39m, remainingQty: { [32m'$gt'[39m: [33m0[39m }}, { sort: { expiryDate: [33m1[39m } })
+[0;36mMongoose:[0m batches.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), medicineId: ObjectId("69f3857285e04f162e168f3c"), isActive: [33mtrue[39m, remainingQty: { [32m'$gt'[39m: [33m0[39m }}, { sort: { expiryDate: [33m1[39m } })
+[0mGET /api/suppliers?status=all&limit=500 [36m304[0m 122.529 ms - -[0m
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m parapharmacyproducts.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m parapharmacyproducts.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0;36mMongoose:[0m medicines.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0;36mMongoose:[0m suppliers.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m suppliers.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0mGET /api/parapharmacy?status=all&limit=500 [36m304[0m 86.732 ms - -[0m
+[0mGET /api/medicines?status=all&limit=500 [36m304[0m 204.402 ms - -[0m
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m deliveries.findOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), supplierId: ObjectId("69f370071560d458a8f20a27")}, { sort: { deliveryDate: [33m-1[39m }, projection: { deliveryDate: [33m1[39m } })
+[0;36mMongoose:[0m deliveries.findOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), supplierId: ObjectId("69f3736be29d4c7c9666f557")}, { sort: { deliveryDate: [33m-1[39m }, projection: { deliveryDate: [33m1[39m } })
+[0;36mMongoose:[0m medicines.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0mGET /api/suppliers?status=all&limit=500 [36m304[0m 128.965 ms - -[0m
+[0;36mMongoose:[0m suppliers.find({ _id: { [32m'$in'[39m: [ ObjectId("69f370071560d458a8f20a27"), ObjectId("69f3736be29d4c7c9666f557") ] }}, { projection: { name: [33m1[39m } })
+[0;36mMongoose:[0m batches.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), medicineId: ObjectId("69f3864085e04f162e168f6e"), isActive: [33mtrue[39m, remainingQty: { [32m'$gt'[39m: [33m0[39m }}, { sort: { expiryDate: [33m1[39m } })
+[0;36mMongoose:[0m batches.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), medicineId: ObjectId("69f3857285e04f162e168f3c"), isActive: [33mtrue[39m, remainingQty: { [32m'$gt'[39m: [33m0[39m }}, { sort: { expiryDate: [33m1[39m } })
+[0;36mMongoose:[0m medicines.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0mGET /api/medicines?status=all&limit=500 [36m304[0m 220.330 ms - -[0m
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m medicines.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m parapharmacyproducts.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m parapharmacyproducts.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0;36mMongoose:[0m suppliers.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m suppliers.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0;36mMongoose:[0m suppliers.find({ _id: { [32m'$in'[39m: [ ObjectId("69f370071560d458a8f20a27"), ObjectId("69f3736be29d4c7c9666f557") ] }}, { projection: { name: [33m1[39m } })
+[0mGET /api/parapharmacy?status=all&limit=500 [36m304[0m 82.467 ms - -[0m
+[0;36mMongoose:[0m deliveries.findOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), supplierId: ObjectId("69f370071560d458a8f20a27")}, { sort: { deliveryDate: [33m-1[39m }, projection: { deliveryDate: [33m1[39m } })
+[0;36mMongoose:[0m deliveries.findOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), supplierId: ObjectId("69f3736be29d4c7c9666f557")}, { sort: { deliveryDate: [33m-1[39m }, projection: { deliveryDate: [33m1[39m } })
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m batches.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), medicineId: ObjectId("69f3864085e04f162e168f6e"), isActive: [33mtrue[39m, remainingQty: { [32m'$gt'[39m: [33m0[39m }}, { sort: { expiryDate: [33m1[39m } })
+[0;36mMongoose:[0m batches.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), medicineId: ObjectId("69f3857285e04f162e168f3c"), isActive: [33mtrue[39m, remainingQty: { [32m'$gt'[39m: [33m0[39m }}, { sort: { expiryDate: [33m1[39m } })
+[0mGET /api/suppliers?status=all&limit=500 [36m304[0m 123.771 ms - -[0m
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m parapharmacyproducts.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m parapharmacyproducts.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0;36mMongoose:[0m medicines.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0;36mMongoose:[0m suppliers.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m suppliers.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0mGET /api/parapharmacy?status=all&limit=500 [36m304[0m 85.746 ms - -[0m
+[0mGET /api/medicines?status=all&limit=500 [36m304[0m 215.280 ms - -[0m
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m deliveries.findOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), supplierId: ObjectId("69f370071560d458a8f20a27")}, { sort: { deliveryDate: [33m-1[39m }, projection: { deliveryDate: [33m1[39m } })
+[0;36mMongoose:[0m deliveries.findOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), supplierId: ObjectId("69f3736be29d4c7c9666f557")}, { sort: { deliveryDate: [33m-1[39m }, projection: { deliveryDate: [33m1[39m } })
+[0;36mMongoose:[0m medicines.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0mGET /api/suppliers?status=all&limit=500 [36m304[0m 126.759 ms - -[0m
+[0;36mMongoose:[0m suppliers.find({ _id: { [32m'$in'[39m: [ ObjectId("69f370071560d458a8f20a27"), ObjectId("69f3736be29d4c7c9666f557") ] }}, { projection: { name: [33m1[39m } })
+[0;36mMongoose:[0m batches.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), medicineId: ObjectId("69f3864085e04f162e168f6e"), isActive: [33mtrue[39m, remainingQty: { [32m'$gt'[39m: [33m0[39m }}, { sort: { expiryDate: [33m1[39m } })
+[0;36mMongoose:[0m batches.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), medicineId: ObjectId("69f3857285e04f162e168f3c"), isActive: [33mtrue[39m, remainingQty: { [32m'$gt'[39m: [33m0[39m }}, { sort: { expiryDate: [33m1[39m } })
+[0;36mMongoose:[0m medicines.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0mGET /api/medicines?status=all&limit=500 [36m304[0m 207.372 ms - -[0m
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m medicines.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m parapharmacyproducts.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m parapharmacyproducts.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0;36mMongoose:[0m suppliers.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m suppliers.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0;36mMongoose:[0m suppliers.find({ _id: { [32m'$in'[39m: [ ObjectId("69f370071560d458a8f20a27"), ObjectId("69f3736be29d4c7c9666f557") ] }}, { projection: { name: [33m1[39m } })
+[0mGET /api/parapharmacy?status=all&limit=500 [36m304[0m 84.789 ms - -[0m
+[0;36mMongoose:[0m deliveries.findOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), supplierId: ObjectId("69f370071560d458a8f20a27")}, { sort: { deliveryDate: [33m-1[39m }, projection: { deliveryDate: [33m1[39m } })
+[0;36mMongoose:[0m deliveries.findOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), supplierId: ObjectId("69f3736be29d4c7c9666f557")}, { sort: { deliveryDate: [33m-1[39m }, projection: { deliveryDate: [33m1[39m } })
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m batches.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), medicineId: ObjectId("69f3864085e04f162e168f6e"), isActive: [33mtrue[39m, remainingQty: { [32m'$gt'[39m: [33m0[39m }}, { sort: { expiryDate: [33m1[39m } })
+[0;36mMongoose:[0m batches.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), medicineId: ObjectId("69f3857285e04f162e168f3c"), isActive: [33mtrue[39m, remainingQty: { [32m'$gt'[39m: [33m0[39m }}, { sort: { expiryDate: [33m1[39m } })
+[0mGET /api/suppliers?status=all&limit=500 [36m304[0m 135.294 ms - -[0m
+[0;36mMongoose:[0m parapharmacyproducts.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m parapharmacyproducts.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m medicines.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0mGET /api/parapharmacy?status=all&limit=500 [36m304[0m 85.040 ms - -[0m
+[0;36mMongoose:[0m suppliers.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m suppliers.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0mGET /api/medicines?status=all&limit=500 [36m304[0m 218.516 ms - -[0m
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m deliveries.findOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), supplierId: ObjectId("69f370071560d458a8f20a27")}, { sort: { deliveryDate: [33m-1[39m }, projection: { deliveryDate: [33m1[39m } })
+[0;36mMongoose:[0m deliveries.findOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), supplierId: ObjectId("69f3736be29d4c7c9666f557")}, { sort: { deliveryDate: [33m-1[39m }, projection: { deliveryDate: [33m1[39m } })
+[0;36mMongoose:[0m medicines.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0mGET /api/suppliers?status=all&limit=500 [36m304[0m 130.852 ms - -[0m
+[0;36mMongoose:[0m suppliers.find({ _id: { [32m'$in'[39m: [ ObjectId("69f370071560d458a8f20a27"), ObjectId("69f3736be29d4c7c9666f557") ] }}, { projection: { name: [33m1[39m } })
+[0;36mMongoose:[0m batches.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), medicineId: ObjectId("69f3864085e04f162e168f6e"), isActive: [33mtrue[39m, remainingQty: { [32m'$gt'[39m: [33m0[39m }}, { sort: { expiryDate: [33m1[39m } })
+[0;36mMongoose:[0m batches.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), medicineId: ObjectId("69f3857285e04f162e168f3c"), isActive: [33mtrue[39m, remainingQty: { [32m'$gt'[39m: [33m0[39m }}, { sort: { expiryDate: [33m1[39m } })
+[0;36mMongoose:[0m medicines.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0mGET /api/medicines?status=all&limit=500 [36m304[0m 226.202 ms - -[0m
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m medicines.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m parapharmacyproducts.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m parapharmacyproducts.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0;36mMongoose:[0m suppliers.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m suppliers.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0;36mMongoose:[0m suppliers.find({ _id: { [32m'$in'[39m: [ ObjectId("69f370071560d458a8f20a27"), ObjectId("69f3736be29d4c7c9666f557") ] }}, { projection: { name: [33m1[39m } })
+[0mGET /api/parapharmacy?status=all&limit=500 [36m304[0m 89.445 ms - -[0m
+[0;36mMongoose:[0m deliveries.findOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), supplierId: ObjectId("69f370071560d458a8f20a27")}, { sort: { deliveryDate: [33m-1[39m }, projection: { deliveryDate: [33m1[39m } })
+[0;36mMongoose:[0m deliveries.findOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), supplierId: ObjectId("69f3736be29d4c7c9666f557")}, { sort: { deliveryDate: [33m-1[39m }, projection: { deliveryDate: [33m1[39m } })
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m batches.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), medicineId: ObjectId("69f3864085e04f162e168f6e"), isActive: [33mtrue[39m, remainingQty: { [32m'$gt'[39m: [33m0[39m }}, { sort: { expiryDate: [33m1[39m } })
+[0;36mMongoose:[0m batches.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), medicineId: ObjectId("69f3857285e04f162e168f3c"), isActive: [33mtrue[39m, remainingQty: { [32m'$gt'[39m: [33m0[39m }}, { sort: { expiryDate: [33m1[39m } })
+[0mGET /api/suppliers?status=all&limit=500 [36m304[0m 130.991 ms - -[0m
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m parapharmacyproducts.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m parapharmacyproducts.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0;36mMongoose:[0m medicines.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0;36mMongoose:[0m suppliers.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m suppliers.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0mGET /api/parapharmacy?status=all&limit=500 [36m304[0m 84.815 ms - -[0m
+[0mGET /api/medicines?status=all&limit=500 [36m304[0m 217.393 ms - -[0m
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m deliveries.findOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), supplierId: ObjectId("69f370071560d458a8f20a27")}, { sort: { deliveryDate: [33m-1[39m }, projection: { deliveryDate: [33m1[39m } })
+[0;36mMongoose:[0m deliveries.findOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), supplierId: ObjectId("69f3736be29d4c7c9666f557")}, { sort: { deliveryDate: [33m-1[39m }, projection: { deliveryDate: [33m1[39m } })
+[0;36mMongoose:[0m medicines.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0mGET /api/suppliers?status=all&limit=500 [36m304[0m 122.330 ms - -[0m
+[0;36mMongoose:[0m suppliers.find({ _id: { [32m'$in'[39m: [ ObjectId("69f370071560d458a8f20a27"), ObjectId("69f3736be29d4c7c9666f557") ] }}, { projection: { name: [33m1[39m } })
+[0;36mMongoose:[0m batches.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), medicineId: ObjectId("69f3864085e04f162e168f6e"), isActive: [33mtrue[39m, remainingQty: { [32m'$gt'[39m: [33m0[39m }}, { sort: { expiryDate: [33m1[39m } })
+[0;36mMongoose:[0m batches.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), medicineId: ObjectId("69f3857285e04f162e168f3c"), isActive: [33mtrue[39m, remainingQty: { [32m'$gt'[39m: [33m0[39m }}, { sort: { expiryDate: [33m1[39m } })
+[0;36mMongoose:[0m medicines.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0mGET /api/medicines?status=all&limit=500 [36m304[0m 216.932 ms - -[0m
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m suppliers.findOne({ _id: ObjectId("69f370071560d458a8f20a27"), pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), isActive: [33mtrue[39m}, {})
+[0;36mMongoose:[0m medicines.findOneAndUpdate({ _id: ObjectId("69f3864085e04f162e168f6e"), pharmacyId: ObjectId("69f078cbcdde9c739a33f20c")}, { [32m'$setOnInsert'[39m: { createdAt: new Date("Thu, 30 Apr 2026 16:44:33 GMT") }, [32m'$set'[39m: { name: [32m'Abiraterone'[39m, genericName: [32m'ABIRANAT 250 MG'[39m, category: [32m'prescription'[39m, unit: [32m'tablet'[39m, supplierId: ObjectId("69f370071560d458a8f20a27"), minStockLevel: [33m20[39m, updatedAt: new Date("Thu, 30 Apr 2026 16:44:33 GMT") }}, { runValidators: [33mtrue[39m, returnDocument: [32m'after'[39m, returnOriginal: [33mfalse[39m })
+[0mPATCH /api/medicines/69f3864085e04f162e168f6e [32m200[0m 148.000 ms - 394[0m
+[0;36mMongoose:[0m auditlogs.insertOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), userId: ObjectId("69f078cccdde9c739a33f20d"), action: [32m'MEDICINE_UPDATED'[39m, entity: [32m'medicines'[39m, entityId: ObjectId("69f3864085e04f162e168f6e"), payload: { name: [32m'Abiraterone'[39m, genericName: [32m'ABIRANAT 250 MG'[39m, category: [32m'prescription'[39m, unit: [32m'tablet'[39m, supplierId: [32m'69f370071560d458a8f20a27'[39m, minStockLevel: [33m20[39m }, _id: ObjectId("69f386f185e04f162e169005"), createdAt: new Date("Thu, 30 Apr 2026 16:44:33 GMT"), __v: [33m0[39m}, {})
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m medicines.findOne({ _id: ObjectId("69f3864085e04f162e168f6e"), pharmacyId: ObjectId("69f078cbcdde9c739a33f20c")}, {})
+[0;36mMongoose:[0m medicines.updateOne({ _id: ObjectId("69f3864085e04f162e168f6e") }, { [32m'$set'[39m: { isActive: [33mfalse[39m, updatedAt: new Date("Thu, 30 Apr 2026 16:44:36 GMT") }}, {})
+[0mPATCH /api/medicines/69f3864085e04f162e168f6e/deactivate [32m200[0m 132.904 ms - 49[0m
+[0;36mMongoose:[0m auditlogs.insertOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), userId: ObjectId("69f078cccdde9c739a33f20d"), action: [32m'MEDICINE_DEACTIVATED'[39m, entity: [32m'medicines'[39m, entityId: ObjectId("69f3864085e04f162e168f6e"), _id: ObjectId("69f386f485e04f162e16900a"), createdAt: new Date("Thu, 30 Apr 2026 16:44:36 GMT"), __v: [33m0[39m}, {})
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m medicines.findOne({ _id: ObjectId("69f3864085e04f162e168f6e"), pharmacyId: ObjectId("69f078cbcdde9c739a33f20c")}, {})
+[0;36mMongoose:[0m medicines.updateOne({ _id: ObjectId("69f3864085e04f162e168f6e") }, { [32m'$set'[39m: { isActive: [33mtrue[39m, updatedAt: new Date("Thu, 30 Apr 2026 16:44:40 GMT") }}, {})
+[0mPATCH /api/medicines/69f3864085e04f162e168f6e/reactivate [32m200[0m 129.817 ms - 394[0m
+[0;36mMongoose:[0m auditlogs.insertOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), userId: ObjectId("69f078cccdde9c739a33f20d"), action: [32m'MEDICINE_REACTIVATED'[39m, entity: [32m'medicines'[39m, entityId: ObjectId("69f3864085e04f162e168f6e"), _id: ObjectId("69f386f885e04f162e16900f"), createdAt: new Date("Thu, 30 Apr 2026 16:44:40 GMT"), __v: [33m0[39m}, {})
+[2026-04-30 18:45:00] [32minfo[39m: Reservation expiry job started
+[0;36mMongoose:[0m reservations.find({ status: { [32m'$in'[39m: [ [32m'pending'[39m, [32m'confirmed'[39m ] }, expiresAt: { [32m'$lt'[39m: new Date("Thu, 30 Apr 2026 16:45:00 GMT") }}, {})
+[2026-04-30 18:45:00] [32minfo[39m: Reservation expiry job - no reservations to expire
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m suppliers.findOne({ _id: ObjectId("69f370071560d458a8f20a27"), pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), isActive: [33mtrue[39m}, {})
+[0;36mMongoose:[0m medicines.findOneAndUpdate({ _id: ObjectId("69f3864085e04f162e168f6e"), pharmacyId: ObjectId("69f078cbcdde9c739a33f20c")}, { [32m'$setOnInsert'[39m: { createdAt: new Date("Thu, 30 Apr 2026 16:45:08 GMT") }, [32m'$set'[39m: { name: [32m'Abiraterone'[39m, genericName: [32m'ABIRANAT 250 MG'[39m, category: [32m'prescription'[39m, unit: [32m'tablet'[39m, supplierId: ObjectId("69f370071560d458a8f20a27"), minStockLevel: [33m20[39m, updatedAt: new Date("Thu, 30 Apr 2026 16:45:08 GMT") }}, { runValidators: [33mtrue[39m, returnDocument: [32m'after'[39m, returnOriginal: [33mfalse[39m })
+[0mPATCH /api/medicines/69f3864085e04f162e168f6e [32m200[0m 134.167 ms - 394[0m
+[0;36mMongoose:[0m auditlogs.insertOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), userId: ObjectId("69f078cccdde9c739a33f20d"), action: [32m'MEDICINE_UPDATED'[39m, entity: [32m'medicines'[39m, entityId: ObjectId("69f3864085e04f162e168f6e"), payload: { name: [32m'Abiraterone'[39m, genericName: [32m'ABIRANAT 250 MG'[39m, category: [32m'prescription'[39m, unit: [32m'tablet'[39m, supplierId: [32m'69f370071560d458a8f20a27'[39m, minStockLevel: [33m20[39m }, _id: ObjectId("69f3871485e04f162e169015"), createdAt: new Date("Thu, 30 Apr 2026 16:45:08 GMT"), __v: [33m0[39m}, {})
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m medicines.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m parapharmacyproducts.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m parapharmacyproducts.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0;36mMongoose:[0m suppliers.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m suppliers.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0;36mMongoose:[0m suppliers.find({ _id: { [32m'$in'[39m: [ ObjectId("69f370071560d458a8f20a27"), ObjectId("69f3736be29d4c7c9666f557") ] }}, { projection: { name: [33m1[39m } })
+[0mGET /api/parapharmacy?status=all&limit=500 [36m304[0m 82.747 ms - -[0m
+[0;36mMongoose:[0m deliveries.findOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), supplierId: ObjectId("69f370071560d458a8f20a27")}, { sort: { deliveryDate: [33m-1[39m }, projection: { deliveryDate: [33m1[39m } })
+[0;36mMongoose:[0m deliveries.findOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), supplierId: ObjectId("69f3736be29d4c7c9666f557")}, { sort: { deliveryDate: [33m-1[39m }, projection: { deliveryDate: [33m1[39m } })
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m batches.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), medicineId: ObjectId("69f3864085e04f162e168f6e"), isActive: [33mtrue[39m, remainingQty: { [32m'$gt'[39m: [33m0[39m }}, { sort: { expiryDate: [33m1[39m } })
+[0;36mMongoose:[0m batches.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), medicineId: ObjectId("69f3857285e04f162e168f3c"), isActive: [33mtrue[39m, remainingQty: { [32m'$gt'[39m: [33m0[39m }}, { sort: { expiryDate: [33m1[39m } })
+[0mGET /api/suppliers?status=all&limit=500 [36m304[0m 123.319 ms - -[0m
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m parapharmacyproducts.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m parapharmacyproducts.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0;36mMongoose:[0m medicines.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0;36mMongoose:[0m suppliers.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m suppliers.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0mGET /api/parapharmacy?status=all&limit=500 [36m304[0m 84.964 ms - -[0m
+[0mGET /api/medicines?status=all&limit=500 [32m200[0m 211.559 ms - 1084[0m
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m deliveries.findOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), supplierId: ObjectId("69f370071560d458a8f20a27")}, { sort: { deliveryDate: [33m-1[39m }, projection: { deliveryDate: [33m1[39m } })
+[0;36mMongoose:[0m deliveries.findOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), supplierId: ObjectId("69f3736be29d4c7c9666f557")}, { sort: { deliveryDate: [33m-1[39m }, projection: { deliveryDate: [33m1[39m } })
+[0;36mMongoose:[0m medicines.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0mGET /api/suppliers?status=all&limit=500 [36m304[0m 124.606 ms - -[0m
+[0;36mMongoose:[0m suppliers.find({ _id: { [32m'$in'[39m: [ ObjectId("69f370071560d458a8f20a27"), ObjectId("69f3736be29d4c7c9666f557") ] }}, { projection: { name: [33m1[39m } })
+[0;36mMongoose:[0m batches.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), medicineId: ObjectId("69f3864085e04f162e168f6e"), isActive: [33mtrue[39m, remainingQty: { [32m'$gt'[39m: [33m0[39m }}, { sort: { expiryDate: [33m1[39m } })
+[0;36mMongoose:[0m batches.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), medicineId: ObjectId("69f3857285e04f162e168f3c"), isActive: [33mtrue[39m, remainingQty: { [32m'$gt'[39m: [33m0[39m }}, { sort: { expiryDate: [33m1[39m } })
+[0;36mMongoose:[0m medicines.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0mGET /api/medicines?status=all&limit=500 [36m304[0m 208.687 ms - -[0m
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m parapharmacyproducts.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m parapharmacyproducts.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0;36mMongoose:[0m medicines.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m suppliers.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m suppliers.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0mGET /api/parapharmacy?status=all&limit=500 [36m304[0m 87.932 ms - -[0m
+[0;36mMongoose:[0m suppliers.find({ _id: { [32m'$in'[39m: [ ObjectId("69f370071560d458a8f20a27"), ObjectId("69f3736be29d4c7c9666f557") ] }}, { projection: { name: [33m1[39m } })
+[0;36mMongoose:[0m deliveries.findOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), supplierId: ObjectId("69f370071560d458a8f20a27")}, { sort: { deliveryDate: [33m-1[39m }, projection: { deliveryDate: [33m1[39m } })
+[0;36mMongoose:[0m deliveries.findOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), supplierId: ObjectId("69f3736be29d4c7c9666f557")}, { sort: { deliveryDate: [33m-1[39m }, projection: { deliveryDate: [33m1[39m } })
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m batches.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), medicineId: ObjectId("69f3864085e04f162e168f6e"), isActive: [33mtrue[39m, remainingQty: { [32m'$gt'[39m: [33m0[39m }}, { sort: { expiryDate: [33m1[39m } })
+[0;36mMongoose:[0m batches.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), medicineId: ObjectId("69f3857285e04f162e168f3c"), isActive: [33mtrue[39m, remainingQty: { [32m'$gt'[39m: [33m0[39m }}, { sort: { expiryDate: [33m1[39m } })
+[0mGET /api/suppliers?status=all&limit=500 [36m304[0m 128.392 ms - -[0m
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m parapharmacyproducts.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m parapharmacyproducts.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0;36mMongoose:[0m medicines.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0;36mMongoose:[0m suppliers.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m suppliers.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0mGET /api/parapharmacy?status=all&limit=500 [36m304[0m 84.832 ms - -[0m
+[0mGET /api/medicines?status=all&limit=500 [36m304[0m 211.379 ms - -[0m
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m deliveries.findOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), supplierId: ObjectId("69f370071560d458a8f20a27")}, { sort: { deliveryDate: [33m-1[39m }, projection: { deliveryDate: [33m1[39m } })
+[0;36mMongoose:[0m deliveries.findOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), supplierId: ObjectId("69f3736be29d4c7c9666f557")}, { sort: { deliveryDate: [33m-1[39m }, projection: { deliveryDate: [33m1[39m } })
+[0;36mMongoose:[0m medicines.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0mGET /api/suppliers?status=all&limit=500 [36m304[0m 124.581 ms - -[0m
+[0;36mMongoose:[0m suppliers.find({ _id: { [32m'$in'[39m: [ ObjectId("69f370071560d458a8f20a27"), ObjectId("69f3736be29d4c7c9666f557") ] }}, { projection: { name: [33m1[39m } })
+[0;36mMongoose:[0m batches.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), medicineId: ObjectId("69f3864085e04f162e168f6e"), isActive: [33mtrue[39m, remainingQty: { [32m'$gt'[39m: [33m0[39m }}, { sort: { expiryDate: [33m1[39m } })
+[0;36mMongoose:[0m batches.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), medicineId: ObjectId("69f3857285e04f162e168f3c"), isActive: [33mtrue[39m, remainingQty: { [32m'$gt'[39m: [33m0[39m }}, { sort: { expiryDate: [33m1[39m } })
+[0;36mMongoose:[0m medicines.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0mGET /api/medicines?status=all&limit=500 [36m304[0m 207.104 ms - -[0m
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m medicines.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m parapharmacyproducts.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m parapharmacyproducts.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0;36mMongoose:[0m suppliers.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m suppliers.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0;36mMongoose:[0m suppliers.find({ _id: { [32m'$in'[39m: [ ObjectId("69f370071560d458a8f20a27"), ObjectId("69f3736be29d4c7c9666f557") ] }}, { projection: { name: [33m1[39m } })
+[0mGET /api/parapharmacy?status=all&limit=500 [36m304[0m 87.724 ms - -[0m
+[0;36mMongoose:[0m deliveries.findOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), supplierId: ObjectId("69f370071560d458a8f20a27")}, { sort: { deliveryDate: [33m-1[39m }, projection: { deliveryDate: [33m1[39m } })
+[0;36mMongoose:[0m deliveries.findOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), supplierId: ObjectId("69f3736be29d4c7c9666f557")}, { sort: { deliveryDate: [33m-1[39m }, projection: { deliveryDate: [33m1[39m } })
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m batches.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), medicineId: ObjectId("69f3864085e04f162e168f6e"), isActive: [33mtrue[39m, remainingQty: { [32m'$gt'[39m: [33m0[39m }}, { sort: { expiryDate: [33m1[39m } })
+[0;36mMongoose:[0m batches.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), medicineId: ObjectId("69f3857285e04f162e168f3c"), isActive: [33mtrue[39m, remainingQty: { [32m'$gt'[39m: [33m0[39m }}, { sort: { expiryDate: [33m1[39m } })
+[0mGET /api/suppliers?status=all&limit=500 [36m304[0m 129.852 ms - -[0m
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m parapharmacyproducts.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m parapharmacyproducts.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0;36mMongoose:[0m medicines.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0;36mMongoose:[0m suppliers.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m suppliers.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0mGET /api/parapharmacy?status=all&limit=500 [36m304[0m 87.405 ms - -[0m
+[0mGET /api/medicines?status=all&limit=500 [36m304[0m 214.168 ms - -[0m
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m deliveries.findOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), supplierId: ObjectId("69f370071560d458a8f20a27")}, { sort: { deliveryDate: [33m-1[39m }, projection: { deliveryDate: [33m1[39m } })
+[0;36mMongoose:[0m deliveries.findOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), supplierId: ObjectId("69f3736be29d4c7c9666f557")}, { sort: { deliveryDate: [33m-1[39m }, projection: { deliveryDate: [33m1[39m } })
+[0;36mMongoose:[0m medicines.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0mGET /api/suppliers?status=all&limit=500 [36m304[0m 125.663 ms - -[0m
+[0;36mMongoose:[0m suppliers.find({ _id: { [32m'$in'[39m: [ ObjectId("69f370071560d458a8f20a27"), ObjectId("69f3736be29d4c7c9666f557") ] }}, { projection: { name: [33m1[39m } })
+[0;36mMongoose:[0m batches.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), medicineId: ObjectId("69f3864085e04f162e168f6e"), isActive: [33mtrue[39m, remainingQty: { [32m'$gt'[39m: [33m0[39m }}, { sort: { expiryDate: [33m1[39m } })
+[0;36mMongoose:[0m batches.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), medicineId: ObjectId("69f3857285e04f162e168f3c"), isActive: [33mtrue[39m, remainingQty: { [32m'$gt'[39m: [33m0[39m }}, { sort: { expiryDate: [33m1[39m } })
+[0;36mMongoose:[0m medicines.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0mGET /api/medicines?status=all&limit=500 [36m304[0m 211.665 ms - -[0m
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m parapharmacyproducts.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m parapharmacyproducts.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0;36mMongoose:[0m suppliers.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m suppliers.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0;36mMongoose:[0m medicines.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0mGET /api/parapharmacy?status=all&limit=500 [36m304[0m 86.560 ms - -[0m
+[0;36mMongoose:[0m deliveries.findOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), supplierId: ObjectId("69f370071560d458a8f20a27")}, { sort: { deliveryDate: [33m-1[39m }, projection: { deliveryDate: [33m1[39m } })
+[0;36mMongoose:[0m deliveries.findOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), supplierId: ObjectId("69f3736be29d4c7c9666f557")}, { sort: { deliveryDate: [33m-1[39m }, projection: { deliveryDate: [33m1[39m } })
+[0;36mMongoose:[0m suppliers.find({ _id: { [32m'$in'[39m: [ ObjectId("69f370071560d458a8f20a27"), ObjectId("69f3736be29d4c7c9666f557") ] }}, { projection: { name: [33m1[39m } })
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0mGET /api/suppliers?status=all&limit=500 [36m304[0m 126.778 ms - -[0m
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m batches.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), medicineId: ObjectId("69f3864085e04f162e168f6e"), isActive: [33mtrue[39m, remainingQty: { [32m'$gt'[39m: [33m0[39m }}, { sort: { expiryDate: [33m1[39m } })
+[0;36mMongoose:[0m batches.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), medicineId: ObjectId("69f3857285e04f162e168f3c"), isActive: [33mtrue[39m, remainingQty: { [32m'$gt'[39m: [33m0[39m }}, { sort: { expiryDate: [33m1[39m } })
+[0;36mMongoose:[0m parapharmacyproducts.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m parapharmacyproducts.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0;36mMongoose:[0m suppliers.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m suppliers.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0;36mMongoose:[0m medicines.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0mGET /api/parapharmacy?status=all&limit=500 [36m304[0m 87.105 ms - -[0m
+[0mGET /api/medicines?status=all&limit=500 [36m304[0m 216.403 ms - -[0m
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m medicines.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m100[39m })
+[0;36mMongoose:[0m suppliers.find({ _id: { [32m'$in'[39m: [ ObjectId("69f370071560d458a8f20a27"), ObjectId("69f3736be29d4c7c9666f557") ] }}, { projection: { name: [33m1[39m } })
+[0;36mMongoose:[0m batches.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), medicineId: ObjectId("69f3864085e04f162e168f6e"), isActive: [33mtrue[39m, remainingQty: { [32m'$gt'[39m: [33m0[39m }}, { sort: { expiryDate: [33m1[39m } })
+[0;36mMongoose:[0m batches.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), medicineId: ObjectId("69f3857285e04f162e168f3c"), isActive: [33mtrue[39m, remainingQty: { [32m'$gt'[39m: [33m0[39m }}, { sort: { expiryDate: [33m1[39m } })
+[0;36mMongoose:[0m medicines.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0mGET /api/medicines?status=all&limit=500 [36m304[0m 205.386 ms - -[0m
+[0;36mMongoose:[0m deliveries.findOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), supplierId: ObjectId("69f370071560d458a8f20a27")}, { sort: { deliveryDate: [33m-1[39m }, projection: { deliveryDate: [33m1[39m } })
+[0;36mMongoose:[0m deliveries.findOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), supplierId: ObjectId("69f3736be29d4c7c9666f557")}, { sort: { deliveryDate: [33m-1[39m }, projection: { deliveryDate: [33m1[39m } })
+[0mGET /api/suppliers?status=all&limit=500 [36m304[0m 476.159 ms - -[0m
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d"), pharmacyId: ObjectId("69f078cbcdde9c739a33f20c")}, { projection: { passwordHash: [33m0[39m } })
+[0mGET /api/auth/me [32m200[0m 84.970 ms - 343[0m
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m customers.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0mGET /api/customers?sort=name&page=1&limit=20 [32m200[0m 93.866 ms - 86[0m
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m customers.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0mGET /api/customers?sort=name&page=1&limit=20 [36m304[0m 83.370 ms - -[0m
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d"), pharmacyId: ObjectId("69f078cbcdde9c739a33f20c")}, { projection: { passwordHash: [33m0[39m } })
+[0mGET /api/auth/me [32m200[0m 85.433 ms - 343[0m
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d"), pharmacyId: ObjectId("69f078cbcdde9c739a33f20c")}, { projection: { passwordHash: [33m0[39m } })
+[0mGET /api/auth/me [32m200[0m 85.601 ms - 343[0m
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m suppliers.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m20[39m })
+[0;36mMongoose:[0m suppliers.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0;36mMongoose:[0m deliveries.findOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), supplierId: ObjectId("69f370071560d458a8f20a27")}, { sort: { deliveryDate: [33m-1[39m }, projection: { deliveryDate: [33m1[39m } })
+[0;36mMongoose:[0m deliveries.findOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), supplierId: ObjectId("69f3736be29d4c7c9666f557")}, { sort: { deliveryDate: [33m-1[39m }, projection: { deliveryDate: [33m1[39m } })
+[0mGET /api/suppliers?sort=name-asc&page=1&limit=20 [32m200[0m 127.544 ms - 847[0m
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m suppliers.find({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, { sort: { name: [33m1[39m }, skip: [33m0[39m, limit: [33m20[39m })
+[0;36mMongoose:[0m suppliers.countDocuments({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c") }, {})
+[0;36mMongoose:[0m deliveries.findOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), supplierId: ObjectId("69f370071560d458a8f20a27")}, { sort: { deliveryDate: [33m-1[39m }, projection: { deliveryDate: [33m1[39m } })
+[0;36mMongoose:[0m deliveries.findOne({ pharmacyId: ObjectId("69f078cbcdde9c739a33f20c"), supplierId: ObjectId("69f3736be29d4c7c9666f557")}, { sort: { deliveryDate: [33m-1[39m }, projection: { deliveryDate: [33m1[39m } })
+[0mGET /api/suppliers?sort=name-asc&page=1&limit=20 [36m304[0m 126.894 ms - -[0m
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d"), pharmacyId: ObjectId("69f078cbcdde9c739a33f20c")}, { projection: { passwordHash: [33m0[39m } })
+[0mGET /api/auth/me [32m200[0m 85.890 ms - 343[0m
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d") }, { projection: { mustChangePassword: [33m1[39m, isActive: [33m1[39m } })
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("69f078cccdde9c739a33f20d"), pharmacyId: ObjectId("69f078cbcdde9c739a33f20c")}, { projection: { passwordHash: [33m0[39m } })
+[0mGET /api/auth/me [32m200[0m 87.013 ms - 343[0m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node src/server.js`[39m
+[2026-04-30 18:54:51] [33mwarn[39m: Email transporter not ready: Invalid login: 535 Authentication failed: The provided authorization grant is invalid, expired, or revoked
+[2026-04-30 18:54:52] [32minfo[39m: MongoDB connected: ac-kqnx0we-shard-00-00.jj9g0kc.mongodb.net
+[2026-04-30 18:54:52] [33mwarn[39m: REDIS_URL not set - Redis disabled
+[2026-04-30 18:54:52] [32minfo[39m: Near-expiry job scheduled - runs daily at 08:00 (Casablanca time)
+[2026-04-30 18:54:52] [32minfo[39m: Reservation expiry job scheduled - runs every 15 minutes
+[2026-04-30 18:54:52] [31merror[39m: Uncaught Exception: listen EADDRINUSE: address already in use :::5000
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node src/server.js`[39m
+[2026-04-30 19:18:55] [33mwarn[39m: Email transporter not ready: Invalid login: 535 Authentication failed: The provided authorization grant is invalid, expired, or revoked
+[2026-04-30 19:18:56] [32minfo[39m: MongoDB connected: ac-kqnx0we-shard-00-00.jj9g0kc.mongodb.net
+[2026-04-30 19:18:56] [33mwarn[39m: REDIS_URL not set - Redis disabled
+[2026-04-30 19:18:56] [32minfo[39m: Near-expiry job scheduled - runs daily at 08:00 (Casablanca time)
+[2026-04-30 19:18:56] [32minfo[39m: Reservation expiry job scheduled - runs every 15 minutes
+[2026-04-30 19:18:56] [31merror[39m: Uncaught Exception: listen EADDRINUSE: address already in use :::5000
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node src/server.js`[39m
+[2026-04-30 19:19:21] [33mwarn[39m: Email transporter not ready: Invalid login: 535 Authentication failed: The provided authorization grant is invalid, expired, or revoked
+[2026-04-30 19:19:21] [32minfo[39m: MongoDB connected: ac-kqnx0we-shard-00-01.jj9g0kc.mongodb.net
+[2026-04-30 19:19:21] [33mwarn[39m: REDIS_URL not set - Redis disabled
+[2026-04-30 19:19:21] [32minfo[39m: Near-expiry job scheduled - runs daily at 08:00 (Casablanca time)
+[2026-04-30 19:19:21] [32minfo[39m: Reservation expiry job scheduled - runs every 15 minutes
+[2026-04-30 19:19:21] [31merror[39m: Uncaught Exception: listen EADDRINUSE: address already in use :::5000
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node src/server.js`[39m
+[2026-04-30 19:19:39] [33mwarn[39m: Email transporter not ready: Invalid login: 535 Authentication failed: The provided authorization grant is invalid, expired, or revoked
+[2026-04-30 19:19:40] [32minfo[39m: MongoDB connected: ac-kqnx0we-shard-00-00.jj9g0kc.mongodb.net
+[2026-04-30 19:19:40] [33mwarn[39m: REDIS_URL not set - Redis disabled
+[2026-04-30 19:19:40] [32minfo[39m: Near-expiry job scheduled - runs daily at 08:00 (Casablanca time)
+[2026-04-30 19:19:40] [32minfo[39m: Reservation expiry job scheduled - runs every 15 minutes
+[2026-04-30 19:19:40] [31merror[39m: Uncaught Exception: listen EADDRINUSE: address already in use :::5000
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m

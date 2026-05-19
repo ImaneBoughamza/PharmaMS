@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { Search, X, Edit2, Power } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,33 +12,10 @@ import Modal from "@/components/ui/Modal";
 import StockAlertBanner from "@/components/inventory/StockAlertBanner";
 import { useAuth } from "@/hooks/useAuth";
 import { PHARMACIST } from "@/constants/roles";
+import api from "@/lib/axios";
 import styles from "@/styles/InventoryPage.module.css";
 
 const PAGE_SIZE = 20;
-
-// TODO: replace with useSWR("/api/medicines") when backend is ready
-const INITIAL_MEDICINES = [
-  { _id: "1", name: "Paracetamol 500mg", genericName: "Paracetamol",   category: "non-prescription", unit: "tablet", batchCount: 2, totalStock: 8,  minStockLevel: 20, nearestExpiry: "2026-05-18", supplier: { _id: "s1", name: "PharmaDist Maroc" }, isActive: true },
-  { _id: "2", name: "Amoxicillin 1g",    genericName: "Amoxicillin",   category: "prescription",     unit: "tablet", batchCount: 1, totalStock: 42, minStockLevel: 15, nearestExpiry: "2027-03-10", supplier: { _id: "s2", name: "BioLab Supplies"   }, isActive: true },
-  { _id: "3", name: "Ibuprofen 400mg",   genericName: "Ibuprofen",     category: "non-prescription", unit: "tablet", batchCount: 3, totalStock: 19, minStockLevel: 25, nearestExpiry: "2026-06-15", supplier: { _id: "s1", name: "PharmaDist Maroc" }, isActive: true },
-  { _id: "4", name: "Vitamin C 1000mg",  genericName: "Ascorbic Acid", category: "non-prescription", unit: "tablet", batchCount: 1, totalStock: 63, minStockLevel: 10, nearestExpiry: "2028-01-20", supplier: { _id: "s2", name: "BioLab Supplies"   }, isActive: true },
-  { _id: "5", name: "Diazepam 5mg",      genericName: "Diazepam",      category: "regulated",        unit: "tablet", batchCount: 1, totalStock: 0,  minStockLevel: 5,  nearestExpiry: "2027-09-30", supplier: { _id: "s1", name: "PharmaDist Maroc" }, isActive: false },
-  { _id: "6", name: "Metformin 500mg",   genericName: "Metformin",     category: "prescription",     unit: "tablet", batchCount: 2, totalStock: 55, minStockLevel: 20, nearestExpiry: "2026-07-01", supplier: { _id: "s2", name: "BioLab Supplies"   }, isActive: true },
-];
-
-// TODO: replace with useSWR("/api/parapharmacy") when backend is ready
-const INITIAL_PARAPHARMACY = [
-  { _id: "p1", name: "Vitamin D3 1000 IU",  brand: "Sanofi",    category: "supplements",    stockQty: 48, minStockLevel: 10, salePrice: 85,  purchasePrice: 55,  supplier: { _id: "s2", name: "BioLab Supplies"   }, isActive: true },
-  { _id: "p2", name: "Micellar Water 400ml", brand: "Bioderma",  category: "cosmetics",      stockQty: 12, minStockLevel: 5,  salePrice: 120, purchasePrice: 80,  supplier: { _id: "s1", name: "PharmaDist Maroc" }, isActive: true },
-  { _id: "p3", name: "Digital Thermometer",  brand: "Omron",     category: "medical-device", stockQty: 3,  minStockLevel: 5,  salePrice: 220, purchasePrice: 140, supplier: { _id: "s1", name: "PharmaDist Maroc" }, isActive: true },
-  { _id: "p4", name: "Hand Sanitiser 500ml", brand: "Dettol",    category: "hygiene",        stockQty: 0,  minStockLevel: 10, salePrice: 45,  purchasePrice: 28,  supplier: { _id: "s2", name: "BioLab Supplies"   }, isActive: true },
-  { _id: "p5", name: "Omega-3 Fish Oil",     brand: "Nutrident", category: "supplements",    stockQty: 30, minStockLevel: 8,  salePrice: 150, purchasePrice: 95,  supplier: { _id: "s1", name: "PharmaDist Maroc" }, isActive: false },
-];
-
-const MOCK_SUPPLIERS = [
-  { _id: "s1", name: "PharmaDist Maroc" },
-  { _id: "s2", name: "BioLab Supplies" },
-];
 
 // ── Schemas ───────────────────────────────────────────────────────────────
 const medEditSchema = z.object({
@@ -108,8 +86,31 @@ function fmtMAD(v) {
   return new Intl.NumberFormat("fr-MA", { style: "currency", currency: "MAD" }).format(v ?? 0);
 }
 
+function normalizeSupplier(item) {
+  const supplier = item.supplierId && typeof item.supplierId === "object" ? item.supplierId : item.supplier;
+  return supplier ? { _id: supplier._id, name: supplier.name } : null;
+}
+
+function normalizeMedicine(item) {
+  return {
+    ...item,
+    supplier: normalizeSupplier(item),
+    totalStock: item.totalStock ?? item.stock?.totalStock ?? 0,
+    batchCount: item.batchCount ?? item.stock?.activeBatches ?? 0,
+    nearestExpiry: item.nearestExpiry ?? item.stock?.nearestExpiry ?? null,
+  };
+}
+
+function normalizeParapharmacy(item) {
+  return {
+    ...item,
+    supplier: normalizeSupplier(item),
+    stockQty: item.stockQty ?? 0,
+  };
+}
+
 // ── Edit forms (defined here so they can use their own useForm) ───────────
-function MedEditForm({ defaultValues, formId, onSubmit }) {
+function MedEditForm({ defaultValues, formId, onSubmit, suppliers = [] }) {
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: zodResolver(medEditSchema),
     defaultValues,
@@ -148,7 +149,7 @@ function MedEditForm({ defaultValues, formId, onSubmit }) {
           <label className={styles.formLabel}>Supplier</label>
           <select className={styles.formSelect} {...register("supplierId")}>
             <option value="">No supplier</option>
-            {MOCK_SUPPLIERS.map((s) => (
+            {suppliers.map((s) => (
               <option key={s._id} value={s._id}>{s.name}</option>
             ))}
           </select>
@@ -158,7 +159,7 @@ function MedEditForm({ defaultValues, formId, onSubmit }) {
   );
 }
 
-function ParaEditForm({ defaultValues, formId, onSubmit }) {
+function ParaEditForm({ defaultValues, formId, onSubmit, suppliers = [] }) {
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: zodResolver(paraEditSchema),
     defaultValues,
@@ -189,7 +190,7 @@ function ParaEditForm({ defaultValues, formId, onSubmit }) {
           <label className={styles.formLabel}>Supplier</label>
           <select className={styles.formSelect} {...register("supplierId")}>
             <option value="">No supplier</option>
-            {MOCK_SUPPLIERS.map((s) => (
+            {suppliers.map((s) => (
               <option key={s._id} value={s._id}>{s.name}</option>
             ))}
           </select>
@@ -216,11 +217,55 @@ function ParaEditForm({ defaultValues, formId, onSubmit }) {
 
 // ── Page ─────────────────────────────────────────────────────────────────
 export default function ProductsPage() {
+  const router = useRouter();
   const { role } = useAuth();
   const [tab, setTab] = useState("medicines");
 
-  const [medicines, setMedicines]       = useState(INITIAL_MEDICINES);
-  const [parapharmacy, setParapharmacy] = useState(INITIAL_PARAPHARMACY);
+  const [medicines, setMedicines]       = useState([]);
+  const [parapharmacy, setParapharmacy] = useState([]);
+  const [suppliers, setSuppliers]       = useState([]);
+  const [loading, setLoading]           = useState(true);
+  const [loadError, setLoadError]       = useState("");
+
+  useEffect(() => {
+    const nextTab = router.query.tab;
+    if (nextTab === "medicines" || nextTab === "parapharmacy") {
+      setTab(nextTab);
+    }
+  }, [router.query.tab]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadProducts() {
+      setLoading(true);
+      setLoadError("");
+      try {
+        const [medicineResponse, parapharmacyResponse, supplierResponse] = await Promise.all([
+          api.get("/api/medicines", { params: { status: "all", limit: 500 } }),
+          api.get("/api/parapharmacy", { params: { status: "all", limit: 500 } }),
+          api.get("/api/suppliers", { params: { status: "all", limit: 500 } }).catch(() => ({ data: { data: [] } })),
+        ]);
+
+        if (cancelled) return;
+
+        setMedicines((medicineResponse.data.data ?? []).map(normalizeMedicine));
+        setParapharmacy((parapharmacyResponse.data.data ?? []).map(normalizeParapharmacy));
+        setSuppliers(supplierResponse.data.data ?? []);
+      } catch (err) {
+        if (!cancelled) {
+          setLoadError(err?.response?.data?.message ?? "Failed to load products.");
+          setMedicines([]);
+          setParapharmacy([]);
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+
+    loadProducts();
+    return () => { cancelled = true; };
+  }, []);
 
   // Debounced search
   const [searchRaw, setSearchRaw] = useState("");
@@ -318,40 +363,53 @@ export default function ProductsPage() {
   ).length;
 
   // ── Handlers ──────────────────────────────────────────────────────────
-  function handleSaveMed(data) {
-    setMedicines((prev) =>
-      prev.map((m) =>
-        m._id === editModal.item._id
-          ? { ...m, ...data, supplier: MOCK_SUPPLIERS.find((s) => s._id === data.supplierId) || m.supplier }
-          : m
-      )
-    );
-    toast.success("Medicine updated");
-    setEditModal({ open: false, item: null });
+  async function handleSaveMed(data) {
+    try {
+      const { data: response } = await api.patch(`/api/medicines/${editModal.item._id}`, data);
+      const updated = normalizeMedicine({
+        ...response.data,
+        supplier: suppliers.find((supplier) => supplier._id === response.data.supplierId) ?? editModal.item.supplier,
+      });
+      setMedicines((prev) => prev.map((m) => (m._id === updated._id ? updated : m)));
+      toast.success("Medicine updated");
+      setEditModal({ open: false, item: null });
+    } catch (err) {
+      toast.error(err?.response?.data?.message ?? "Failed to update medicine.");
+    }
   }
 
-  function handleSavePara(data) {
-    setParapharmacy((prev) =>
-      prev.map((p) =>
-        p._id === editModal.item._id
-          ? { ...p, ...data, supplier: MOCK_SUPPLIERS.find((s) => s._id === data.supplierId) || p.supplier }
-          : p
-      )
-    );
-    toast.success("Product updated");
-    setEditModal({ open: false, item: null });
+  async function handleSavePara(data) {
+    try {
+      const { data: response } = await api.patch(`/api/parapharmacy/${editModal.item._id}`, data);
+      const updated = normalizeParapharmacy({
+        ...response.data,
+        supplier: suppliers.find((supplier) => supplier._id === response.data.supplierId) ?? editModal.item.supplier,
+      });
+      setParapharmacy((prev) => prev.map((p) => (p._id === updated._id ? updated : p)));
+      toast.success("Product updated");
+      setEditModal({ open: false, item: null });
+    } catch (err) {
+      toast.error(err?.response?.data?.message ?? "Failed to update product.");
+    }
   }
 
-  function handleToggleActive() {
+  async function handleToggleActive() {
     const { item } = deactivateModal;
     const next = !item.isActive;
-    if (tab === "medicines") {
-      setMedicines((prev) => prev.map((m) => m._id === item._id ? { ...m, isActive: next } : m));
-    } else {
-      setParapharmacy((prev) => prev.map((p) => p._id === item._id ? { ...p, isActive: next } : p));
+    try {
+      const resource = tab === "medicines" ? "medicines" : "parapharmacy";
+      const action = next ? "reactivate" : "deactivate";
+      await api.patch(`/api/${resource}/${item._id}/${action}`);
+      if (tab === "medicines") {
+        setMedicines((prev) => prev.map((m) => m._id === item._id ? { ...m, isActive: next } : m));
+      } else {
+        setParapharmacy((prev) => prev.map((p) => p._id === item._id ? { ...p, isActive: next } : p));
+      }
+      toast.success(next ? `${item.name} reactivated` : `${item.name} deactivated`);
+      setDeactivateModal({ open: false, item: null });
+    } catch (err) {
+      toast.error(err?.response?.data?.message ?? "Failed to update product status.");
     }
-    toast.success(next ? `${item.name} reactivated` : `${item.name} deactivated`);
-    setDeactivateModal({ open: false, item: null });
   }
 
   return (
@@ -427,7 +485,7 @@ export default function ProductsPage() {
         </select>
         <select className={styles.filterSelect} value={supplierFilter} onChange={(e) => { setSupplierFilter(e.target.value); setPage(1); }}>
           <option value="">All Suppliers</option>
-          {MOCK_SUPPLIERS.map((s) => (
+          {suppliers.map((s) => (
             <option key={s._id} value={s._id}>{s.name}</option>
           ))}
         </select>
@@ -445,8 +503,11 @@ export default function ProductsPage() {
       {/* Low-stock banner (medicines only) */}
       {tab === "medicines" && <StockAlertBanner count={lowStockCount} />}
 
+      {loading && <p className={styles.emptyCell}>Loading products...</p>}
+      {loadError && <p className={styles.emptyCell}>{loadError}</p>}
+
       {/* Table */}
-      <div className={styles.tableWrap}>
+      {!loading && !loadError && <div className={styles.tableWrap}>
         {tab === "medicines" ? (
           <table className={styles.table}>
             <thead>
@@ -591,7 +652,7 @@ export default function ProductsPage() {
             </div>
           </div>
         )}
-      </div>
+      </div>}
 
       {/* Edit Modal */}
       <Modal
@@ -618,6 +679,7 @@ export default function ProductsPage() {
               supplierId:    editModal.item.supplier?._id ?? "",
             }}
             onSubmit={handleSaveMed}
+            suppliers={suppliers}
           />
         )}
         {editModal.item && tab === "parapharmacy" && (
@@ -634,6 +696,7 @@ export default function ProductsPage() {
               supplierId:    editModal.item.supplier?._id ?? "",
             }}
             onSubmit={handleSavePara}
+            suppliers={suppliers}
           />
         )}
       </Modal>

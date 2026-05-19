@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Copy, Check } from "lucide-react";
+import { Copy, Check, TriangleAlert, X } from "lucide-react";
 import { formatDate } from "@/utils/formatDate";
 import { formatCurrency } from "@/utils/formatCurrency";
 import styles from "./ReservationDetail.module.css";
@@ -37,6 +37,18 @@ const CONNECTOR_CLASS = {
   done:   styles.connectorDone,
   idle:   styles.connectorIdle,
 };
+
+function getPrescriptionRequired(reservation) {
+  return reservation.prescriptionRequired ||
+    reservation.items?.some((item) => item.productType === "medicine" && item.category === "prescription");
+}
+
+function getVerifierName(reservation) {
+  return reservation.prescriptionVerifiedByName ||
+    reservation.prescriptionVerifiedBy?.fullName ||
+    reservation.prescriptionVerifiedBy?.name ||
+    "pharmacist";
+}
 
 function getTimelineSteps(status) {
   const FLOW_IDX = { pending: 0, confirmed: 1, ready: 2 };
@@ -98,6 +110,7 @@ function getExpiryInfo(status, pickupDate) {
 
 export default function ReservationDetail({ reservation }) {
   const [copied, setCopied] = useState(false);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
 
   const { status } = reservation;
   const items     = reservation.items ?? [];
@@ -113,6 +126,9 @@ export default function ReservationDetail({ reservation }) {
 
   const timelineSteps = getTimelineSteps(status);
   const expiryInfo    = getExpiryInfo(status, reservation.pickupDate);
+  const prescriptionRequired = getPrescriptionRequired(reservation);
+  const prescriptionVerified = Boolean(reservation.prescriptionVerified);
+  const prescriptionImage = reservation.prescriptionImage || reservation.prescriptionImageUrl;
 
   function handleCopy() {
     navigator.clipboard.writeText(reservation.trackingCode).catch(() => {});
@@ -178,6 +194,36 @@ export default function ReservationDetail({ reservation }) {
           </div>
         </section>
 
+        {prescriptionRequired && (
+          <section className={styles.section}>
+            <h3 className={styles.sectionTitle}>Prescription</h3>
+            {!prescriptionVerified ? (
+              <div className={styles.prescriptionBannerAmber}>
+                <TriangleAlert size={17} />
+                <p>Customer must present original prescription at pickup. Verify before converting to sale.</p>
+              </div>
+            ) : (
+              <div className={styles.prescriptionBannerGreen}>
+                <Check size={17} />
+                <p>Prescription verified at pickup by {getVerifierName(reservation)}</p>
+              </div>
+            )}
+
+            {prescriptionImage ? (
+              <div className={styles.prescriptionImageBlock}>
+                <button type="button" className={styles.prescriptionThumbBtn} onClick={() => setLightboxOpen(true)}>
+                  <img src={prescriptionImage} alt="Uploaded prescription" />
+                </button>
+                <button type="button" className={styles.viewFullLink} onClick={() => setLightboxOpen(true)}>
+                  View Full Size
+                </button>
+              </div>
+            ) : (
+              <p className={styles.prescriptionMissing}>No prescription image was uploaded.</p>
+            )}
+          </section>
+        )}
+
         {/* Customer Information */}
         <section className={styles.section}>
           <h3 className={styles.sectionTitle}>Customer Information</h3>
@@ -221,6 +267,12 @@ export default function ReservationDetail({ reservation }) {
             <span className={`${styles.statusBadgeLg} ${BADGE_CLASS[status] ?? styles.badgeNeutral}`}>
               {STATUS_LABEL[status] ?? status}
             </span>
+            {prescriptionRequired && !prescriptionVerified && (
+              <span className={`${styles.statusBadgeLg} ${styles.prescriptionRequiredBadge}`}>Prescription Required</span>
+            )}
+            {prescriptionRequired && prescriptionVerified && (
+              <span className={`${styles.statusBadgeLg} ${styles.prescriptionVerifiedBadge}`}>Prescription Verified</span>
+            )}
           </div>
 
           <button
@@ -284,6 +336,19 @@ export default function ReservationDetail({ reservation }) {
           </section>
         )}
       </div>
+
+      {lightboxOpen && prescriptionImage && (
+        <div className={styles.lightbox} onMouseDown={(event) => {
+          if (event.target === event.currentTarget) setLightboxOpen(false);
+        }}>
+          <div className={styles.lightboxPanel}>
+            <button type="button" className={styles.lightboxClose} onClick={() => setLightboxOpen(false)} aria-label="Close prescription preview">
+              <X size={18} />
+            </button>
+            <img src={prescriptionImage} alt="Prescription full size" />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

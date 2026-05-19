@@ -78,7 +78,7 @@ export default function BillingPanel({ sale, onClose }) {
           </button>
         </div>
 
-        <p className={styles.footer}>Thank you for your visit — PharmaOS</p>
+        <p className={styles.footer}>Thank you for your visit — PharmaMS</p>
       </div>
     </div>
   );

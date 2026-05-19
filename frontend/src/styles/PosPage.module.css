@@ -40,6 +40,18 @@
   padding-top: 0.25rem;
 }
 
+.reservationBanner {
+  background: #dbeafe;
+  border: 1px solid #93c5fd;
+  border-radius: var(--radius-md);
+  padding: 0.5rem 0.875rem;
+  font-family: var(--font-ui);
+  font-size: 0.825rem;
+  color: #1e3a5f;
+  margin-bottom: 0.4rem;
+  flex-shrink: 0;
+}
+
 .cartHeader {
   display: flex;
   align-items: center;

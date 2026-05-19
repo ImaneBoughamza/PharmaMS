@@ -1,42 +1,104 @@
 import cron from "node-cron";
-import { Reservation } from "../models/Reservation.model.js";
-import { AuditLog } from "../models/AuditLog.model.js";
+import mongoose from "mongoose";
+import Reservation from "../models/Reservation.model.js";
+import AuditLog from "../models/AuditLog.model.js";
+import emailService from "../services/email.service.js";
+import { releaseReservationStock } from "../services/reservationStock.service.js";
 import logger from "../utils/logger.js";
 
-/**
- * Every 15 minutes — expire pending reservations whose expiresAt has passed.
- */
-export function startReservationExpiryJob() {
-  cron.schedule("*/15 * * * *", async () => {
-    try {
-      const now = new Date();
+let reservationExpiryTask = null;
 
-      const expired = await Reservation.find({
-        status: { $in: ["pending", "confirmed"] },
-        expiresAt: { $lt: now },
-      });
+export const runReservationExpiry = async () => {
+  logger.info("Reservation expiry job started");
 
-      if (expired.length === 0) return;
+  try {
+    const now = new Date();
 
-      const ids = expired.map((r) => r._id);
-      await Reservation.updateMany({ _id: { $in: ids } }, { status: "expired" });
+    const expiredReservations = await Reservation.find({
+      status: { $in: ["pending", "confirmed", "ready"] },
+      expiresAt: { $lt: now },
+    });
 
-      // Write audit logs for each expired reservation
-      await AuditLog.insertMany(
-        expired.map((r) => ({
+    if (expiredReservations.length === 0) {
+      logger.info("Reservation expiry job - no reservations to expire");
+      return;
+    }
+
+    logger.info(
+      `Reservation expiry job - processing ${expiredReservations.length} expired reservations`
+    );
+
+    for (const reservation of expiredReservations) {
+      const session = await mongoose.startSession();
+      try {
+        await session.withTransaction(async () => {
+          await releaseReservationStock(reservation, reservation.pharmacyId, session);
+          reservation.status = "expired";
+          reservation.expiredAt = now;
+          await reservation.save({ session });
+        });
+
+        await AuditLog.create({
+          pharmacyId: reservation.pharmacyId,
           userId: null,
           action: "RESERVATION_EXPIRED",
-          entity: "Reservation",
-          entityId: r._id.toString(),
-          payload: { confirmationCode: r.confirmationCode, expiredAt: now },
-        }))
-      );
+          entity: "reservations",
+          entityId: reservation._id,
+          payload: {
+            confirmationCode: reservation.confirmationCode,
+            customerEmail: reservation.customerEmail,
+            expiredAt: now,
+          },
+        });
 
-      logger.info(`[reservationExpiry] Expired ${expired.length} reservation(s)`);
-    } catch (err) {
-      logger.error(`[reservationExpiry] Job failed: ${err.message}`);
+        emailService
+          .sendReservationExpired({
+            customerEmail: reservation.customerEmail,
+            customerName: reservation.customerName,
+            confirmationCode: reservation.confirmationCode,
+          })
+          .catch((emailErr) => {
+            logger.error(
+              `Expiry email failed for ${reservation.confirmationCode}: ${emailErr.message}`
+            );
+          });
+
+        logger.info(
+          `Reservation expired: ${reservation.confirmationCode} - ` +
+            `customer: ${reservation.customerEmail}`
+        );
+      } catch (reservationErr) {
+        logger.error(
+          `Failed to expire reservation ${reservation.confirmationCode}: ` +
+            `${reservationErr.message}`
+        );
+      } finally {
+        session.endSession();
+      }
     }
+
+    logger.info(
+      `Reservation expiry job completed - ${expiredReservations.length} reservations expired`
+    );
+  } catch (err) {
+    logger.error(`Reservation expiry job failed: ${err.message}`);
+  }
+};
+
+export const startReservationExpiryJob = () => {
+  if (reservationExpiryTask) {
+    return reservationExpiryTask;
+  }
+
+  reservationExpiryTask = cron.schedule("*/15 * * * *", runReservationExpiry, {
+    timezone: "Africa/Casablanca",
   });
 
-  logger.info("[reservationExpiry] Job scheduled — every 15 minutes");
-}
+  logger.info("Reservation expiry job scheduled - runs every 15 minutes");
+  return reservationExpiryTask;
+};
+
+export default {
+  runReservationExpiry,
+  startReservationExpiryJob,
+};

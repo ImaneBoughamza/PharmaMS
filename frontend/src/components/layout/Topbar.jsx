@@ -31,7 +31,7 @@ export default function Topbar({ onMenuClick }) {
   const { pathname } = useRouter();
   const { user, role, logout } = useAuth();
 
-  const title = PAGE_TITLES[pathname] ?? "PharmaOS";
+  const title = PAGE_TITLES[pathname] ?? "PharmaMS";
   const initials = user?.fullName
     ? user.fullName.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)
     : "?";

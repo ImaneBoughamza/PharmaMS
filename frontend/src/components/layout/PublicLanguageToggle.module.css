@@ -1,0 +1,41 @@
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-family: var(--font-ui);
+  z-index: 20;
+}
+
+.fixed {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+}
+
+.inline {
+  justify-content: center;
+  width: 100%;
+}
+
+.toggle button {
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--color-text-muted);
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  padding: 0.2rem 0;
+  cursor: pointer;
+}
+
+.toggle .active {
+  border-bottom-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+:global([dir="rtl"]) .fixed {
+  right: auto;
+  left: 1rem;
+}

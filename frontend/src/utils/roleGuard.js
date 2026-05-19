@@ -1,34 +1,31 @@
-import { jwtVerify } from "jose";
+import { getServerAuthUser } from "./serverAuth";
 
 export function withRoleGuard(allowedRoles, next) {
   return async function getServerSideProps(context) {
-    const token = context.req.cookies["pharmaos_token"];
+    const user = await getServerAuthUser(context);
 
-    if (!token) {
+    if (!user) {
       return {
         redirect: { destination: "/login", permanent: false },
       };
     }
 
-    try {
-      const secret = new TextEncoder().encode(process.env.JWT_SECRET);
-      const { payload } = await jwtVerify(token, secret);
-
-      if (allowedRoles.length > 0 && !allowedRoles.includes(payload.role)) {
-        return {
-          redirect: { destination: "/dashboard", permanent: false },
-        };
-      }
-
-      if (next) {
-        return next(context, payload);
-      }
-
-      return { props: { user: payload } };
-    } catch {
+    if (user.mustChangePassword) {
       return {
-        redirect: { destination: "/login", permanent: false },
+        redirect: { destination: "/profile", permanent: false },
       };
     }
+
+    if (allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
+      return {
+        redirect: { destination: "/dashboard", permanent: false },
+      };
+    }
+
+    if (next) {
+      return next(context, user);
+    }
+
+    return { props: { user } };
   };
 }

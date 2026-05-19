@@ -1,12 +1,16 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Loader2 } from "lucide-react";
 import { formatCurrency } from "@/utils/formatCurrency";
 import styles from "./CheckoutPanel.module.css";
 
 const PAYMENT_METHODS = ["Cash", "Card"];
 
-export default function CheckoutPanel({ cart, onCheckout, isLoading, receipt, onNewSale, pharmacistNotice }) {
-  const [paymentMethod, setPaymentMethod] = useState("Cash");
+export default function CheckoutPanel({ cart, onCheckout, isLoading, receipt, onNewSale, pharmacistNotice, initialPaymentMethod }) {
+  const [paymentMethod, setPaymentMethod] = useState(initialPaymentMethod ?? "Cash");
+
+  useEffect(() => {
+    if (initialPaymentMethod) setPaymentMethod(initialPaymentMethod);
+  }, [initialPaymentMethod]);
 
   /* ── Receipt (read-only) mode ── */
   if (receipt) {

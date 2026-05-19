@@ -1,0 +1,52 @@
+
+> pharmaos-frontend@1.0.0 dev
+> next dev
+
+  ▲ Next.js 14.2.3
+  - Local:        http://localhost:3000
+  - Environments: .env.local, .env
+
+ ✓ Starting...
+ ✓ Ready in 2.2s
+ ○ Compiling /login ...
+ ✓ Compiled /login in 3.9s (422 modules)
+ GET /login 200 in 4152ms
+ GET /login 200 in 14ms
+ GET /login 200 in 32ms
+ ○ Compiling /dashboard ...
+ ✓ Compiled /dashboard in 7.7s (1258 modules)
+ GET /_next/data/development/dashboard.json 200 in 1021ms
+ ✓ Compiled /_error in 317ms (1260 modules)
+ GET /api/dashboard/pharmacist 404 in 371ms
+ ○ Compiling /reports ...
+ ✓ Compiled /reports in 2.6s (1304 modules)
+ ○ Compiling /stock ...
+ ✓ Compiled /stock in 4.8s (1330 modules)
+ ○ Compiling /stock/report ...
+ ✓ Compiled /stock/report in 923ms (1338 modules)
+ ○ Compiling /customers ...
+ ✓ Compiled /customers in 2.2s (733 modules)
+ GET /_next/data/development/customers.json 200 in 230ms
+ ○ Compiling /transactions ...
+ ✓ Compiled /transactions in 2.5s (1257 modules)
+ GET /_next/data/development/transactions.json 200 in 245ms
+ ○ Compiling /suppliers ...
+ ✓ Compiled /suppliers in 2.5s (1256 modules)
+ GET /_next/data/development/suppliers.json 200 in 116ms
+ ○ Compiling /suppliers/delivery/new ...
+ ✓ Compiled /suppliers/delivery/new in 2.4s (1266 modules)
+ GET /_next/data/development/suppliers/delivery/new.json 200 in 122ms
+ GET /_next/data/development/suppliers.json 200 in 125ms
+ ✓ Compiled in 242ms (705 modules)
+ ○ Compiling /stock/report ...
+ ✓ Compiled /stock/report in 1638ms (718 modules)
+ GET /stock/report 307 in 1792ms
+ ✓ Compiled in 350ms (705 modules)
+ ○ Compiling /stock/report ...
+ ✓ Compiled /stock/report in 732ms (718 modules)
+ GET /stock/report 307 in 841ms
+ ○ Compiling /reports ...
+ ✓ Compiled /reports in 4s (1265 modules)
+ ○ Compiling /login ...
+ ✓ Compiled /login in 1512ms (1290 modules)
+ GET /login 200 in 1670ms

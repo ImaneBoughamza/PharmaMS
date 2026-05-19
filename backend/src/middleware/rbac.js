@@ -1,7 +1,19 @@
-export function requireRole(...roles) {
+import ApiError from "../utils/ApiError.js";
+
+export const allow = (...roles) => {
   return (req, res, next) => {
-    if (!req.user?.role) return res.status(401).json({ message: "Unauthenticated" });
-    if (!roles.includes(req.user.role)) return res.status(403).json({ message: "Forbidden" });
+    if (!req.user) {
+      return next(ApiError.unauthorized("Authentication required"));
+    }
+
+    if (!roles.includes(req.user.role)) {
+      return next(ApiError.forbidden(`Access denied - required role: ${roles.join(" or ")}`));
+    }
+
     next();
   };
-}
+};
+
+export const requireRole = allow;
+
+export default allow;

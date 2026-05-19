@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 import { toast } from "sonner";
 import AppLayout from "@/components/layout/AppLayout";
 import MedicineSearch from "@/components/pos/MedicineSearch";
@@ -7,26 +8,43 @@ import CheckoutPanel from "@/components/pos/CheckoutPanel";
 import BillView from "@/components/pos/BillView";
 import PharmacistApprovalModal from "@/components/pos/PharmacistApprovalModal";
 import SalesHistory from "@/components/pos/SalesHistory";
+import api from "@/lib/axios";
+import { useAuth } from "@/hooks/useAuth";
+import { withRoleGuard } from "@/utils/roleGuard";
+import { PHARMACIST, ASSISTANT, CASHIER } from "@/constants/roles";
 import styles from "@/styles/PosPage.module.css";
 
-const MOCK_USER = { id: "u1", role: "cashier", name: "Imane B." };
-
-function buildReceipt(cartData, paymentMethod, cashierName) {
-  const now = new Date();
-  const pad  = (n) => String(n).padStart(2, "0");
+function buildReceipt(cartData, paymentMethod, cashierName, sale) {
+  const now = sale?.createdAt ? new Date(sale.createdAt) : new Date();
+  const pad = (n) => String(n).padStart(2, "0");
   const medicines = cartData
     .filter((i) => i.item.type === "medicine")
-    .map((i)  => ({ name: i.item.name, qty: i.qty, unitPrice: i.item.salePrice, total: i.item.salePrice * i.qty }));
+    .map((i) => ({
+      name: i.item.name,
+      qty: i.qty,
+      unitPrice: i.item.salePrice,
+      total: i.item.salePrice * i.qty,
+    }));
   const parapharmacy = cartData
     .filter((i) => i.item.type !== "medicine")
-    .map((i)  => ({ name: i.item.name, qty: i.qty, unitPrice: i.item.salePrice, total: i.item.salePrice * i.qty }));
-  const medSubtotal  = medicines.reduce((s, i)    => s + i.total, 0);
+    .map((i) => ({
+      name: i.item.name,
+      qty: i.qty,
+      unitPrice: i.item.salePrice,
+      total: i.item.salePrice * i.qty,
+    }));
+  const medSubtotal = medicines.reduce((s, i) => s + i.total, 0);
   const paraSubtotal = parapharmacy.reduce((s, i) => s + i.total, 0);
   return {
-    receiptNumber: `RCP-${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}-${String(Math.floor(Math.random() * 9000) + 1000)}`,
-    pharmacyName: "PharmaOS Central",
+    receiptNumber:
+      sale?.invoice?.receiptNumber ??
+      `RCP-${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}-${String(Math.floor(Math.random() * 9000) + 1000)}`,
+    pharmacyName: "PharmaMS Central",
     date: now.toLocaleDateString("fr-MA"),
-    time: now.toLocaleTimeString("fr-MA", { hour: "2-digit", minute: "2-digit" }),
+    time: now.toLocaleTimeString("fr-MA", {
+      hour: "2-digit",
+      minute: "2-digit",
+    }),
     cashierName,
     paymentMethod,
     medicines,
@@ -37,11 +55,73 @@ function buildReceipt(cartData, paymentMethod, cashierName) {
   };
 }
 
-export default function PosPage() {
-  const [cart,          setCart]          = useState([]);
-  const [isLoading,     setIsLoading]     = useState(false);
-  const [receipt,       setReceipt]       = useState(null);
+function requiresPharmacistGate(cartItems) {
+  return cartItems.some(
+    (i) => i.item.type === "medicine" && i.item.category === "regulated",
+  );
+}
+
+export default function PosPage({ user: serverUser }) {
+  const router = useRouter();
+  const { user: authUser } = useAuth();
+  const user = authUser ?? serverUser;
+
+  const [cart, setCart] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [receipt, setReceipt] = useState(null);
   const [approvalState, setApprovalState] = useState(null);
+  const [reservationBanner, setReservationBanner] = useState(null);
+  const [initialPaymentMethod, setInitialPaymentMethod] = useState("Cash");
+  const [salesHistoryRefresh, setSalesHistoryRefresh] = useState(0);
+
+  // Pre-populate cart when navigating from a reservation's Convert to Sale button
+  useEffect(() => {
+    const { reservationId } = router.query;
+    if (!reservationId) return;
+    let cancelled = false;
+
+    async function loadReservationCart() {
+      try {
+        const { data } = await api.post(
+          `/api/reservations/${reservationId}/convert`,
+        );
+        if (cancelled) return;
+        const res = data.data;
+        const cartItems = (res.cartItems || []).map((item) => ({
+          item: {
+            _id: item.productId,
+            name: item.name,
+            type: item.productType,
+            category: item.category || "non-prescription",
+            stock: item.qty,
+            salePrice: item.unitPrice,
+          },
+          qty: item.qty,
+        }));
+        setCart(cartItems);
+        setReservationBanner({
+          code: res.confirmationCode,
+          customerName: res.customerName,
+        });
+        setInitialPaymentMethod(
+          res.paymentMethod === "online" ? "Card" : "Cash",
+        );
+      } catch (err) {
+        if (!cancelled) {
+          toast.error(
+            err.response?.data?.message ||
+              "Could not load reservation into POS",
+          );
+        }
+      }
+    }
+
+    loadReservationCart();
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.query.reservationId]);
   // approvalState: null | { status, regulatedItems, cartSnapshot, paymentMethod, approvedBy, rejectedBy, rejectionReason }
 
   const approvalStatus = approvalState ? approvalState.status : null;
@@ -66,10 +146,10 @@ export default function PosPage() {
 
   // Mock socket: simulate pharmacist approving after 8 s (remove when real socket is connected)
   useEffect(() => {
-    if (approvalStatus !== "waiting") return;
+    if (approvalStatus !== "never") return;
     const t = setTimeout(() => {
       setApprovalState((prev) =>
-        prev ? { ...prev, status: "approved", approvedBy: "Dr. Benali" } : null
+        prev ? { ...prev, status: "approved", approvedBy: "Dr. Benali" } : null,
       );
     }, 8000);
     return () => clearTimeout(t);
@@ -78,13 +158,12 @@ export default function PosPage() {
   // Auto-proceed 1 s after approval
   useEffect(() => {
     if (approvalStatus !== "approved" || !approvalState) return;
-    const { cartSnapshot, paymentMethod } = approvalState;
     const t = setTimeout(() => {
       setApprovalState(null);
-      doSale(cartSnapshot, paymentMethod);
+      // Sale already completed after the backend gate response.
     }, 1000);
     return () => clearTimeout(t);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [approvalStatus]);
 
   /* ── Cart actions ── */
@@ -93,7 +172,9 @@ export default function PosPage() {
       const existing = prev.find((i) => i.item._id === item._id);
       if (existing) {
         return prev.map((i) =>
-          i.item._id === item._id ? { ...i, qty: Math.min(i.qty + 1, item.stock) } : i
+          i.item._id === item._id
+            ? { ...i, qty: Math.min(i.qty + 1, item.stock) }
+            : i,
         );
       }
       return [...prev, { item, qty: 1 }];
@@ -103,7 +184,9 @@ export default function PosPage() {
   function handleQtyChange(id, qty) {
     if (qty < 1) return;
     setCart((prev) =>
-      prev.map((i) => i.item._id === id ? { ...i, qty: Math.min(qty, i.item.stock) } : i)
+      prev.map((i) =>
+        i.item._id === id ? { ...i, qty: Math.min(qty, i.item.stock) } : i,
+      ),
     );
   }
 
@@ -124,20 +207,21 @@ export default function PosPage() {
 
     // Step 2: regulated medicine check
     const regulatedItems = cart.filter(
-      (i) => i.item.type === "medicine" && i.item.category === "regulated"
+      (i) => i.item.type === "medicine" && i.item.category === "regulated",
     );
 
     if (regulatedItems.length > 0) {
-      if (MOCK_USER.role === "pharmacist") {
+      if (user?.role === PHARMACIST) {
         // Pharmacist is their own approver — skip gate, notice shown inline in CheckoutPanel
         doSale(cart, paymentMethod);
       } else {
-        // Non-pharmacist: requires pharmacist approval via gate
+        // Non-pharmacist: attach prescription first, then backend waits for pharmacist response.
         setApprovalState({
-          status: "waiting",
+          status: "upload",
           regulatedItems,
           cartSnapshot: cart,
           paymentMethod,
+          prescriptionImage: null,
           approvedBy: null,
           rejectedBy: null,
           rejectionReason: null,
@@ -150,25 +234,78 @@ export default function PosPage() {
     doSale(cart, paymentMethod);
   }
 
-  async function doSale(cartData, paymentMethod) {
+  async function doSale(cartData, paymentMethod, options = {}) {
     setIsLoading(true);
     try {
-      // TODO: replace with real API call
-      // const { data } = await api.post("/api/sales", {
-      //   items: cartData.map((i) => ({ productId: i.item._id, productType: i.item.type, qty: i.qty })),
-      //   paymentMethod,
-      // });
-      // const rec = buildReceipt(cartData, paymentMethod, data.cashierName ?? MOCK_USER.name);
-      await new Promise((r) => setTimeout(r, 700));
-      const rec = buildReceipt(cartData, paymentMethod, MOCK_USER.name);
+      const salePayload = {
+        items: cartData
+          .filter((i) => i.item.type === "medicine")
+          .map((i) => ({ medicineId: i.item._id, qty: i.qty })),
+        parapharmacyItems: cartData
+          .filter((i) => i.item.type !== "medicine")
+          .map((i) => ({ productId: i.item._id, qty: i.qty })),
+        paymentMethod: paymentMethod.toLowerCase(),
+      };
+
+      if (options.prescriptionImage) {
+        salePayload.prescriptionImage = options.prescriptionImage;
+      }
+
+      if (
+        router.query.reservationId &&
+        /^[a-f\d]{24}$/i.test(String(router.query.reservationId))
+      ) {
+        salePayload.reservationId = String(router.query.reservationId);
+      }
+
+      const { data } = await api.post("/api/sales", salePayload);
+      const sale = data.data;
+      const cashierName = user?.fullName ?? user?.email ?? "Staff";
+      const rec = buildReceipt(cartData, paymentMethod, cashierName, sale);
       setCart([]);
       setReceipt(rec);
-      toast.success(`Sale completed — Receipt #${rec.receiptNumber}`);
+      setSalesHistoryRefresh((value) => value + 1);
+      if (options.requiresApproval) {
+        setApprovalState((prev) =>
+          prev
+            ? { ...prev, status: "approved", approvedBy: "Pharmacist" }
+            : null,
+        );
+      }
+      toast.success(`Sale completed - Receipt #${rec.receiptNumber}`);
     } catch (err) {
-      toast.error(err?.response?.data?.message ?? "Checkout failed. Please try again.");
+      const message =
+        err?.response?.data?.message ?? "Checkout failed. Please try again.";
+      if (options.requiresApproval) {
+        const rejected = message.toLowerCase().includes("rejected");
+        setApprovalState((prev) =>
+          prev
+            ? {
+                ...prev,
+                status: rejected ? "rejected" : "timeout",
+                rejectedBy: rejected ? "Pharmacist" : null,
+                rejectionReason: rejected ? message : null,
+              }
+            : null,
+        );
+      }
+      toast.error(message);
     } finally {
       setIsLoading(false);
     }
+  }
+
+  function handlePrescriptionSubmit(prescriptionImage) {
+    if (!approvalState) return;
+    const cartSnapshot = approvalState.cartSnapshot || cart;
+    const paymentMethod = approvalState.paymentMethod;
+    setApprovalState((prev) =>
+      prev ? { ...prev, status: "waiting", prescriptionImage } : null,
+    );
+    doSale(cartSnapshot, paymentMethod, {
+      requiresApproval: true,
+      prescriptionImage,
+    });
   }
 
   function handleNewSale() {
@@ -183,7 +320,7 @@ export default function PosPage() {
   }
 
   function handleApprovalTimeout() {
-    setApprovalState((prev) => prev ? { ...prev, status: "timeout" } : null);
+    setApprovalState((prev) => (prev ? { ...prev, status: "timeout" } : null));
   }
 
   function handleApprovalBackToCart() {
@@ -206,6 +343,13 @@ export default function PosPage() {
                   <MedicineSearch onAdd={handleAdd} />
                 </div>
                 <div className={styles.cartSection}>
+                  {reservationBanner && (
+                    <div className={styles.reservationBanner}>
+                      Converting reservation{" "}
+                      <strong>{reservationBanner.code}</strong> —{" "}
+                      {reservationBanner.customerName}
+                    </div>
+                  )}
                   <div className={styles.cartHeader}>
                     <h2 className={styles.sectionTitle}>Cart</h2>
                     {cart.length > 0 && (
@@ -214,12 +358,19 @@ export default function PosPage() {
                       </span>
                     )}
                     {cart.length > 0 && (
-                      <button className={styles.clearCartBtn} onClick={handleClearCart}>
+                      <button
+                        className={styles.clearCartBtn}
+                        onClick={handleClearCart}
+                      >
                         Clear all
                       </button>
                     )}
                   </div>
-                  <Cart items={cart} onQtyChange={handleQtyChange} onRemove={handleRemove} />
+                  <Cart
+                    items={cart}
+                    onQtyChange={handleQtyChange}
+                    onRemove={handleRemove}
+                  />
                 </div>
               </>
             )}
@@ -234,9 +385,9 @@ export default function PosPage() {
                 isLoading={isLoading}
                 receipt={receipt}
                 onNewSale={handleNewSale}
+                initialPaymentMethod={initialPaymentMethod}
                 pharmacistNotice={
-                  MOCK_USER.role === "pharmacist" &&
-                  cart.some((i) => i.item.type === "medicine" && i.item.category === "regulated")
+                  user?.role === PHARMACIST && requiresPharmacistGate(cart)
                 }
               />
             </div>
@@ -245,7 +396,11 @@ export default function PosPage() {
 
         {/* ── Sales History (scrolls below) ── */}
         <hr className={styles.separator} />
-        <SalesHistory userRole={MOCK_USER.role} userId={MOCK_USER.id} />
+        <SalesHistory
+          userRole={user?.role}
+          userId={user?.userId ?? user?.sub}
+          refreshKey={salesHistoryRefresh}
+        />
       </div>
 
       {/* ── Pharmacist Approval Modal (fixed overlay) ── */}
@@ -257,6 +412,7 @@ export default function PosPage() {
           approvedBy={approvalState.approvedBy}
           rejectedBy={approvalState.rejectedBy}
           rejectionReason={approvalState.rejectionReason}
+          onSubmitPrescription={handlePrescriptionSubmit}
           onCancel={handleApprovalCancel}
           onTimeout={handleApprovalTimeout}
           onBackToCart={handleApprovalBackToCart}
@@ -268,5 +424,8 @@ export default function PosPage() {
 
 PosPage.getLayout = AppLayout.getLayout;
 
-// TODO: restore when backend is ready
-// export const getServerSideProps = withRoleGuard([PHARMACIST, ASSISTANT, CASHIER]);
+export const getServerSideProps = withRoleGuard([
+  PHARMACIST,
+  ASSISTANT,
+  CASHIER,
+]);
