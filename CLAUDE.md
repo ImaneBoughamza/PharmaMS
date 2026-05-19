@@ -1,25 +1,8 @@
-# PharmaOS — Claude Code Context
-
-## IMPORTANT — READ THIS FIRST
-
-Before writing or editing any file, always read its current content first.
-Never assume a file is empty and never assume a file already has content.
-Always check first.
-
-- If the file is empty or missing → implement it from scratch.
-- If the file already has content → read it fully, understand what is there,
-  then continue from where it left off or integrate your additions cleanly
-  without duplicating or overwriting existing code.
-
-Follow the implementation steps in order. Do not skip steps.
-Do not add code to a file without reading it first.
-
----
-
+# PharmaMS
 ## Project
 
 Web-Based Automated Pharmacy Management System (SaaS)
-Capstone project — Al Akhawayn University in Ifrane, Spring 2026
+Capstone project: Al Akhawayn University in Ifrane, Spring 2026
 Student: Imane Boughamza
 Supervisor: Dr. Driss Kettani
 Live URL: https://pharmacy-management-system-one-drab.vercel.app/
