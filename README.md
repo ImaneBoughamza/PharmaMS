@@ -61,3 +61,79 @@ It's built as **two separate Next.js applications sharing one backend**:
 ---
 
 ## 🏗️ Architecture
+
+```
+┌─────────────────────┐       ┌──────────────────────┐
+│   Staff Portal        │       │  Customer Portal       │
+│   (Next.js, authed)   │       │  (Next.js, public)     │
+└──────────┬────────────┘       └───────────┬───────────┘
+           │                                │
+           └───────────────┬────────────────┘
+                            ▼
+                 ┌────────────────────────┐
+                 │  Express.js API         │
+                 │  JWT Auth + RBAC        │
+                 │  FIFO / Gate Services   │
+                 └───────┬────────┬────────┘
+                         │        │
+              ┌──────────┘        └──────────┐
+              ▼                              ▼
+     ┌──────────────────┐          ┌───────────────────┐
+     │  MongoDB Atlas     │          │  Redis (Upstash)   │
+     └──────────────────┘          └───────────────────┘
+```
+
+The two frontend apps never talk to each other directly — they only communicate through the shared backend API, keeping the public-facing portal completely decoupled from authenticated staff operations.
+
+---
+
+## 📁 Project Structure
+
+```
+PHARMACY-MS/
+├── frontend/         → Staff Portal (Next.js, Pages Router)
+├── customer-portal/  → Public Reservation Portal (Next.js)
+├── backend/          → Node.js + Express API
+└── README.md
+```
+
+---
+
+## 🚀 Getting Started
+
+```bash
+# Clone the repo
+git clone https://github.com/ImaneBoughamza/PharmaMS.git
+cd PharmaMS
+
+# Backend
+cd backend
+npm install
+cp .env.example .env   # fill in MongoDB URI, Redis URL, JWT secrets, etc.
+npm run dev
+
+# Frontend (staff portal)
+cd ../frontend
+npm install
+npm run dev
+
+# Customer portal
+cd ../customer-portal
+npm install
+npm run dev
+```
+
+---
+
+## 🎓 About This Project
+
+Built as a capstone project at **Al Akhawayn University in Ifrane**, Spring 2026.
+
+- **Student:** Imane Boughamza
+- **Supervisor:** Dr. Driss Kettani
+
+---
+
+## 📝 License
+
+MIT
